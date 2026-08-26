@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation';
 
+import LogoutButton from '@/components/auth/logout-button';
+import CompanyNameForm from '@/components/company/company-name-form';
 import { createClient } from '@/lib/supabase/server';
 
 export default async function HomePage() {
@@ -31,11 +33,9 @@ export default async function HomePage() {
 
       <p>Välkommen till ditt bokföringsprogram.</p>
 
-      <hr />
+      <CompanyNameForm companyId={company.id} initialName={company.name} />
 
-      <h3>Översikt</h3>
-
-      <p>Här kommer företagets bokföring att visas.</p>
+      <LogoutButton />
     </main>
   );
 }
