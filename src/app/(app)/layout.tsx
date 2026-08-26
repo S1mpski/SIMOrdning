@@ -4,6 +4,8 @@ import AppHeader from '@/components/layout/app-header';
 import Sidebar from '@/components/layout/sidebar';
 import { createClient } from '@/lib/supabase/server';
 
+import { Box } from '@mui/material';
+
 export default async function AppLayout({
   children,
 }: {
@@ -30,23 +32,25 @@ export default async function AppLayout({
   }
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         display: 'flex',
         minHeight: '100vh',
-        background: '#f5f5f5',
+        bgcolor: 'background.default',
       }}>
       <Sidebar />
 
-      <div
-        style={{
+      <Box
+        component='main'
+        sx={{
           flex: 1,
-          padding: 32,
+          minWidth: 0,
+          p: 3,
         }}>
         <AppHeader companyId={company.id} companyName={company.name} />
 
         {children}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

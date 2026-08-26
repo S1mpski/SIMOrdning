@@ -3,6 +3,10 @@
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import CheckIcon from '@mui/icons-material/Check';
+import EditIcon from '@mui/icons-material/Edit';
+import { Box, Button, IconButton, TextField, Typography } from '@mui/material';
+
 import { createClient } from '@/lib/supabase/client';
 
 type Props = {
@@ -14,64 +18,111 @@ export default function CompanyNameForm({ companyId, initialName }: Props) {
   const router = useRouter();
 
   const [name, setName] = useState(initialName);
+  const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
+    const trimmedName = name.trim();
+
+    if (!trimmedName) {
+      setError('Företagsnamnet får inte vara tomt.');
+      return;
+    }
+
     setLoading(true);
-    setMessage('');
+    setError('');
 
     const supabase = createClient();
 
     const { error } = await supabase
       .from('companies')
       .update({
-        name: name.trim(),
+        name: trimmedName,
       })
       .eq('id', companyId);
 
     if (error) {
-      setMessage('Kunde inte spara företagsnamnet.');
+      setError('Kunde inte spara företagsnamnet.');
       setLoading(false);
       return;
     }
 
-    setMessage('Företagsnamnet har sparats.');
+    setName(trimmedName);
+    setEditing(false);
     setLoading(false);
 
     router.refresh();
   }
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor='company-name'>Företagsnamn</label>
-
-      <div
-        style={{
+  if (!editing) {
+    return (
+      <Box
+        sx={{
           display: 'flex',
-          gap: 10,
-          marginTop: 8,
+          alignItems: 'center',
+          gap: 1,
         }}>
-        <input
-          id='company-name'
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          required
-          maxLength={100}
-          style={{
-            padding: 10,
-            minWidth: 300,
-          }}
-        />
+        <Typography variant='h6' fontWeight={600}>
+          {name}
+        </Typography>
 
-        <button type='submit' disabled={loading}>
-          {loading ? 'Sparar...' : 'Spara'}
-        </button>
-      </div>
+        <IconButton
+          size='small'
+          onClick={() => setEditing(true)}
+          aria-label='Ändra företagsnamn'>
+          <EditIcon fontSize='small' />
+        </IconButton>
+      </Box>
+    );
+  }
 
-      {message && <p>{message}</p>}
-    </form>
+  return (
+    <Box
+      component='form'
+      onSubmit={handleSubmit}
+      sx={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 1,
+      }}>
+      <TextField
+        size='small'
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        error={Boolean(error)}
+        helperText={error}
+        disabled={loading}
+        autoFocus
+        inputProps={{
+          maxLength: 100,
+        }}
+        sx={{
+          minWidth: 300,
+        }}
+      />
+
+      <Button
+        type='submit'
+        variant='contained'
+        startIcon={<CheckIcon />}
+        disabled={loading}>
+        {loading ? 'Sparar...' : 'Spara'}
+      </Button>
+
+      <Button
+        type='button'
+        variant='text'
+        disabled={loading}
+        onClick={() => {
+          setName(initialName);
+          setError('');
+          setEditing(false);
+        }}>
+        Avbryt
+      </Button>
+    </Box>
   );
 }

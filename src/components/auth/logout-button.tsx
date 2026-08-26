@@ -2,6 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Button } from '@mui/material';
+
 import { createClient } from '@/lib/supabase/client';
 
 export default function LogoutButton() {
@@ -16,5 +19,12 @@ export default function LogoutButton() {
     router.refresh();
   }
 
-  return <button onClick={handleLogout}>Logga ut</button>;
+  return (
+    <Button
+      variant='outlined'
+      startIcon={<LogoutIcon />}
+      onClick={handleLogout}>
+      Logga ut
+    </Button>
+  );
 }
