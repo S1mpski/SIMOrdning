@@ -18,7 +18,7 @@ export async function createClient() {
               cookieStore.set(name, value, options);
             });
           } catch {
-            // Server Components kan inte alltid skriva cookies.
+            // Kan ignoreras i Server Components.
           }
         },
       },
