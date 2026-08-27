@@ -49,7 +49,7 @@ export default async function HomePage() {
 
   const result = allVouchers.reduce((totalResult, voucher) => {
     const voucherResult = voucher.voucher_rows.reduce((total, row) => {
-      const accountNumber = row.accounts?.account_number;
+      const accountNumber = (row.accounts as any)?.account_number;
 
       if (!accountNumber) {
         return total;

@@ -53,9 +53,11 @@ export default function VoucherRow({
         })
       }
       placeholder='0,00'
-      inputProps={{
-        min: 0,
-        step: '0.01',
+      slotProps={{
+        htmlInput: {
+          min: 0,
+          step: '0.01',
+        },
       }}
       sx={{
         width: {
@@ -88,9 +90,11 @@ export default function VoucherRow({
         })
       }
       placeholder='0,00'
-      inputProps={{
-        min: 0,
-        step: '0.01',
+      slotProps={{
+        htmlInput: {
+          min: 0,
+          step: '0.01',
+        },
       }}
       sx={{
         width: {
@@ -173,9 +177,9 @@ export default function VoucherRow({
           <Stack
             direction='row'
             spacing={1}
-            alignItems='flex-end'
             sx={{
               width: '100%',
+              alignItems: 'flex-end',
             }}>
             <Box>
               <Typography

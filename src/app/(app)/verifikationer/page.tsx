@@ -78,7 +78,7 @@ export default async function VouchersPage() {
         mx: 'auto',
       }}>
       <Box sx={{ mb: 3 }}>
-        <Typography variant='h4' fontWeight={700}>
+        <Typography variant='h4' sx={{ fontWeight: 700 }}>
           Verifikationer
         </Typography>
 

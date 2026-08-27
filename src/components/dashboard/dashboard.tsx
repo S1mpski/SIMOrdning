@@ -83,8 +83,10 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
               }}>
               <Stack
                 direction='row'
-                justifyContent='space-between'
-                alignItems='flex-start'>
+                sx={{
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                }}>
                 <Box>
                   <Typography variant='body2' color='text.secondary'>
                     Resultat
@@ -125,8 +127,10 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
               }}>
               <Stack
                 direction='row'
-                justifyContent='space-between'
-                alignItems='flex-start'>
+                sx={{
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                }}>
                 <Box>
                   <Typography variant='body2' color='text.secondary'>
                     Verifikationer

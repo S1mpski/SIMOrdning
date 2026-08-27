@@ -315,15 +315,9 @@ export default function VoucherForm() {
                 type='date'
                 value={date}
                 onChange={(event) => setDate(event.target.value)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                size='small'
-                fullWidth
-                sx={{
-                  maxWidth: {
-                    xs: '100%',
-                    sm: 200,
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
                   },
                 }}
               />
@@ -335,8 +329,10 @@ export default function VoucherForm() {
                 placeholder='Ex. Försäljning av vara'
                 fullWidth
                 size='small'
-                inputProps={{
-                  maxLength: 200,
+                slotProps={{
+                  htmlInput: {
+                    maxLength: 200,
+                  },
                 }}
               />
             </Stack>
@@ -489,22 +485,22 @@ export default function VoucherForm() {
                   sm: 340,
                 },
               }}>
-              <Stack direction='row' justifyContent='space-between'>
+              <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
                 <Typography variant='body2' color='text.secondary'>
                   Debet
                 </Typography>
 
-                <Typography variant='body2' fontWeight={600}>
+                <Typography variant='body2' sx={{ fontWeight: 600 }}>
                   {formatCurrency(debitTotal)} kr
                 </Typography>
               </Stack>
 
-              <Stack direction='row' justifyContent='space-between'>
+              <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
                 <Typography variant='body2' color='text.secondary'>
                   Kredit
                 </Typography>
 
-                <Typography variant='body2' fontWeight={600}>
+                <Typography variant='body2' sx={{ fontWeight: 600 }}>
                   {formatCurrency(creditTotal)} kr
                 </Typography>
               </Stack>
@@ -513,8 +509,7 @@ export default function VoucherForm() {
 
               <Stack
                 direction='row'
-                justifyContent='space-between'
-                alignItems='center'>
+                sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography
                   sx={{
                     fontSize: 14,
@@ -543,8 +538,8 @@ export default function VoucherForm() {
                 <Stack
                   direction='row'
                   spacing={0.75}
-                  alignItems='center'
                   sx={{
+                    alignItems: 'center',
                     pt: 0.5,
                     color: 'success.main',
                   }}>

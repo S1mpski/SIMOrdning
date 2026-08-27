@@ -51,7 +51,7 @@ export default function AccountList({ accounts }: Props) {
           {accounts.map((account) => (
             <TableRow key={account.id} hover>
               <TableCell>
-                <Typography fontWeight={600}>
+                <Typography sx={{ fontWeight: 600 }}>
                   {account.account_number}
                 </Typography>
               </TableCell>

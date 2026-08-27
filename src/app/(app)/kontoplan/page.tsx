@@ -48,7 +48,7 @@ export default async function AccountsPage() {
         mx: 'auto',
       }}>
       <Box sx={{ mb: 3 }}>
-        <Typography variant='h4' fontWeight={700}>
+        <Typography variant='h4' sx={{ fontWeight: 700 }}>
           Kontoplan
         </Typography>
 
