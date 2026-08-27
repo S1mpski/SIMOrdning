@@ -1,3 +1,93 @@
-export default function VerifikationerPage() {
-  return <h1>Verifikationer</h1>;
+import { redirect } from 'next/navigation';
+
+import { Box, Typography } from '@mui/material';
+
+import VoucherList, {
+  VoucherListItem,
+} from '@/components/bookkeeping/voucher-list';
+
+import { createClient } from '@/lib/supabase/server';
+
+export default async function VouchersPage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  const { data: company } = await supabase
+    .from('companies')
+    .select('id')
+    .eq('owner_id', user.id)
+    .single();
+
+  if (!company) {
+    return <Typography color='error'>Kunde inte hitta företaget.</Typography>;
+  }
+
+  const { data: vouchers, error } = await supabase
+    .from('vouchers')
+    .select(
+      `
+      id,
+      voucher_number,
+      voucher_date,
+      description,
+      voucher_rows (
+        debit,
+        credit
+      )
+    `,
+    )
+    .eq('company_id', company.id)
+    .order('voucher_number', {
+      ascending: false,
+    });
+
+  if (error) {
+    console.error(error);
+
+    return (
+      <Typography color='error'>Kunde inte hämta verifikationerna.</Typography>
+    );
+  }
+
+  const voucherList: VoucherListItem[] = (vouchers ?? []).map((voucher) => {
+    const amount = voucher.voucher_rows.reduce(
+      (total, row) => total + Number(row.debit),
+      0,
+    );
+
+    return {
+      id: voucher.id,
+      voucher_number: voucher.voucher_number,
+      voucher_date: voucher.voucher_date,
+      description: voucher.description,
+      amount,
+    };
+  });
+
+  return (
+    <Box
+      sx={{
+        maxWidth: 1100,
+        mx: 'auto',
+      }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant='h4' fontWeight={700}>
+          Verifikationer
+        </Typography>
+
+        <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
+          Alla bokförda verifikationer för företaget.
+        </Typography>
+      </Box>
+
+      <VoucherList vouchers={voucherList} />
+    </Box>
+  );
 }

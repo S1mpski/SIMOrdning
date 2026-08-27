@@ -1,3 +1,63 @@
-export default function VerifikationerPage() {
-  return <h1>Kontoplan</h1>;
+import { Box, Typography } from '@mui/material';
+
+import AccountList, {
+  AccountListItem,
+} from '@/components/bookkeeping/account-list';
+
+import { createClient } from '@/lib/supabase/server';
+
+export default async function AccountsPage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const { data: company } = await supabase
+    .from('companies')
+    .select('id')
+    .eq('owner_id', user.id)
+    .single();
+
+  if (!company) {
+    return <Typography color='error'>Kunde inte hitta företaget.</Typography>;
+  }
+
+  const { data: accounts, error } = await supabase
+    .from('accounts')
+    .select('id, account_number, name, active')
+    .eq('company_id', company.id)
+    .order('account_number');
+
+  if (error) {
+    console.error(error);
+
+    return <Typography color='error'>Kunde inte hämta kontoplanen.</Typography>;
+  }
+
+  const accountList: AccountListItem[] = accounts ?? [];
+
+  return (
+    <Box
+      sx={{
+        maxWidth: 1100,
+        mx: 'auto',
+      }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant='h4' fontWeight={700}>
+          Kontoplan
+        </Typography>
+
+        <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
+          Konton som används i företagets bokföring.
+        </Typography>
+      </Box>
+
+      <AccountList accounts={accountList} />
+    </Box>
+  );
 }
