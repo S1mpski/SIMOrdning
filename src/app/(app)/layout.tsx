@@ -41,15 +41,22 @@ export default async function AppLayout({
       <Sidebar />
 
       <Box
-        component='main'
         sx={{
           flex: 1,
           minWidth: 0,
-          p: 3,
+          display: 'flex',
+          flexDirection: 'column',
         }}>
         <AppHeader companyId={company.id} companyName={company.name} />
 
-        {children}
+        <Box
+          component='main'
+          sx={{
+            flex: 1,
+            p: 4,
+          }}>
+          {children}
+        </Box>
       </Box>
     </Box>
   );

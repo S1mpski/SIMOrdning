@@ -21,9 +21,19 @@ export default function LogoutButton() {
 
   return (
     <Button
-      variant='outlined'
+      variant='text'
+      color='inherit'
       startIcon={<LogoutIcon />}
-      onClick={handleLogout}>
+      onClick={handleLogout}
+      sx={{
+        color: 'text.secondary',
+        fontSize: 13,
+
+        '&:hover': {
+          color: 'text.primary',
+          bgcolor: 'action.hover',
+        },
+      }}>
       Logga ut
     </Button>
   );
