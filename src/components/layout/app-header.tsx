@@ -1,20 +1,20 @@
 import { Box, Typography } from '@mui/material';
 
 import LogoutButton from '@/components/auth/logout-button';
-import CompanyNameForm from '@/components/company/company-name-form';
 
 type Props = {
   companyId: string;
   companyName: string;
 };
 
-export default function AppHeader({ companyId, companyName }: Props) {
+export default function AppHeader({ companyName }: Props) {
   return (
     <Box
       component='header'
       sx={{
         height: 72,
         px: 4,
+        py: 4,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -30,12 +30,20 @@ export default function AppHeader({ companyId, companyName }: Props) {
             color: 'text.secondary',
             textTransform: 'uppercase',
             letterSpacing: 0.5,
-            mb: 0.25,
+            my: 0.25,
           }}>
           Aktivt företag
         </Typography>
 
-        <CompanyNameForm companyId={companyId} initialName={companyName} />
+        <Typography
+          sx={{
+            fontSize: 24,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            mb: 0.25,
+          }}>
+          {companyName}
+        </Typography>
       </Box>
 
       <LogoutButton />

@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 
 import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 type Company = {
   id: string;
@@ -48,7 +49,7 @@ type Props = {
 
 export default function CompanySettingsForm({ company }: Props) {
   const supabase = createClient();
-
+  const router = useRouter();
   const [form, setForm] = useState({
     name: company.name ?? '',
     organization_number: company.organization_number ?? '',
@@ -117,6 +118,7 @@ export default function CompanySettingsForm({ company }: Props) {
     }
 
     setSuccess(true);
+    router.refresh();
   }
 
   return (

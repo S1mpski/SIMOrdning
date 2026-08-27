@@ -79,7 +79,6 @@ export default function Dashboard({
             fontSize: 24,
             fontWeight: 700,
             letterSpacing: '-0.4px',
-            color: 'text.secondary',
           }}>
           Översikt
         </Typography>

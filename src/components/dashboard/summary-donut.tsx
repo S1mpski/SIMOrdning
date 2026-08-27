@@ -44,7 +44,7 @@ export default function SummaryDonut({
       }}>
       <CardContent
         sx={{
-          p: 2.5,
+          p: 2,
           '&:last-child': {
             pb: 2.5,
           },
@@ -73,27 +73,27 @@ export default function SummaryDonut({
           </Box>
         ) : (
           <Stack
-            direction={{ xs: 'column', sm: 'row' }}
+            direction='column'
             sx={{
-              mt: 2,
+              mt: 1.5,
               alignItems: 'center',
-              gap: 2,
+              gap: 1.5,
             }}>
             <Box
               sx={{
                 position: 'relative',
-                width: 220,
-                height: 220,
+                width: 150,
+                height: 150,
                 flexShrink: 0,
               }}>
               <PieChart
-                width={220}
-                height={220}
+                width={150}
+                height={150}
                 series={[
                   {
                     data: filteredData,
-                    innerRadius: 68,
-                    outerRadius: 100,
+                    innerRadius: 45,
+                    outerRadius: 68,
                     paddingAngle: 2,
                     cornerRadius: 3,
                     highlightScope: {
@@ -101,8 +101,8 @@ export default function SummaryDonut({
                       highlight: 'item',
                     },
                     faded: {
-                      innerRadius: 68,
-                      additionalRadius: -5,
+                      innerRadius: 45,
+                      additionalRadius: -4,
                     },
                   },
                 ]}

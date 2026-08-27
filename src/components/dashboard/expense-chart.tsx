@@ -67,30 +67,25 @@ export default function ExpenseChart({ data }: Props) {
             </Box>
           ) : (
             <Stack
-              direction={{
-                xs: 'column',
-                md: 'row',
-              }}
+              direction='column'
+              spacing={1.5}
               sx={{
-                spacing: 2,
                 alignItems: 'center',
               }}>
               <Box
                 sx={{
-                  width: {
-                    xs: '100%',
-                    md: 300,
-                  },
+                  width: '100%',
+
                   display: 'flex',
                   justifyContent: 'center',
                 }}>
                 <PieChart
-                  height={240}
+                  height={180}
                   series={[
                     {
                       data,
-                      innerRadius: 62,
-                      outerRadius: 95,
+                      innerRadius: 45,
+                      outerRadius: 72,
                       paddingAngle: 2,
                       cornerRadius: 3,
                       highlightScope: {
@@ -98,8 +93,8 @@ export default function ExpenseChart({ data }: Props) {
                         highlight: 'item',
                       },
                       faded: {
-                        innerRadius: 62,
-                        additionalRadius: -6,
+                        innerRadius: 45,
+                        additionalRadius: -5,
                       },
                     },
                   ]}
