@@ -47,17 +47,7 @@ export default async function AccountsPage() {
         maxWidth: 1100,
         mx: 'auto',
       }}>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant='h4' sx={{ fontWeight: 700 }}>
-          Kontoplan
-        </Typography>
-
-        <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-          Konton som används i företagets bokföring.
-        </Typography>
-      </Box>
-
-      <AccountList accounts={accountList} />
+      <AccountList accounts={accountList} companyId={company.id} />
     </Box>
   );
 }
