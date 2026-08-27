@@ -60,10 +60,12 @@ export default function VoucherForm() {
   const [description, setDescription] = useState('');
 
   const [loadingAccounts, setLoadingAccounts] = useState(true);
+
   const [accountsError, setAccountsError] = useState('');
 
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
   const [saveError, setSaveError] = useState('');
 
   useEffect(() => {
@@ -76,6 +78,7 @@ export default function VoucherForm() {
 
       if (!user) {
         setAccountsError('Ingen användare är inloggad.');
+
         setLoadingAccounts(false);
         return;
       }
@@ -88,6 +91,7 @@ export default function VoucherForm() {
 
       if (companyError || !company) {
         setAccountsError('Kunde inte hitta företaget.');
+
         setLoadingAccounts(false);
         return;
       }
@@ -101,6 +105,7 @@ export default function VoucherForm() {
 
       if (error) {
         setAccountsError('Kunde inte hämta kontoplanen.');
+
         setLoadingAccounts(false);
         return;
       }
@@ -176,6 +181,7 @@ export default function VoucherForm() {
 
     if (!user) {
       setSaveError('Du är inte längre inloggad.');
+
       setSaving(false);
       return;
     }
@@ -188,6 +194,7 @@ export default function VoucherForm() {
 
     if (companyError || !company) {
       setSaveError('Kunde inte hitta företaget.');
+
       setSaving(false);
       return;
     }
@@ -207,14 +214,19 @@ export default function VoucherForm() {
 
     if (error) {
       console.error(error);
+
       setSaveError('Kunde inte bokföra verifikationen.');
+
       setSaving(false);
       return;
     }
 
     setSuccessMessage('Verifikationen har bokförts.');
+
     setDescription('');
+
     setRows([createEmptyRow(), createEmptyRow()]);
+
     setSaving(false);
 
     console.log('Sparad verifikation:', data);
@@ -242,8 +254,6 @@ export default function VoucherForm() {
         mx: 'auto',
       }}>
       <Stack spacing={3}>
-        {/* Sidrubrik */}
-
         <Box>
           <Typography
             sx={{
@@ -265,21 +275,24 @@ export default function VoucherForm() {
 
         {saveError && <Alert severity='error'>{saveError}</Alert>}
 
-        {/* Verifikation */}
-
         <Card
           variant='outlined'
           sx={{
             borderRadius: 1.5,
             borderColor: 'divider',
           }}>
-          {/* Grunduppgifter */}
-
           <CardContent
             sx={{
-              p: 2.5,
+              p: {
+                xs: 2,
+                sm: 2.5,
+              },
+
               '&:last-child': {
-                pb: 2.5,
+                pb: {
+                  xs: 2,
+                  sm: 2.5,
+                },
               },
             }}>
             <Typography
@@ -306,8 +319,9 @@ export default function VoucherForm() {
                   shrink: true,
                 }}
                 size='small'
+                fullWidth
                 sx={{
-                  width: {
+                  maxWidth: {
                     xs: '100%',
                     sm: 200,
                   },
@@ -330,11 +344,13 @@ export default function VoucherForm() {
 
           <Divider />
 
-          {/* Bokföringsrader */}
-
           <Box
             sx={{
-              px: 2.5,
+              px: {
+                xs: 2,
+                sm: 2.5,
+              },
+
               pt: 2,
               pb: 1,
             }}>
@@ -354,24 +370,68 @@ export default function VoucherForm() {
             </Typography>
           </Box>
 
+          {/* MOBIL */}
+
           <Box
             sx={{
-              overflowX: 'auto',
+              display: {
+                xs: 'block',
+                sm: 'none',
+              },
+
+              px: 2,
+              pb: 1,
+            }}>
+            <Stack spacing={1.5}>
+              {rows.map((row) => (
+                <VoucherRow
+                  key={row.id}
+                  row={row}
+                  accounts={accounts}
+                  onChange={(updatedRow) => handleRowChange(row.id, updatedRow)}
+                  onDelete={() => handleDeleteRow(row.id)}
+                  canDelete={rows.length > 2}
+                  mobile
+                />
+              ))}
+            </Stack>
+          </Box>
+
+          {/* DESKTOP */}
+
+          <Box
+            sx={{
+              display: {
+                xs: 'none',
+                sm: 'block',
+              },
             }}>
             <Table size='small'>
               <TableHead>
                 <TableRow>
                   <TableCell>Konto</TableCell>
 
-                  <TableCell align='right' sx={{ width: 180 }}>
+                  <TableCell
+                    align='right'
+                    sx={{
+                      width: 160,
+                    }}>
                     Debet
                   </TableCell>
 
-                  <TableCell align='right' sx={{ width: 180 }}>
+                  <TableCell
+                    align='right'
+                    sx={{
+                      width: 160,
+                    }}>
                     Kredit
                   </TableCell>
 
-                  <TableCell sx={{ width: 60 }} />
+                  <TableCell
+                    sx={{
+                      width: 56,
+                    }}
+                  />
                 </TableRow>
               </TableHead>
 
@@ -394,7 +454,10 @@ export default function VoucherForm() {
 
           <Box
             sx={{
-              px: 2.5,
+              px: {
+                xs: 2,
+                sm: 2.5,
+              },
               py: 1.5,
             }}>
             <Button
@@ -408,11 +471,13 @@ export default function VoucherForm() {
 
           <Divider />
 
-          {/* Summering */}
-
           <Box
             sx={{
-              p: 2.5,
+              p: {
+                xs: 2,
+                sm: 2.5,
+              },
+
               display: 'flex',
               justifyContent: 'flex-end',
             }}>
@@ -483,7 +548,11 @@ export default function VoucherForm() {
                     pt: 0.5,
                     color: 'success.main',
                   }}>
-                  <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 17 }} />
+                  <CheckCircleOutlineOutlinedIcon
+                    sx={{
+                      fontSize: 17,
+                    }}
+                  />
 
                   <Typography
                     sx={{
@@ -499,22 +568,37 @@ export default function VoucherForm() {
 
           <Divider />
 
-          {/* Actions */}
-
           <Box
             sx={{
-              px: 2.5,
+              px: {
+                xs: 2,
+                sm: 2.5,
+              },
+
               py: 2,
+
               display: 'flex',
-              justifyContent: 'flex-end',
+
+              justifyContent: {
+                xs: 'stretch',
+                sm: 'flex-end',
+              },
+
               bgcolor: '#fafafa',
             }}>
             <Button
               type='submit'
               variant='contained'
               disabled={!canSubmit || saving}
+              fullWidth
               sx={{
-                minWidth: 170,
+                minWidth: {
+                  sm: 170,
+                },
+
+                width: {
+                  sm: 'auto',
+                },
               }}>
               {saving ? 'Bokför...' : 'Bokför verifikation'}
             </Button>
