@@ -142,10 +142,12 @@ export default function Sidebar() {
                 </ListItemIcon>
                 <ListItemText
                   primary={item.label}
-                  primaryTypographyProps={{
-                    sx: {
-                      fontSize: 14,
-                      fontWeight: 600,
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        fontSize: 14,
+                        fontWeight: 600,
+                      },
                     },
                   }}
                 />
