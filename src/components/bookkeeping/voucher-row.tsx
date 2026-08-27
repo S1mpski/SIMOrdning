@@ -8,6 +8,7 @@ import {
   Stack,
   TableCell,
   TableRow,
+  Tooltip,
   TextField,
   Typography,
 } from '@mui/material';
@@ -56,17 +57,17 @@ export default function VoucherRow({
       slotProps={{
         htmlInput: {
           min: 0,
-          step: '0.01',
+          step: '1',
         },
       }}
       sx={{
         width: {
-          xs: 70,
-          sm: 100,
+          xs: 90,
+          sm: 120,
         },
 
         '& input': {
-          textAlign: 'right',
+          textAlign: 'center',
           fontSize: {
             xs: 12,
             sm: 14,
@@ -93,20 +94,20 @@ export default function VoucherRow({
       slotProps={{
         htmlInput: {
           min: 0,
-          step: '0.01',
+          step: '1',
         },
       }}
       sx={{
         width: {
-          xs: 70,
-          sm: 100,
+          xs: 90,
+          sm: 120,
         },
 
         '& input': {
-          textAlign: 'right',
+          textAlign: 'center',
           fontSize: {
-            xs: 12,
-            sm: 14,
+            xs: 14,
+            sm: 16,
           },
           px: 0.75,
         },
@@ -119,14 +120,10 @@ export default function VoucherRow({
       onClick={onDelete}
       disabled={!canDelete}
       aria-label='Ta bort rad'
-      size='small'
       sx={{
+        width: 42,
+        height: 42,
         color: 'text.secondary',
-
-        p: {
-          xs: 0.4,
-          sm: 1,
-        },
 
         '&:hover': {
           color: 'error.main',
@@ -136,8 +133,8 @@ export default function VoucherRow({
       <DeleteOutlineOutlinedIcon
         sx={{
           fontSize: {
-            xs: 17,
-            sm: 20,
+            xs: 20,
+            sm: 26,
           },
         }}
       />
@@ -248,28 +245,40 @@ export default function VoucherRow({
       </TableCell>
 
       <TableCell
-        align='left'
         sx={{
           width: 140,
           px: 1,
         }}>
-        <Box sx={{ width: 100, ml: 'auto' }}>{debitField}</Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+          }}>
+          {debitField}
+        </Box>
       </TableCell>
 
       <TableCell
-        align='left'
         sx={{
           width: 140,
           px: 1,
         }}>
-        <Box sx={{ width: 100, ml: 'auto' }}>{creditField}</Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+          }}>
+          {creditField}
+        </Box>
       </TableCell>
 
       <TableCell
-        align='left'
         sx={{
-          width: 56,
-          pl: 0.5,
+          width: 70,
+          px: 1,
+          textAlign: 'center',
         }}>
         {deleteButton}
       </TableCell>

@@ -124,12 +124,7 @@ export default function CompanySettingsForm({ company }: Props) {
   return (
     <Stack spacing={3}>
       <Box>
-        <Typography
-          sx={{
-            fontSize: 24,
-            fontWeight: 700,
-            letterSpacing: '-0.4px',
-          }}>
+        <Typography variant='h4' sx={{ fontWeight: 700 }}>
           Företagsuppgifter
         </Typography>
 

@@ -42,88 +42,133 @@ export default function BalanceSheet({ accounts }: Props) {
   );
 
   return (
-    <Card variant='outlined'>
-      <CardContent>
-        <Stack spacing={3}>
-          <Box>
-            <Typography variant='h5' sx={{ fontWeight: 700 }}>
-              Balansrapport
-            </Typography>
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: 1800,
+        mx: 'auto',
+        px: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
+      }}>
+      <Stack spacing={2}>
+        <Box>
+          <Typography
+            variant='h4'
+            sx={{
+              fontWeight: 700,
+            }}>
+            Balansrapport
+          </Typography>
 
-            <Typography variant='body2' color='text.secondary'>
-              Företagets tillgångar, eget kapital och skulder.
-            </Typography>
-          </Box>
+          <Typography
+            variant='body2'
+            color='text.secondary'
+            sx={{
+              mt: 0.5,
+            }}>
+            Företagets tillgångar, eget kapital och skulder.
+          </Typography>
+        </Box>
 
-          <Divider />
+        <Card variant='outlined'>
+          <CardContent>
+            <Stack spacing={3}>
+              <Stack spacing={1}>
+                <Typography variant='h6'>Tillgångar</Typography>
 
-          <Stack spacing={1}>
-            <Typography variant='h6'>Tillgångar</Typography>
+                {assetAccounts.map((account) => {
+                  const amount = account.debit - account.credit;
 
-            {assetAccounts.map((account) => {
-              const amount = account.debit - account.credit;
+                  return (
+                    <Stack
+                      key={account.account_number}
+                      direction='row'
+                      sx={{
+                        justifyContent: 'space-between',
+                      }}>
+                      <Typography>
+                        {account.account_number} – {account.name}
+                      </Typography>
 
-              return (
+                      <Typography>{formatCurrency(amount)} kr</Typography>
+                    </Stack>
+                  );
+                })}
+
                 <Stack
-                  key={account.account_number}
                   direction='row'
-                  sx={{ justifyContent: 'space-between' }}>
-                  <Typography>
-                    {account.account_number} – {account.name}
+                  sx={{
+                    justifyContent: 'space-between',
+                    pt: 1,
+                  }}>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                    }}>
+                    Summa tillgångar
                   </Typography>
 
-                  <Typography>{formatCurrency(amount)} kr</Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                    }}>
+                    {formatCurrency(totalAssets)} kr
+                  </Typography>
                 </Stack>
-              );
-            })}
+              </Stack>
 
-            <Stack
-              direction='row'
-              sx={{ justifyContent: 'space-between', pt: 1 }}>
-              <Typography sx={{ fontWeight: 700 }}>Summa tillgångar</Typography>
+              <Divider />
 
-              <Typography sx={{ fontWeight: 700 }}>
-                {formatCurrency(totalAssets)} kr
-              </Typography>
-            </Stack>
-          </Stack>
+              <Stack spacing={1}>
+                <Typography variant='h6'>Eget kapital och skulder</Typography>
 
-          <Divider />
+                {liabilityAccounts.map((account) => {
+                  const amount = account.credit - account.debit;
 
-          <Stack spacing={1}>
-            <Typography variant='h6'>Eget kapital och skulder</Typography>
+                  return (
+                    <Stack
+                      key={account.account_number}
+                      direction='row'
+                      sx={{
+                        justifyContent: 'space-between',
+                      }}>
+                      <Typography>
+                        {account.account_number} – {account.name}
+                      </Typography>
 
-            {liabilityAccounts.map((account) => {
-              const amount = account.credit - account.debit;
+                      <Typography>{formatCurrency(amount)} kr</Typography>
+                    </Stack>
+                  );
+                })}
 
-              return (
                 <Stack
-                  key={account.account_number}
                   direction='row'
-                  sx={{ justifyContent: 'space-between' }}>
-                  <Typography>
-                    {account.account_number} – {account.name}
+                  sx={{
+                    justifyContent: 'space-between',
+                    pt: 1,
+                  }}>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                    }}>
+                    Summa eget kapital och skulder
                   </Typography>
 
-                  <Typography>{formatCurrency(amount)} kr</Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                    }}>
+                    {formatCurrency(totalLiabilities)} kr
+                  </Typography>
                 </Stack>
-              );
-            })}
-
-            <Stack
-              direction='row'
-              sx={{ justifyContent: 'space-between', pt: 1 }}>
-              <Typography sx={{ fontWeight: 700 }}>
-                Summa eget kapital och skulder
-              </Typography>
-
-              <Typography sx={{ fontWeight: 700 }}>
-                {formatCurrency(totalLiabilities)} kr
-              </Typography>
+              </Stack>
             </Stack>
-          </Stack>
-        </Stack>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      </Stack>
+    </Box>
   );
 }

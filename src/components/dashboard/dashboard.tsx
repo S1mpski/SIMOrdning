@@ -72,372 +72,387 @@ export default function Dashboard({
   const router = useRouter();
 
   return (
-    <Stack spacing={3}>
-      <Box>
-        <Typography
-          sx={{
-            fontSize: 24,
-            fontWeight: 700,
-            letterSpacing: '-0.4px',
-          }}>
-          Översikt
-        </Typography>
-      </Box>
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: 2100,
+        mx: 'auto',
+        px: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
+      }}>
+      <Stack spacing={3}>
+        <Box>
+          <Typography variant='h4' sx={{ fontWeight: 700 }}>
+            Översikt
+          </Typography>
 
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Card
-            variant='outlined'
-            sx={{
-              height: '100%',
-              borderColor: 'divider',
-              borderRadius: 1.5,
-            }}>
-            <CardContent
+          <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
+            Överblickande information om företaget.
+          </Typography>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Card
+              variant='outlined'
               sx={{
-                p: 2.5,
-                '&:last-child': {
-                  pb: 2.5,
-                },
+                height: '100%',
+                borderColor: 'divider',
+                borderRadius: 1.5,
               }}>
-              <Stack
-                direction='row'
+              <CardContent
                 sx={{
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
+                  p: 2.5,
+                  '&:last-child': {
+                    pb: 2.5,
+                  },
                 }}>
-                <Box>
-                  <Typography variant='body2' color='text.secondary'>
-                    Resultat
-                  </Typography>
+                <Stack
+                  direction='row'
+                  sx={{
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                  }}>
+                  <Box>
+                    <Typography variant='body2' color='text.secondary'>
+                      Resultat
+                    </Typography>
 
-                  <Typography
-                    sx={{
-                      mt: 0.75,
-                      fontSize: 24,
-                      lineHeight: 1.2,
-                      fontWeight: 700,
-                      letterSpacing: '-0.4px',
-                    }}>
-                    {formatCurrency(result)} kr
-                  </Typography>
-                </Box>
+                    <Typography
+                      sx={{
+                        mt: 0.75,
+                        fontSize: 24,
+                        lineHeight: 1.2,
+                        fontWeight: 700,
+                        letterSpacing: '-0.4px',
+                      }}>
+                      {formatCurrency(result)} kr
+                    </Typography>
+                  </Box>
 
-                <TrendingUpOutlinedIcon color='action' />
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
+                  <TrendingUpOutlinedIcon color='action' />
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
 
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Card
-            variant='outlined'
-            sx={{
-              height: '100%',
-              borderColor: 'divider',
-              borderRadius: 1.5,
-            }}>
-            <CardContent
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Card
+              variant='outlined'
               sx={{
-                p: 2.5,
-                '&:last-child': {
-                  pb: 2.5,
-                },
+                height: '100%',
+                borderColor: 'divider',
+                borderRadius: 1.5,
               }}>
-              <Stack
-                direction='row'
+              <CardContent
                 sx={{
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
+                  p: 2.5,
+                  '&:last-child': {
+                    pb: 2.5,
+                  },
                 }}>
-                <Box>
-                  <Typography variant='body2' color='text.secondary'>
-                    Verifikationer
-                  </Typography>
+                <Stack
+                  direction='row'
+                  sx={{
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                  }}>
+                  <Box>
+                    <Typography variant='body2' color='text.secondary'>
+                      Verifikationer
+                    </Typography>
 
-                  <Typography
-                    sx={{
-                      mt: 0.75,
-                      fontSize: 24,
-                      lineHeight: 1.2,
-                      fontWeight: 700,
-                      letterSpacing: '-0.4px',
-                    }}>
-                    {voucherCount} st
-                  </Typography>
-                </Box>
+                    <Typography
+                      sx={{
+                        mt: 0.75,
+                        fontSize: 24,
+                        lineHeight: 1.2,
+                        fontWeight: 700,
+                        letterSpacing: '-0.4px',
+                      }}>
+                      {voucherCount} st
+                    </Typography>
+                  </Box>
 
-                <ReceiptLongOutlinedIcon color='action' />
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
+                  <ReceiptLongOutlinedIcon color='action' />
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
 
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Card
-            variant='outlined'
-            sx={{
-              height: '100%',
-              borderColor: 'divider',
-              borderRadius: 1.5,
-            }}>
-            <CardContent
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Card
+              variant='outlined'
               sx={{
-                p: 2.5,
-                '&:last-child': {
-                  pb: 2.5,
-                },
+                height: '100%',
+                borderColor: 'divider',
+                borderRadius: 1.5,
               }}>
-              <Typography variant='body2' color='text.secondary'>
-                Senaste verifikation
-              </Typography>
+              <CardContent
+                sx={{
+                  p: 2.5,
+                  '&:last-child': {
+                    pb: 2.5,
+                  },
+                }}>
+                <Typography variant='body2' color='text.secondary'>
+                  Senaste verifikation
+                </Typography>
 
-              {vouchers.length > 0 ? (
-                <>
-                  <Typography
-                    sx={{
-                      mt: 0.75,
-                      fontSize: 20,
-                      lineHeight: 1.2,
-                      fontWeight: 700,
-                    }}>
-                    #{vouchers[0].voucher_number}
-                  </Typography>
+                {vouchers.length > 0 ? (
+                  <>
+                    <Typography
+                      sx={{
+                        mt: 0.75,
+                        fontSize: 20,
+                        lineHeight: 1.2,
+                        fontWeight: 700,
+                      }}>
+                      #{vouchers[0].voucher_number}
+                    </Typography>
 
+                    <Typography
+                      variant='body2'
+                      color='text.secondary'
+                      noWrap
+                      sx={{ mt: 0.5 }}>
+                      {vouchers[0].description}
+                    </Typography>
+                  </>
+                ) : (
                   <Typography
                     variant='body2'
                     color='text.secondary'
-                    noWrap
-                    sx={{ mt: 0.5 }}>
-                    {vouchers[0].description}
+                    sx={{ mt: 1 }}>
+                    Ingen ännu
                   </Typography>
-                </>
-              ) : (
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <SummaryDonut
+              title='Tillgångar'
+              subtitle='Fördelning av företagets tillgångar.'
+              centerLabel='Tillgångar'
+              centerValue={assets}
+              data={[
+                {
+                  id: 'fixed-assets',
+                  label: 'Anläggningstillgångar',
+                  value: Math.max(0, fixedAssets),
+                },
+                {
+                  id: 'current-assets',
+                  label: 'Omsättningstillgångar',
+                  value: Math.max(0, currentAssets),
+                },
+              ]}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <SummaryDonut
+              title='Eget kapital & skulder'
+              subtitle='Hur företagets finansiering är fördelad.'
+              centerLabel='Totalt'
+              centerValue={Math.max(0, equity) + Math.max(0, liabilities)}
+              data={[
+                {
+                  id: 'equity',
+                  label: 'Eget kapital',
+                  value: Math.max(0, equity),
+                },
+                {
+                  id: 'liabilities',
+                  label: 'Skulder',
+                  value: Math.max(0, liabilities),
+                },
+              ]}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <SummaryDonut
+              title='Resultat'
+              subtitle='Intäkter och kostnader för perioden.'
+              centerLabel='Resultat'
+              centerValue={result}
+              data={[
+                {
+                  id: 'revenue',
+                  label: 'Intäkter',
+                  value: Math.max(0, revenue),
+                },
+                {
+                  id: 'expenses',
+                  label: 'Kostnader',
+                  value: Math.max(0, expenses),
+                },
+              ]}
+            />
+          </Grid>
+        </Grid>
+
+        <Card
+          variant='outlined'
+          sx={{
+            borderRadius: 1.5,
+          }}>
+          <Box>
+            <Box
+              sx={{
+                px: 2.5,
+                py: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+              }}>
+              <Box>
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    fontWeight: 600,
+                  }}>
+                  Senaste verifikationer
+                </Typography>
+
                 <Typography
                   variant='body2'
                   color='text.secondary'
-                  sx={{ mt: 1 }}>
-                  Ingen ännu
+                  sx={{ mt: 0.25 }}>
+                  De senast bokförda händelserna.
                 </Typography>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+              </Box>
 
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <SummaryDonut
-            title='Tillgångar'
-            subtitle='Fördelning av företagets tillgångar.'
-            centerLabel='Tillgångar'
-            centerValue={assets}
-            data={[
-              {
-                id: 'fixed-assets',
-                label: 'Anläggningstillgångar',
-                value: Math.max(0, fixedAssets),
-              },
-              {
-                id: 'current-assets',
-                label: 'Omsättningstillgångar',
-                value: Math.max(0, currentAssets),
-              },
-            ]}
-          />
-        </Grid>
+              <Button
+                size='small'
+                onClick={() => router.push('/verifikationer')}>
+                Visa alla
+              </Button>
+            </Box>
 
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <SummaryDonut
-            title='Eget kapital & skulder'
-            subtitle='Hur företagets finansiering är fördelad.'
-            centerLabel='Totalt'
-            centerValue={Math.max(0, equity) + Math.max(0, liabilities)}
-            data={[
-              {
-                id: 'equity',
-                label: 'Eget kapital',
-                value: Math.max(0, equity),
-              },
-              {
-                id: 'liabilities',
-                label: 'Skulder',
-                value: Math.max(0, liabilities),
-              },
-            ]}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <SummaryDonut
-            title='Resultat'
-            subtitle='Intäkter och kostnader för perioden.'
-            centerLabel='Resultat'
-            centerValue={result}
-            data={[
-              {
-                id: 'revenue',
-                label: 'Intäkter',
-                value: Math.max(0, revenue),
-              },
-              {
-                id: 'expenses',
-                label: 'Kostnader',
-                value: Math.max(0, expenses),
-              },
-            ]}
-          />
-        </Grid>
-      </Grid>
-
-      <Card
-        variant='outlined'
-        sx={{
-          borderRadius: 1.5,
-        }}>
-        <Box>
-          <Box
-            sx={{
-              px: 2.5,
-              py: 2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-            }}>
-            <Box>
-              <Typography
+            {vouchers.length === 0 ? (
+              <Box
                 sx={{
-                  fontSize: 16,
-                  fontWeight: 600,
+                  py: 6,
+                  textAlign: 'center',
                 }}>
-                Senaste verifikationer
-              </Typography>
+                <Typography color='text.secondary'>
+                  Det finns inga verifikationer ännu.
+                </Typography>
+              </Box>
+            ) : (
+              <Table size='small'>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ width: 100 }}>Nr</TableCell>
 
-              <Typography
-                variant='body2'
-                color='text.secondary'
-                sx={{ mt: 0.25 }}>
-                De senast bokförda händelserna.
-              </Typography>
-            </Box>
+                    <TableCell sx={{ width: 160 }}>Datum</TableCell>
 
-            <Button size='small' onClick={() => router.push('/verifikationer')}>
-              Visa alla
-            </Button>
-          </Box>
+                    <TableCell>Beskrivning</TableCell>
 
-          {vouchers.length === 0 ? (
-            <Box
-              sx={{
-                py: 6,
-                textAlign: 'center',
-              }}>
-              <Typography color='text.secondary'>
-                Det finns inga verifikationer ännu.
-              </Typography>
-            </Box>
-          ) : (
-            <Table size='small'>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ width: 100 }}>Nr</TableCell>
-
-                  <TableCell sx={{ width: 160 }}>Datum</TableCell>
-
-                  <TableCell>Beskrivning</TableCell>
-
-                  <TableCell align='right'>Belopp</TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {vouchers.map((voucher) => (
-                  <TableRow
-                    key={voucher.id}
-                    hover
-                    onClick={() => router.push(`/verifikationer/${voucher.id}`)}
-                    sx={{
-                      cursor: 'pointer',
-                    }}>
-                    <TableCell>
-                      <Chip
-                        size='small'
-                        variant='outlined'
-                        label={voucher.voucher_number}
-                      />
-                    </TableCell>
-
-                    <TableCell>
-                      {new Date(
-                        `${voucher.voucher_date}T00:00:00`,
-                      ).toLocaleDateString('sv-SE')}
-                    </TableCell>
-
-                    <TableCell>{voucher.description}</TableCell>
-
-                    <TableCell align='right'>
-                      {formatCurrency(voucher.amount)} kr
-                    </TableCell>
+                    <TableCell align='right'>Belopp</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </Box>
-      </Card>
+                </TableHead>
 
-      <Card
-        variant='outlined'
-        sx={{
-          borderRadius: 1.5,
-        }}>
-        <CardContent
+                <TableBody>
+                  {vouchers.map((voucher) => (
+                    <TableRow
+                      key={voucher.id}
+                      hover
+                      onClick={() =>
+                        router.push(`/verifikationer/${voucher.id}`)
+                      }
+                      sx={{
+                        cursor: 'pointer',
+                      }}>
+                      <TableCell>
+                        <Chip
+                          size='small'
+                          variant='outlined'
+                          label={voucher.voucher_number}
+                        />
+                      </TableCell>
+
+                      <TableCell>
+                        {new Date(
+                          `${voucher.voucher_date}T00:00:00`,
+                        ).toLocaleDateString('sv-SE')}
+                      </TableCell>
+
+                      <TableCell>{voucher.description}</TableCell>
+
+                      <TableCell align='right'>
+                        {formatCurrency(voucher.amount)} kr
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </Box>
+        </Card>
+
+        <Card
+          variant='outlined'
           sx={{
-            p: 2.5,
-            '&:last-child': {
-              pb: 2.5,
-            },
+            borderRadius: 1.5,
           }}>
-          <Typography
+          <CardContent
             sx={{
-              fontSize: 16,
-              fontWeight: 600,
-              mb: 2,
+              p: 2.5,
+              '&:last-child': {
+                pb: 2.5,
+              },
             }}>
-            Snabbåtgärder
-          </Typography>
+            <Typography
+              sx={{
+                fontSize: 16,
+                fontWeight: 600,
+                mb: 2,
+              }}>
+              Snabbåtgärder
+            </Typography>
 
-          <Stack
-            direction={{
-              xs: 'column',
-              sm: 'row',
-            }}
-            spacing={1.5}>
-            <Button
-              variant='contained'
-              startIcon={<AddIcon />}
-              onClick={() => router.push('/ny-verifikation')}>
-              Ny verifikation
-            </Button>
+            <Stack
+              direction={{
+                xs: 'column',
+                sm: 'row',
+              }}
+              spacing={1.5}>
+              <Button
+                variant='contained'
+                startIcon={<AddIcon />}
+                onClick={() => router.push('/ny-verifikation')}>
+                Ny verifikation
+              </Button>
 
-            <Button
-              variant='outlined'
-              startIcon={<ListAltOutlinedIcon />}
-              onClick={() => router.push('/kontoplan')}>
-              Kontoplan
-            </Button>
+              <Button
+                variant='outlined'
+                startIcon={<ListAltOutlinedIcon />}
+                onClick={() => router.push('/kontoplan')}>
+                Kontoplan
+              </Button>
 
-            <Button
-              variant='outlined'
-              startIcon={<DescriptionOutlinedIcon />}
-              onClick={() => router.push('/rapporter')}>
-              Rapporter
-            </Button>
-          </Stack>
-        </CardContent>
-      </Card>
-    </Stack>
+              <Button
+                variant='outlined'
+                startIcon={<DescriptionOutlinedIcon />}
+                onClick={() => router.push('/rapporter')}>
+                Rapporter
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Stack>
+    </Box>
   );
 }

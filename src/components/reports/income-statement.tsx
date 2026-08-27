@@ -49,103 +49,148 @@ export default function IncomeStatement({ accounts }: Props) {
   const result = totalRevenue - totalExpenses;
 
   return (
-    <Card variant='outlined'>
-      <CardContent>
-        <Stack spacing={3}>
-          <Box>
-            <Typography variant='h5' sx={{ fontWeight: 700 }}>
-              Resultatrapport
-            </Typography>
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: 1800,
+        mx: 'auto',
+        px: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
+      }}>
+      <Stack spacing={2}>
+        <Box>
+          <Typography variant='h4' sx={{ fontWeight: 700 }}>
+            Resultatrapport
+          </Typography>
 
-            <Typography variant='body2' color='text.secondary'>
-              Företagets intäkter och kostnader.
-            </Typography>
-          </Box>
+          <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
+            Företagets intäkter och kostnader.
+          </Typography>
+        </Box>
+        <Card variant='outlined'>
+          <CardContent>
+            <Stack spacing={3}>
+              <Stack spacing={1}>
+                <Typography variant='h6'>Intäkter</Typography>
 
-          <Divider />
+                {revenueAccounts.map((account) => {
+                  const amount = account.credit - account.debit;
 
-          <Stack spacing={1}>
-            <Typography variant='h6'>Intäkter</Typography>
+                  return (
+                    <Stack
+                      key={account.account_number}
+                      direction='row'
+                      sx={{
+                        justifyContent: 'space-between',
+                      }}>
+                      <Typography>
+                        {account.account_number} – {account.name}
+                      </Typography>
 
-            {revenueAccounts.map((account) => {
-              const amount = account.credit - account.debit;
+                      <Typography>{formatCurrency(amount)} kr</Typography>
+                    </Stack>
+                  );
+                })}
 
-              return (
                 <Stack
-                  key={account.account_number}
                   direction='row'
-                  sx={{ justifyContent: 'space-between' }}>
-                  <Typography>
-                    {account.account_number} – {account.name}
+                  sx={{
+                    justifyContent: 'space-between',
+                    pt: 1,
+                  }}>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                    }}>
+                    Summa intäkter
                   </Typography>
 
-                  <Typography>{formatCurrency(amount)} kr</Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                    }}>
+                    {formatCurrency(totalRevenue)} kr
+                  </Typography>
                 </Stack>
-              );
-            })}
+              </Stack>
 
-            <Stack
-              direction='row'
-              sx={{ justifyContent: 'space-between', pt: 1 }}>
-              <Typography sx={{ fontWeight: 700 }}>Summa intäkter</Typography>
+              <Divider />
 
-              <Typography sx={{ fontWeight: 700 }}>
-                {formatCurrency(totalRevenue)} kr
-              </Typography>
-            </Stack>
-          </Stack>
+              <Stack spacing={1}>
+                <Typography variant='h6'>Kostnader</Typography>
 
-          <Divider />
+                {expenseAccounts.map((account) => {
+                  const amount = account.debit - account.credit;
 
-          <Stack spacing={1}>
-            <Typography variant='h6'>Kostnader</Typography>
+                  return (
+                    <Stack
+                      key={account.account_number}
+                      direction='row'
+                      sx={{
+                        justifyContent: 'space-between',
+                      }}>
+                      <Typography>
+                        {account.account_number} – {account.name}
+                      </Typography>
 
-            {expenseAccounts.map((account) => {
-              const amount = account.debit - account.credit;
+                      <Typography>{formatCurrency(amount)} kr</Typography>
+                    </Stack>
+                  );
+                })}
 
-              return (
                 <Stack
-                  key={account.account_number}
                   direction='row'
-                  sx={{ justifyContent: 'space-between' }}>
-                  <Typography>
-                    {account.account_number} – {account.name}
+                  sx={{
+                    justifyContent: 'space-between',
+                    pt: 1,
+                  }}>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                    }}>
+                    Summa kostnader
                   </Typography>
 
-                  <Typography>{formatCurrency(amount)} kr</Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: 700,
+                    }}>
+                    {formatCurrency(totalExpenses)} kr
+                  </Typography>
                 </Stack>
-              );
-            })}
+              </Stack>
 
-            <Stack
-              direction='row'
-              sx={{ justifyContent: 'space-between', pt: 1 }}>
-              <Typography sx={{ fontWeight: 700 }}>
-                Summa kostnader:{' '}
-              </Typography>
+              <Divider />
 
-              <Typography sx={{ fontWeight: 700 }}>
-                {formatCurrency(totalExpenses)} kr
-              </Typography>
+              <Stack
+                direction='row'
+                sx={{
+                  justifyContent: 'space-between',
+                }}>
+                <Typography
+                  variant='h6'
+                  sx={{
+                    fontWeight: 700,
+                  }}>
+                  Resultat:
+                </Typography>
+
+                <Typography
+                  variant='h6'
+                  sx={{
+                    fontWeight: 700,
+                  }}
+                  color={result >= 0 ? 'success.main' : 'error.main'}>
+                  {formatCurrency(result)} kr
+                </Typography>
+              </Stack>
             </Stack>
-          </Stack>
-
-          <Divider />
-
-          <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
-            <Typography variant='h6' sx={{ fontWeight: 700 }}>
-              Resultat:
-            </Typography>
-
-            <Typography
-              variant='h6'
-              sx={{ fontWeight: 700 }}
-              color={result >= 0 ? 'success.main' : 'error.main'}>
-              {formatCurrency(result)} kr
-            </Typography>
-          </Stack>
-        </Stack>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      </Stack>
+    </Box>
   );
 }

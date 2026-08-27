@@ -74,8 +74,14 @@ export default async function VouchersPage() {
   return (
     <Box
       sx={{
-        maxWidth: 1100,
+        width: '100%',
+        maxWidth: 1600,
         mx: 'auto',
+        px: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
       }}>
       <Box sx={{ mb: 3 }}>
         <Typography variant='h4' sx={{ fontWeight: 700 }}>

@@ -30,6 +30,7 @@ import VoucherRow, {
 import type { Account } from '@/components/bookkeeping/account-select';
 
 import { createClient } from '@/lib/supabase/client';
+import { RightArrow } from 'next/dist/next-devtools/dev-overlay/icons/right-arrow';
 
 function createEmptyRow(): VoucherRowData {
   return {
@@ -247,11 +248,15 @@ export default function VoucherForm() {
 
   return (
     <Box
-      component='form'
-      onSubmit={handleSubmit}
       sx={{
+        width: '100%',
         maxWidth: 1100,
         mx: 'auto',
+        px: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
       }}>
       <Stack spacing={3}>
         <Box>
@@ -328,7 +333,7 @@ export default function VoucherForm() {
                 onChange={(event) => setDescription(event.target.value)}
                 placeholder='Ex. Försäljning av vara'
                 fullWidth
-                size='small'
+                size='medium'
                 slotProps={{
                   htmlInput: {
                     maxLength: 200,
@@ -402,32 +407,34 @@ export default function VoucherForm() {
                 sm: 'block',
               },
             }}>
-            <Table size='small'>
+            <Table size='medium'>
               <TableHead>
                 <TableRow>
-                  <TableCell>Konto</TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: 600,
+                      pl: 2.5,
+                    }}>
+                    Konto
+                  </TableCell>
 
                   <TableCell
-                    align='right'
                     sx={{
-                      width: 80,
+                      fontWeight: 600,
+                      pl: 6,
                     }}>
                     Debet
                   </TableCell>
 
                   <TableCell
-                    align='right'
                     sx={{
-                      width: 80,
+                      fontWeight: 600,
+                      pl: 6,
                     }}>
                     Kredit
                   </TableCell>
 
-                  <TableCell
-                    sx={{
-                      width: 20,
-                    }}
-                  />
+                  <TableCell />
                 </TableRow>
               </TableHead>
 
