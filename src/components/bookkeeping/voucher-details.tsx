@@ -11,6 +11,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import DeleteVoucherButton from '@/components/bookkeeping/delete-voucher-button';
 
 type VoucherRowDetails = {
   id: string;
@@ -23,6 +24,7 @@ type VoucherRowDetails = {
 };
 
 type Props = {
+  voucherId: string;
   voucherNumber: number;
   voucherDate: string;
   description: string;
@@ -30,6 +32,7 @@ type Props = {
 };
 
 export default function VoucherDetails({
+  voucherId,
   voucherNumber,
   voucherDate,
   description,
@@ -139,6 +142,14 @@ export default function VoucherDetails({
                   </TableRow>
                 </TableBody>
               </Table>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  mt: 2,
+                }}>
+                <DeleteVoucherButton voucherId={voucherId} />
+              </Box>
             </Stack>
           </CardContent>
         </Card>

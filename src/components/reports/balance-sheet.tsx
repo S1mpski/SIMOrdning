@@ -1,0 +1,131 @@
+import {
+  Box,
+  Card,
+  CardContent,
+  Divider,
+  Stack,
+  Typography,
+} from '@mui/material';
+
+import type { ReportAccount } from './income-statement';
+
+type Props = {
+  accounts: ReportAccount[];
+};
+
+function formatCurrency(value: number) {
+  return value.toLocaleString('sv-SE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+export default function BalanceSheet({ accounts }: Props) {
+  const assetAccounts = accounts.filter(
+    (account) =>
+      account.account_number >= 1000 && account.account_number < 2000,
+  );
+
+  const liabilityAccounts = accounts.filter(
+    (account) =>
+      account.account_number >= 2000 && account.account_number < 3000,
+  );
+
+  const totalAssets = assetAccounts.reduce(
+    (total, account) => total + account.debit - account.credit,
+    0,
+  );
+
+  const totalLiabilities = liabilityAccounts.reduce(
+    (total, account) => total + account.credit - account.debit,
+    0,
+  );
+
+  return (
+    <Card variant='outlined'>
+      <CardContent>
+        <Stack spacing={3}>
+          <Box>
+            <Typography variant='h5' fontWeight={700}>
+              Balansrapport
+            </Typography>
+
+            <Typography variant='body2' color='text.secondary'>
+              Företagets tillgångar, eget kapital och skulder.
+            </Typography>
+          </Box>
+
+          <Divider />
+
+          <Stack spacing={1}>
+            <Typography variant='h6'>Tillgångar</Typography>
+
+            {assetAccounts.map((account) => {
+              const amount = account.debit - account.credit;
+
+              return (
+                <Stack
+                  key={account.account_number}
+                  direction='row'
+                  justifyContent='space-between'>
+                  <Typography>
+                    {account.account_number} – {account.name}
+                  </Typography>
+
+                  <Typography>{formatCurrency(amount)} kr</Typography>
+                </Stack>
+              );
+            })}
+
+            <Stack
+              direction='row'
+              justifyContent='space-between'
+              sx={{ pt: 1 }}>
+              <Typography fontWeight={700}>Summa tillgångar</Typography>
+
+              <Typography fontWeight={700}>
+                {formatCurrency(totalAssets)} kr
+              </Typography>
+            </Stack>
+          </Stack>
+
+          <Divider />
+
+          <Stack spacing={1}>
+            <Typography variant='h6'>Eget kapital och skulder</Typography>
+
+            {liabilityAccounts.map((account) => {
+              const amount = account.credit - account.debit;
+
+              return (
+                <Stack
+                  key={account.account_number}
+                  direction='row'
+                  justifyContent='space-between'>
+                  <Typography>
+                    {account.account_number} – {account.name}
+                  </Typography>
+
+                  <Typography>{formatCurrency(amount)} kr</Typography>
+                </Stack>
+              );
+            })}
+
+            <Stack
+              direction='row'
+              justifyContent='space-between'
+              sx={{ pt: 1 }}>
+              <Typography fontWeight={700}>
+                Summa eget kapital och skulder
+              </Typography>
+
+              <Typography fontWeight={700}>
+                {formatCurrency(totalLiabilities)} kr
+              </Typography>
+            </Stack>
+          </Stack>
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+}

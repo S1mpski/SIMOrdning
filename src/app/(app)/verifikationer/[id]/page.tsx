@@ -61,6 +61,7 @@ export default async function VoucherPage({ params }: Props) {
 
   return (
     <VoucherDetails
+      voucherId={voucher.id}
       voucherNumber={voucher.voucher_number}
       voucherDate={voucher.voucher_date}
       description={voucher.description}
