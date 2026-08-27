@@ -60,15 +60,21 @@ export default async function VoucherPage({ params }: Props) {
     notFound();
   }
 
-  const rows = voucher.voucher_rows.map((row) => ({
-    id: row.id,
-    debit: row.debit,
-    credit: row.credit,
-    accounts: row.accounts?.[0] ?? {
-      account_number: 0,
-      name: '',
-    },
-  }));
+  const rows = voucher.voucher_rows.map((row) => {
+    const account = Array.isArray(row.accounts)
+      ? row.accounts[0]
+      : row.accounts;
+
+    return {
+      id: row.id,
+      debit: row.debit,
+      credit: row.credit,
+      accounts: account ?? {
+        account_number: 0,
+        name: 'Okänt konto',
+      },
+    };
+  });
 
   return (
     <VoucherDetails

@@ -8,6 +8,8 @@ import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
 
+import SummaryDonut from '@/components/dashboard/summary-donut';
+
 import {
   Box,
   Button,
@@ -34,6 +36,16 @@ type Voucher = {
 
 type Props = {
   result: number;
+  revenue: number;
+  expenses: number;
+
+  assets: number;
+  fixedAssets: number;
+  currentAssets: number;
+
+  equity: number;
+  liabilities: number;
+
   voucherCount: number;
   vouchers: Voucher[];
 };
@@ -45,7 +57,18 @@ function formatCurrency(value: number) {
   });
 }
 
-export default function Dashboard({ result, voucherCount, vouchers }: Props) {
+export default function Dashboard({
+  result,
+  revenue,
+  expenses,
+  assets,
+  fixedAssets,
+  currentAssets,
+  equity,
+  liabilities,
+  voucherCount,
+  vouchers,
+}: Props) {
   const router = useRouter();
 
   return (
@@ -56,12 +79,9 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
             fontSize: 24,
             fontWeight: 700,
             letterSpacing: '-0.4px',
+            color: 'red',
           }}>
           Översikt
-        </Typography>
-
-        <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-          Översikt över företagets bokföring.
         </Typography>
       </Box>
 
@@ -203,6 +223,71 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
               )}
             </CardContent>
           </Card>
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <SummaryDonut
+            title='Tillgångar'
+            subtitle='Fördelning av företagets tillgångar.'
+            centerLabel='Tillgångar'
+            centerValue={assets}
+            data={[
+              {
+                id: 'fixed-assets',
+                label: 'Anläggningstillgångar',
+                value: Math.max(0, fixedAssets),
+              },
+              {
+                id: 'current-assets',
+                label: 'Omsättningstillgångar',
+                value: Math.max(0, currentAssets),
+              },
+            ]}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <SummaryDonut
+            title='Eget kapital & skulder'
+            subtitle='Hur företagets finansiering är fördelad.'
+            centerLabel='Totalt'
+            centerValue={Math.max(0, equity) + Math.max(0, liabilities)}
+            data={[
+              {
+                id: 'equity',
+                label: 'Eget kapital',
+                value: Math.max(0, equity),
+              },
+              {
+                id: 'liabilities',
+                label: 'Skulder',
+                value: Math.max(0, liabilities),
+              },
+            ]}
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <SummaryDonut
+            title='Resultat'
+            subtitle='Intäkter och kostnader för perioden.'
+            centerLabel='Resultat'
+            centerValue={result}
+            data={[
+              {
+                id: 'revenue',
+                label: 'Intäkter',
+                value: Math.max(0, revenue),
+              },
+              {
+                id: 'expenses',
+                label: 'Kostnader',
+                value: Math.max(0, expenses),
+              },
+            ]}
+          />
         </Grid>
       </Grid>
 
