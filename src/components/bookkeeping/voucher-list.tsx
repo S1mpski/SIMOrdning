@@ -105,7 +105,9 @@ export default function VoucherList({ vouchers }: Props) {
               </TableCell>
 
               <TableCell>
-                <Typography fontWeight={500}>{voucher.description}</Typography>
+                <Typography sx={{ fontWeight: 500 }}>
+                  {voucher.description}
+                </Typography>
               </TableCell>
 
               <TableCell align='right'>
