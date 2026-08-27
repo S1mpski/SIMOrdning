@@ -3,17 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import {
-  AccountBalance,
-  AddCircleOutlineOutlined,
-  Dashboard,
-  Description,
-  ListAlt,
-  ReceiptLong,
-} from '@mui/icons-material';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import {
   Box,
-  Divider,
   List,
   ListItemButton,
   ListItemIcon,
@@ -25,27 +21,27 @@ const menuItems = [
   {
     label: 'Översikt',
     href: '/',
-    icon: <Dashboard />,
+    icon: <DashboardOutlinedIcon />,
   },
   {
     label: 'Ny verifikation',
     href: '/ny-verifikation',
-    icon: <AddCircleOutlineOutlined />,
+    icon: <AddOutlinedIcon />,
   },
   {
     label: 'Verifikationer',
     href: '/verifikationer',
-    icon: <ReceiptLong />,
+    icon: <DescriptionOutlinedIcon />,
   },
   {
     label: 'Kontoplan',
     href: '/kontoplan',
-    icon: <ListAlt />,
+    icon: <MenuBookOutlinedIcon />,
   },
   {
     label: 'Rapporter',
     href: '/rapporter',
-    icon: <Description />,
+    icon: <AssessmentOutlinedIcon />,
   },
 ];
 
@@ -56,68 +52,107 @@ export default function Sidebar() {
     <Box
       component='aside'
       sx={{
-        width: 250,
-        minWidth: 250,
+        width: 240,
+        minWidth: 240,
         minHeight: '100vh',
-        bgcolor: '#202226',
-        color: 'white',
+        bgcolor: '#202225',
+        color: '#fff',
+        display: 'flex',
+        flexDirection: 'column',
       }}>
-      <Box sx={{ px: 3, py: 3 }}>
-        <Box
+      <Box
+        sx={{
+          height: 72,
+          display: 'flex',
+          alignItems: 'center',
+          px: 3,
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        }}>
+        <Typography
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1.5,
+            fontSize: 20,
+            fontWeight: 700,
+            letterSpacing: '-0.3px',
           }}>
-          <AccountBalance />
-
-          <Typography variant='h6' fontWeight={700}>
-            SIMOrdning
-          </Typography>
-        </Box>
+          SIMOrdning
+        </Typography>
       </Box>
 
-      <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+      <Box sx={{ px: 1.5, py: 2 }}>
+        <Typography
+          sx={{
+            px: 1.5,
+            mb: 1,
+            fontSize: 11,
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: 0.8,
+            color: 'rgba(255,255,255,0.4)',
+          }}>
+          Bokföring
+        </Typography>
 
-      <List sx={{ px: 1.5, py: 2 }}>
-        {menuItems.map((item) => {
-          const selected = pathname === item.href;
+        <List disablePadding>
+          {menuItems.map((item) => {
+            const selected =
+              item.href === '/'
+                ? pathname === '/'
+                : pathname.startsWith(item.href);
 
-          return (
-            <ListItemButton
-              key={item.href}
-              component={Link}
-              href={item.href}
-              selected={selected}
-              sx={{
-                borderRadius: 1.5,
-                mb: 0.5,
-                color: 'rgba(255,255,255,0.8)',
+            return (
+              <ListItemButton
+                key={item.href}
+                component={Link}
+                href={item.href}
+                selected={selected}
+                sx={{
+                  minHeight: 44,
+                  px: 1.5,
+                  mb: 0.5,
+                  borderRadius: 1,
+                  color: 'rgba(255,255,255,0.72)',
 
-                '& .MuiListItemIcon-root': {
-                  color: 'inherit',
-                },
+                  '& .MuiListItemIcon-root': {
+                    color: 'inherit',
+                  },
 
-                '&.Mui-selected': {
-                  bgcolor: 'rgba(255,255,255,0.12)',
-                  color: 'white',
-                },
+                  '&:hover': {
+                    bgcolor: 'rgba(255,255,255,0.06)',
+                    color: '#fff',
+                  },
 
-                '&.Mui-selected:hover': {
-                  bgcolor: 'rgba(255,255,255,0.16)',
-                },
+                  '&.Mui-selected': {
+                    bgcolor: 'rgba(255,255,255,0.1)',
+                    color: '#fff',
+                  },
 
-                '&:hover': {
-                  bgcolor: 'rgba(255,255,255,0.08)',
-                },
-              }}>
-              <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+                  '&.Mui-selected:hover': {
+                    bgcolor: 'rgba(255,255,255,0.12)',
+                  },
+                }}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 36,
 
-              <ListItemText primary={item.label} />
-            </ListItemButton>
-          );
-        })}
-      </List>
+                    '& svg': {
+                      fontSize: 20,
+                    },
+                  }}>
+                  {item.icon}
+                </ListItemIcon>
+
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    fontSize: 14,
+                    fontWeight: selected ? 600 : 400,
+                  }}
+                />
+              </ListItemButton>
+            );
+          })}
+        </List>
+      </Box>
     </Box>
   );
 }
