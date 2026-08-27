@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
@@ -42,6 +42,11 @@ const menuItems = [
     label: 'Rapporter',
     href: '/rapporter',
     icon: <AssessmentOutlinedIcon />,
+  },
+  {
+    label: 'Företagsuppgifter',
+    href: '/foretag',
+    icon: <BusinessOutlinedIcon />,
   },
 ];
 
