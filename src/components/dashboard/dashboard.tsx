@@ -51,7 +51,14 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
   return (
     <Stack spacing={3}>
       <Box>
-        <Typography variant='h4'>Översikt</Typography>
+        <Typography
+          sx={{
+            fontSize: 24,
+            fontWeight: 700,
+            letterSpacing: '-0.4px',
+          }}>
+          Översikt
+        </Typography>
 
         <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
           Översikt över företagets bokföring.
@@ -60,8 +67,20 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
 
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 4 }}>
-          <Card variant='outlined' sx={{ height: '100%' }}>
-            <CardContent>
+          <Card
+            variant='outlined'
+            sx={{
+              height: '100%',
+              borderColor: 'divider',
+              borderRadius: 1.5,
+            }}>
+            <CardContent
+              sx={{
+                p: 2.5,
+                '&:last-child': {
+                  pb: 2.5,
+                },
+              }}>
               <Stack
                 direction='row'
                 justifyContent='space-between'
@@ -71,7 +90,14 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
                     Resultat
                   </Typography>
 
-                  <Typography variant='h5' fontWeight={700} sx={{ mt: 1 }}>
+                  <Typography
+                    sx={{
+                      mt: 0.75,
+                      fontSize: 24,
+                      lineHeight: 1.2,
+                      fontWeight: 700,
+                      letterSpacing: '-0.4px',
+                    }}>
                     {formatCurrency(result)} kr
                   </Typography>
                 </Box>
@@ -83,8 +109,20 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
-          <Card variant='outlined' sx={{ height: '100%' }}>
-            <CardContent>
+          <Card
+            variant='outlined'
+            sx={{
+              height: '100%',
+              borderColor: 'divider',
+              borderRadius: 1.5,
+            }}>
+            <CardContent
+              sx={{
+                p: 2.5,
+                '&:last-child': {
+                  pb: 2.5,
+                },
+              }}>
               <Stack
                 direction='row'
                 justifyContent='space-between'
@@ -94,7 +132,14 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
                     Verifikationer
                   </Typography>
 
-                  <Typography variant='h5' fontWeight={700} sx={{ mt: 1 }}>
+                  <Typography
+                    sx={{
+                      mt: 0.75,
+                      fontSize: 24,
+                      lineHeight: 1.2,
+                      fontWeight: 700,
+                      letterSpacing: '-0.4px',
+                    }}>
                     {voucherCount} st
                   </Typography>
                 </Box>
@@ -106,49 +151,91 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
-          <Card variant='outlined' sx={{ height: '100%' }}>
-            <CardContent>
+          <Card
+            variant='outlined'
+            sx={{
+              height: '100%',
+              borderColor: 'divider',
+              borderRadius: 1.5,
+            }}>
+            <CardContent
+              sx={{
+                p: 2.5,
+                '&:last-child': {
+                  pb: 2.5,
+                },
+              }}>
               <Typography variant='body2' color='text.secondary'>
                 Senaste verifikation
               </Typography>
 
               {vouchers.length > 0 ? (
                 <>
-                  <Typography variant='h6' sx={{ mt: 1 }}>
+                  <Typography
+                    sx={{
+                      mt: 0.75,
+                      fontSize: 20,
+                      lineHeight: 1.2,
+                      fontWeight: 700,
+                    }}>
                     #{vouchers[0].voucher_number}
                   </Typography>
 
-                  <Typography variant='body2' color='text.secondary' noWrap>
+                  <Typography
+                    variant='body2'
+                    color='text.secondary'
+                    noWrap
+                    sx={{ mt: 0.5 }}>
                     {vouchers[0].description}
                   </Typography>
                 </>
               ) : (
-                <Typography sx={{ mt: 1 }}>Ingen ännu</Typography>
+                <Typography
+                  variant='body2'
+                  color='text.secondary'
+                  sx={{ mt: 1 }}>
+                  Ingen ännu
+                </Typography>
               )}
             </CardContent>
           </Card>
         </Grid>
       </Grid>
 
-      <Card variant='outlined'>
-        <CardContent sx={{ p: 0 }}>
+      <Card
+        variant='outlined'
+        sx={{
+          borderRadius: 1.5,
+        }}>
+        <Box>
           <Box
             sx={{
-              px: 3,
-              py: 2.5,
+              px: 2.5,
+              py: 2,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              borderBottom: '1px solid',
+              borderColor: 'divider',
             }}>
             <Box>
-              <Typography variant='h6'>Senaste verifikationer</Typography>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                }}>
+                Senaste verifikationer
+              </Typography>
 
-              <Typography variant='body2' color='text.secondary'>
+              <Typography
+                variant='body2'
+                color='text.secondary'
+                sx={{ mt: 0.25 }}>
                 De senast bokförda händelserna.
               </Typography>
             </Box>
 
-            <Button onClick={() => router.push('/verifikationer')}>
+            <Button size='small' onClick={() => router.push('/verifikationer')}>
               Visa alla
             </Button>
           </Box>
@@ -158,15 +245,13 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
               sx={{
                 py: 6,
                 textAlign: 'center',
-                borderTop: '1px solid',
-                borderColor: 'divider',
               }}>
               <Typography color='text.secondary'>
                 Det finns inga verifikationer ännu.
               </Typography>
             </Box>
           ) : (
-            <Table>
+            <Table size='small'>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ width: 100 }}>Nr</TableCell>
@@ -185,7 +270,9 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
                     key={voucher.id}
                     hover
                     onClick={() => router.push(`/verifikationer/${voucher.id}`)}
-                    sx={{ cursor: 'pointer' }}>
+                    sx={{
+                      cursor: 'pointer',
+                    }}>
                     <TableCell>
                       <Chip
                         size='small'
@@ -210,12 +297,27 @@ export default function Dashboard({ result, voucherCount, vouchers }: Props) {
               </TableBody>
             </Table>
           )}
-        </CardContent>
+        </Box>
       </Card>
 
-      <Card variant='outlined'>
-        <CardContent>
-          <Typography variant='h6' sx={{ mb: 2 }}>
+      <Card
+        variant='outlined'
+        sx={{
+          borderRadius: 1.5,
+        }}>
+        <CardContent
+          sx={{
+            p: 2.5,
+            '&:last-child': {
+              pb: 2.5,
+            },
+          }}>
+          <Typography
+            sx={{
+              fontSize: 16,
+              fontWeight: 600,
+              mb: 2,
+            }}>
             Snabbåtgärder
           </Typography>
 
