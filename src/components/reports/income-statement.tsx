@@ -53,7 +53,7 @@ export default function IncomeStatement({ accounts }: Props) {
       <CardContent>
         <Stack spacing={3}>
           <Box>
-            <Typography variant='h5' fontWeight={700}>
+            <Typography variant='h5' sx={{ fontWeight: 700 }}>
               Resultatrapport
             </Typography>
 
@@ -74,7 +74,7 @@ export default function IncomeStatement({ accounts }: Props) {
                 <Stack
                   key={account.account_number}
                   direction='row'
-                  justifyContent='space-between'>
+                  sx={{ justifyContent: 'space-between' }}>
                   <Typography>
                     {account.account_number} – {account.name}
                   </Typography>
@@ -86,11 +86,10 @@ export default function IncomeStatement({ accounts }: Props) {
 
             <Stack
               direction='row'
-              justifyContent='space-between'
-              sx={{ pt: 1 }}>
-              <Typography fontWeight={700}>Summa intäkter</Typography>
+              sx={{ justifyContent: 'space-between', pt: 1 }}>
+              <Typography sx={{ fontWeight: 700 }}>Summa intäkter</Typography>
 
-              <Typography fontWeight={700}>
+              <Typography sx={{ fontWeight: 700 }}>
                 {formatCurrency(totalRevenue)} kr
               </Typography>
             </Stack>
@@ -108,7 +107,7 @@ export default function IncomeStatement({ accounts }: Props) {
                 <Stack
                   key={account.account_number}
                   direction='row'
-                  justifyContent='space-between'>
+                  sx={{ justifyContent: 'space-between' }}>
                   <Typography>
                     {account.account_number} – {account.name}
                   </Typography>
@@ -120,11 +119,12 @@ export default function IncomeStatement({ accounts }: Props) {
 
             <Stack
               direction='row'
-              justifyContent='space-between'
-              sx={{ pt: 1 }}>
-              <Typography fontWeight={700}>Summa kostnader: </Typography>
+              sx={{ justifyContent: 'space-between', pt: 1 }}>
+              <Typography sx={{ fontWeight: 700 }}>
+                Summa kostnader:{' '}
+              </Typography>
 
-              <Typography fontWeight={700}>
+              <Typography sx={{ fontWeight: 700 }}>
                 {formatCurrency(totalExpenses)} kr
               </Typography>
             </Stack>
@@ -132,14 +132,14 @@ export default function IncomeStatement({ accounts }: Props) {
 
           <Divider />
 
-          <Stack direction='row' justifyContent='space-between'>
-            <Typography variant='h6' fontWeight={700}>
+          <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
+            <Typography variant='h6' sx={{ fontWeight: 700 }}>
               Resultat:
             </Typography>
 
             <Typography
               variant='h6'
-              fontWeight={700}
+              sx={{ fontWeight: 700 }}
               color={result >= 0 ? 'success.main' : 'error.main'}>
               {formatCurrency(result)} kr
             </Typography>

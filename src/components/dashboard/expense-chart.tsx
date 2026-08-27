@@ -71,8 +71,10 @@ export default function ExpenseChart({ data }: Props) {
                 xs: 'column',
                 md: 'row',
               }}
-              spacing={2}
-              alignItems='center'>
+              sx={{
+                spacing: 2,
+                alignItems: 'center',
+              }}>
               <Box
                 sx={{
                   width: {

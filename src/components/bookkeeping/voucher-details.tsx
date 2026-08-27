@@ -53,7 +53,7 @@ export default function VoucherDetails({
       }}>
       <Stack spacing={3}>
         <Box>
-          <Typography variant='h4' fontWeight={700}>
+          <Typography variant='h4' sx={{ fontWeight: 700 }}>
             Verifikation {voucherNumber}
           </Typography>
 
@@ -90,7 +90,7 @@ export default function VoucherDetails({
                   {rows.map((row) => (
                     <TableRow key={row.id}>
                       <TableCell>
-                        <Typography fontWeight={500}>
+                        <Typography sx={{ fontWeight: 500 }}>
                           {row.accounts.account_number} – {row.accounts.name}
                         </Typography>
                       </TableCell>
@@ -117,11 +117,11 @@ export default function VoucherDetails({
 
                   <TableRow>
                     <TableCell>
-                      <Typography fontWeight={700}>Summa</Typography>
+                      <Typography sx={{ fontWeight: 700 }}>Summa</Typography>
                     </TableCell>
 
                     <TableCell align='right'>
-                      <Typography fontWeight={700}>
+                      <Typography sx={{ fontWeight: 700 }}>
                         {debitTotal.toLocaleString('sv-SE', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
@@ -131,7 +131,7 @@ export default function VoucherDetails({
                     </TableCell>
 
                     <TableCell align='right'>
-                      <Typography fontWeight={700}>
+                      <Typography sx={{ fontWeight: 700 }}>
                         {creditTotal.toLocaleString('sv-SE', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,

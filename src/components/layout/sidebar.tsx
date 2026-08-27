@@ -140,12 +140,13 @@ export default function Sidebar() {
                   }}>
                   {item.icon}
                 </ListItemIcon>
-
                 <ListItemText
                   primary={item.label}
                   primaryTypographyProps={{
-                    fontSize: 14,
-                    fontWeight: selected ? 600 : 400,
+                    sx: {
+                      fontSize: 14,
+                      fontWeight: 600,
+                    },
                   }}
                 />
               </ListItemButton>

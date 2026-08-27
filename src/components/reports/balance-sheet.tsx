@@ -46,7 +46,7 @@ export default function BalanceSheet({ accounts }: Props) {
       <CardContent>
         <Stack spacing={3}>
           <Box>
-            <Typography variant='h5' fontWeight={700}>
+            <Typography variant='h5' sx={{ fontWeight: 700 }}>
               Balansrapport
             </Typography>
 
@@ -67,7 +67,7 @@ export default function BalanceSheet({ accounts }: Props) {
                 <Stack
                   key={account.account_number}
                   direction='row'
-                  justifyContent='space-between'>
+                  sx={{ justifyContent: 'space-between' }}>
                   <Typography>
                     {account.account_number} – {account.name}
                   </Typography>
@@ -79,11 +79,10 @@ export default function BalanceSheet({ accounts }: Props) {
 
             <Stack
               direction='row'
-              justifyContent='space-between'
-              sx={{ pt: 1 }}>
-              <Typography fontWeight={700}>Summa tillgångar</Typography>
+              sx={{ justifyContent: 'space-between', pt: 1 }}>
+              <Typography sx={{ fontWeight: 700 }}>Summa tillgångar</Typography>
 
-              <Typography fontWeight={700}>
+              <Typography sx={{ fontWeight: 700 }}>
                 {formatCurrency(totalAssets)} kr
               </Typography>
             </Stack>
@@ -101,7 +100,7 @@ export default function BalanceSheet({ accounts }: Props) {
                 <Stack
                   key={account.account_number}
                   direction='row'
-                  justifyContent='space-between'>
+                  sx={{ justifyContent: 'space-between' }}>
                   <Typography>
                     {account.account_number} – {account.name}
                   </Typography>
@@ -113,13 +112,12 @@ export default function BalanceSheet({ accounts }: Props) {
 
             <Stack
               direction='row'
-              justifyContent='space-between'
-              sx={{ pt: 1 }}>
-              <Typography fontWeight={700}>
+              sx={{ justifyContent: 'space-between', pt: 1 }}>
+              <Typography sx={{ fontWeight: 700 }}>
                 Summa eget kapital och skulder
               </Typography>
 
-              <Typography fontWeight={700}>
+              <Typography sx={{ fontWeight: 700 }}>
                 {formatCurrency(totalLiabilities)} kr
               </Typography>
             </Stack>
