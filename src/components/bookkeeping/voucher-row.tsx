@@ -30,8 +30,17 @@ export default function VoucherRow({
   canDelete,
 }: Props) {
   return (
-    <TableRow>
-      <TableCell sx={{ width: '55%' }}>
+    <TableRow
+      sx={{
+        '& td': {
+          py: 1,
+        },
+      }}>
+      <TableCell
+        sx={{
+          width: '55%',
+          minWidth: 320,
+        }}>
         <AccountSelect
           accounts={accounts}
           value={row.account}
@@ -44,7 +53,11 @@ export default function VoucherRow({
         />
       </TableCell>
 
-      <TableCell sx={{ width: 180 }}>
+      <TableCell
+        align='right'
+        sx={{
+          width: 180,
+        }}>
         <TextField
           size='small'
           type='number'
@@ -56,14 +69,27 @@ export default function VoucherRow({
               credit: Number(event.target.value) > 0 ? '' : row.credit,
             })
           }
+          placeholder='0,00'
           inputProps={{
             min: 0,
             step: '0.01',
           }}
+          sx={{
+            width: 150,
+
+            '& input': {
+              textAlign: 'right',
+              fontSize: 14,
+            },
+          }}
         />
       </TableCell>
 
-      <TableCell sx={{ width: 180 }}>
+      <TableCell
+        align='right'
+        sx={{
+          width: 180,
+        }}>
         <TextField
           size='small'
           type='number'
@@ -75,19 +101,42 @@ export default function VoucherRow({
               debit: Number(event.target.value) > 0 ? '' : row.debit,
             })
           }
+          placeholder='0,00'
           inputProps={{
             min: 0,
             step: '0.01',
           }}
+          sx={{
+            width: 150,
+
+            '& input': {
+              textAlign: 'right',
+              fontSize: 14,
+            },
+          }}
         />
       </TableCell>
 
-      <TableCell align='right' sx={{ width: 60 }}>
+      <TableCell
+        align='right'
+        sx={{
+          width: 56,
+          pl: 1,
+        }}>
         <IconButton
           onClick={onDelete}
           disabled={!canDelete}
-          aria-label='Ta bort rad'>
-          <DeleteOutlineOutlinedIcon />
+          aria-label='Ta bort rad'
+          size='small'
+          sx={{
+            color: 'text.secondary',
+
+            '&:hover': {
+              color: 'error.main',
+              bgcolor: 'error.50',
+            },
+          }}>
+          <DeleteOutlineOutlinedIcon fontSize='small' />
         </IconButton>
       </TableCell>
     </TableRow>

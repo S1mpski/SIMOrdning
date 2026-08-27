@@ -40,8 +40,16 @@ function createEmptyRow(): VoucherRowData {
   };
 }
 
+function formatCurrency(value: number) {
+  return value.toLocaleString('sv-SE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 export default function VoucherForm() {
   const [accounts, setAccounts] = useState<Account[]>([]);
+
   const [rows, setRows] = useState<VoucherRowData[]>([
     createEmptyRow(),
     createEmptyRow(),
@@ -53,6 +61,7 @@ export default function VoucherForm() {
 
   const [loadingAccounts, setLoadingAccounts] = useState(true);
   const [accountsError, setAccountsError] = useState('');
+
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [saveError, setSaveError] = useState('');
@@ -147,6 +156,7 @@ export default function VoucherForm() {
   function handleAddRow() {
     setRows((currentRows) => [...currentRows, createEmptyRow()]);
   }
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
@@ -197,7 +207,6 @@ export default function VoucherForm() {
 
     if (error) {
       console.error(error);
-
       setSaveError('Kunde inte bokföra verifikationen.');
       setSaving(false);
       return;
@@ -210,6 +219,7 @@ export default function VoucherForm() {
 
     console.log('Sparad verifikation:', data);
   }
+
   if (loadingAccounts) {
     return (
       <Box
@@ -218,7 +228,7 @@ export default function VoucherForm() {
           justifyContent: 'center',
           py: 8,
         }}>
-        <CircularProgress />
+        <CircularProgress size={28} />
       </Box>
     );
   }
@@ -232,8 +242,15 @@ export default function VoucherForm() {
         mx: 'auto',
       }}>
       <Stack spacing={3}>
+        {/* Sidrubrik */}
+
         <Box>
-          <Typography variant='h4' fontWeight={700}>
+          <Typography
+            sx={{
+              fontSize: 24,
+              fontWeight: 700,
+              letterSpacing: '-0.4px',
+            }}>
             Ny verifikation
           </Typography>
 
@@ -244,159 +261,264 @@ export default function VoucherForm() {
 
         {accountsError && <Alert severity='error'>{accountsError}</Alert>}
 
-        <Card variant='outlined'>
-          <CardContent>
-            <Stack spacing={3}>
-              <Stack
-                direction={{
-                  xs: 'column',
-                  sm: 'row',
-                }}
-                spacing={2}>
-                <TextField
-                  label='Datum'
-                  type='date'
-                  value={date}
-                  onChange={(event) => setDate(event.target.value)}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  sx={{
-                    width: {
-                      xs: '100%',
-                      sm: 220,
-                    },
-                  }}
-                />
+        {successMessage && <Alert severity='success'>{successMessage}</Alert>}
 
-                <TextField
-                  label='Beskrivning'
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
-                  placeholder='Ex. Försäljning av vara'
-                  fullWidth
-                  inputProps={{
-                    maxLength: 200,
-                  }}
-                />
+        {saveError && <Alert severity='error'>{saveError}</Alert>}
+
+        {/* Verifikation */}
+
+        <Card
+          variant='outlined'
+          sx={{
+            borderRadius: 1.5,
+            borderColor: 'divider',
+          }}>
+          {/* Grunduppgifter */}
+
+          <CardContent
+            sx={{
+              p: 2.5,
+              '&:last-child': {
+                pb: 2.5,
+              },
+            }}>
+            <Typography
+              sx={{
+                fontSize: 16,
+                fontWeight: 600,
+                mb: 2,
+              }}>
+              Verifikationsuppgifter
+            </Typography>
+
+            <Stack
+              direction={{
+                xs: 'column',
+                sm: 'row',
+              }}
+              spacing={2}>
+              <TextField
+                label='Datum'
+                type='date'
+                value={date}
+                onChange={(event) => setDate(event.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                size='small'
+                sx={{
+                  width: {
+                    xs: '100%',
+                    sm: 200,
+                  },
+                }}
+              />
+
+              <TextField
+                label='Beskrivning'
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                placeholder='Ex. Försäljning av vara'
+                fullWidth
+                size='small'
+                inputProps={{
+                  maxLength: 200,
+                }}
+              />
+            </Stack>
+          </CardContent>
+
+          <Divider />
+
+          {/* Bokföringsrader */}
+
+          <Box
+            sx={{
+              px: 2.5,
+              pt: 2,
+              pb: 1,
+            }}>
+            <Typography
+              sx={{
+                fontSize: 16,
+                fontWeight: 600,
+              }}>
+              Kontering
+            </Typography>
+
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{ mt: 0.25 }}>
+              Ange konto och belopp för varje bokföringsrad.
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              overflowX: 'auto',
+            }}>
+            <Table size='small'>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Konto</TableCell>
+
+                  <TableCell align='right' sx={{ width: 180 }}>
+                    Debet
+                  </TableCell>
+
+                  <TableCell align='right' sx={{ width: 180 }}>
+                    Kredit
+                  </TableCell>
+
+                  <TableCell sx={{ width: 60 }} />
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {rows.map((row) => (
+                  <VoucherRow
+                    key={row.id}
+                    row={row}
+                    accounts={accounts}
+                    onChange={(updatedRow) =>
+                      handleRowChange(row.id, updatedRow)
+                    }
+                    onDelete={() => handleDeleteRow(row.id)}
+                    canDelete={rows.length > 2}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
+
+          <Box
+            sx={{
+              px: 2.5,
+              py: 1.5,
+            }}>
+            <Button
+              type='button'
+              size='small'
+              startIcon={<AddIcon />}
+              onClick={handleAddRow}>
+              Lägg till rad
+            </Button>
+          </Box>
+
+          <Divider />
+
+          {/* Summering */}
+
+          <Box
+            sx={{
+              p: 2.5,
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}>
+            <Stack
+              spacing={1}
+              sx={{
+                width: {
+                  xs: '100%',
+                  sm: 340,
+                },
+              }}>
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography variant='body2' color='text.secondary'>
+                  Debet
+                </Typography>
+
+                <Typography variant='body2' fontWeight={600}>
+                  {formatCurrency(debitTotal)} kr
+                </Typography>
+              </Stack>
+
+              <Stack direction='row' justifyContent='space-between'>
+                <Typography variant='body2' color='text.secondary'>
+                  Kredit
+                </Typography>
+
+                <Typography variant='body2' fontWeight={600}>
+                  {formatCurrency(creditTotal)} kr
+                </Typography>
               </Stack>
 
               <Divider />
 
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Konto</TableCell>
-
-                    <TableCell sx={{ width: 180 }}>Debet</TableCell>
-
-                    <TableCell sx={{ width: 180 }}>Kredit</TableCell>
-
-                    <TableCell sx={{ width: 60 }} />
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  {rows.map((row) => (
-                    <VoucherRow
-                      key={row.id}
-                      row={row}
-                      accounts={accounts}
-                      onChange={(updatedRow) =>
-                        handleRowChange(row.id, updatedRow)
-                      }
-                      onDelete={() => handleDeleteRow(row.id)}
-                      canDelete={rows.length > 2}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-
-              <Box>
-                <Button
-                  type='button'
-                  startIcon={<AddIcon />}
-                  onClick={handleAddRow}>
-                  Lägg till rad
-                </Button>
-              </Box>
-
-              <Divider />
-
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                }}>
-                <Stack
-                  spacing={1}
+              <Stack
+                direction='row'
+                justifyContent='space-between'
+                alignItems='center'>
+                <Typography
                   sx={{
-                    width: 320,
+                    fontSize: 14,
+                    fontWeight: 600,
                   }}>
-                  <Stack direction='row' justifyContent='space-between'>
-                    <Typography color='text.secondary'>Debet</Typography>
+                  Differens
+                </Typography>
 
-                    <Typography fontWeight={600}>
-                      {debitTotal.toLocaleString('sv-SE', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}{' '}
-                      kr
-                    </Typography>
-                  </Stack>
-
-                  <Stack direction='row' justifyContent='space-between'>
-                    <Typography color='text.secondary'>Kredit</Typography>
-
-                    <Typography fontWeight={600}>
-                      {creditTotal.toLocaleString('sv-SE', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}{' '}
-                      kr
-                    </Typography>
-                  </Stack>
-
-                  <Stack direction='row' justifyContent='space-between'>
-                    <Typography color='text.secondary'>Differens</Typography>
-
-                    <Typography
-                      fontWeight={700}
-                      color={isBalanced ? 'success.main' : 'error.main'}>
-                      {difference.toLocaleString('sv-SE', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}{' '}
-                      kr
-                    </Typography>
-                  </Stack>
-                </Stack>
-              </Box>
+                <Typography
+                  sx={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                  }}
+                  color={
+                    isBalanced
+                      ? 'success.main'
+                      : difference !== 0
+                        ? 'error.main'
+                        : 'text.primary'
+                  }>
+                  {formatCurrency(difference)} kr
+                </Typography>
+              </Stack>
 
               {isBalanced && (
-                <Alert
-                  severity='success'
-                  icon={<CheckCircleOutlineOutlinedIcon />}>
-                  Verifikationen balanserar.
-                </Alert>
-              )}
+                <Stack
+                  direction='row'
+                  spacing={0.75}
+                  alignItems='center'
+                  sx={{
+                    pt: 0.5,
+                    color: 'success.main',
+                  }}>
+                  <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 17 }} />
 
-              {saveError && <Alert severity='error'>{saveError}</Alert>}
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                }}>
-                <Button
-                  type='submit'
-                  variant='contained'
-                  size='large'
-                  disabled={!canSubmit || saving}>
-                  {saving ? 'Bokför...' : 'Bokför verifikation'}
-                </Button>
-              </Box>
+                  <Typography
+                    sx={{
+                      fontSize: 12,
+                      fontWeight: 500,
+                    }}>
+                    Verifikationen balanserar
+                  </Typography>
+                </Stack>
+              )}
             </Stack>
-          </CardContent>
+          </Box>
+
+          <Divider />
+
+          {/* Actions */}
+
+          <Box
+            sx={{
+              px: 2.5,
+              py: 2,
+              display: 'flex',
+              justifyContent: 'flex-end',
+              bgcolor: '#fafafa',
+            }}>
+            <Button
+              type='submit'
+              variant='contained'
+              disabled={!canSubmit || saving}
+              sx={{
+                minWidth: 170,
+              }}>
+              {saving ? 'Bokför...' : 'Bokför verifikation'}
+            </Button>
+          </Box>
         </Card>
       </Stack>
     </Box>
