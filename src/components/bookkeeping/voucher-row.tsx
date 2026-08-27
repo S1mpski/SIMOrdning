@@ -60,7 +60,7 @@ export default function VoucherRow({
       sx={{
         width: {
           xs: 70,
-          sm: 140,
+          sm: 100,
         },
 
         '& input': {
@@ -95,7 +95,7 @@ export default function VoucherRow({
       sx={{
         width: {
           xs: 70,
-          sm: 140,
+          sm: 100,
         },
 
         '& input': {
@@ -244,25 +244,25 @@ export default function VoucherRow({
       </TableCell>
 
       <TableCell
-        align='right'
+        align='left'
         sx={{
-          width: 160,
+          width: 140,
           px: 1,
         }}>
-        <Box sx={{ width: 140, ml: 'auto' }}>{debitField}</Box>
+        <Box sx={{ width: 100, ml: 'auto' }}>{debitField}</Box>
       </TableCell>
 
       <TableCell
-        align='right'
+        align='left'
         sx={{
-          width: 160,
+          width: 140,
           px: 1,
         }}>
-        <Box sx={{ width: 140, ml: 'auto' }}>{creditField}</Box>
+        <Box sx={{ width: 100, ml: 'auto' }}>{creditField}</Box>
       </TableCell>
 
       <TableCell
-        align='right'
+        align='left'
         sx={{
           width: 56,
           pl: 0.5,

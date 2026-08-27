@@ -414,7 +414,7 @@ export default function VoucherForm() {
                   <TableCell
                     align='right'
                     sx={{
-                      width: 160,
+                      width: 80,
                     }}>
                     Debet
                   </TableCell>
@@ -422,14 +422,14 @@ export default function VoucherForm() {
                   <TableCell
                     align='right'
                     sx={{
-                      width: 160,
+                      width: 80,
                     }}>
                     Kredit
                   </TableCell>
 
                   <TableCell
                     sx={{
-                      width: 56,
+                      width: 20,
                     }}
                   />
                 </TableRow>
