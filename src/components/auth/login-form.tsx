@@ -47,7 +47,13 @@ export default function LoginForm() {
 
     setError('');
 
-    const cleanUsername = username.trim().toLowerCase();
+    const cleanUsername = username
+      .trim()
+      .toLowerCase()
+      .replaceAll('å', 'a')
+      .replaceAll('ä', 'a')
+      .replaceAll('ö', 'o')
+      .replace(/\s+/g, '.');
 
     if (!cleanUsername) {
       setError('Ange ett användarnamn.');
@@ -73,7 +79,14 @@ export default function LoginForm() {
 
     const supabase = createClient();
 
-    const email = `${cleanUsername}@simordning.local`;
+    const email = `${cleanUsername}@example.com`;
+
+    if (!/^[a-zA-Z0-9._-]+$/.test(cleanUsername)) {
+      setError(
+        'Användarnamnet får bara innehålla bokstäver, siffror, punkt, bindestreck och understreck.',
+      );
+      return;
+    }
 
     if (isRegister) {
       const { data, error: signUpError } = await supabase.auth.signUp({
