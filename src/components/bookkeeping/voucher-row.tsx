@@ -116,29 +116,41 @@ export default function VoucherRow({
   );
 
   const deleteButton = (
-    <IconButton
-      onClick={onDelete}
-      disabled={!canDelete}
-      aria-label='Ta bort rad'
-      sx={{
-        width: 42,
-        height: 42,
-        color: 'text.secondary',
-
-        '&:hover': {
-          color: 'error.main',
-          bgcolor: 'rgba(211, 47, 47, 0.06)',
-        },
-      }}>
-      <DeleteOutlineOutlinedIcon
-        sx={{
-          fontSize: {
-            xs: 20,
-            sm: 26,
-          },
-        }}
-      />
-    </IconButton>
+    <Tooltip
+      title={
+        canDelete
+          ? 'Ta bort rad'
+          : 'Måste innehålla minst 3 verifieringa innan du kan ta bort'
+      }
+      arrow>
+      <span>
+        <IconButton
+          onClick={onDelete}
+          disabled={!canDelete}
+          aria-label='Ta bort rad'
+          size='small'
+          sx={{
+            color: 'text.secondary',
+            p: {
+              xs: 0.5,
+              sm: 1,
+            },
+            '&:hover': {
+              color: 'error.main',
+              bgcolor: 'rgba(211, 47, 47, 0.06)',
+            },
+          }}>
+          <DeleteOutlineOutlinedIcon
+            sx={{
+              fontSize: {
+                xs: 20,
+                sm: 24,
+              },
+            }}
+          />
+        </IconButton>
+      </span>
+    </Tooltip>
   );
 
   if (mobile) {
