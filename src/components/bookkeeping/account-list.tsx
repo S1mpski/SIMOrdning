@@ -8,6 +8,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
 import ToggleOnOutlinedIcon from '@mui/icons-material/ToggleOnOutlined';
+import { Divider } from '@mui/material';
 
 import {
   Alert,
@@ -307,6 +308,11 @@ export default function AccountList({ accounts, companyId }: Props) {
                     hover
                     sx={{
                       opacity: account.active ? 1 : 0.6,
+
+                      '& td': {
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
+                      },
                     }}>
                     <TableCell>
                       <Typography
@@ -317,7 +323,9 @@ export default function AccountList({ accounts, companyId }: Props) {
                       </Typography>
                     </TableCell>
 
-                    <TableCell>{account.name}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>
+                      {account.name}{' '}
+                    </TableCell>
 
                     <TableCell align='right'>
                       <Chip
