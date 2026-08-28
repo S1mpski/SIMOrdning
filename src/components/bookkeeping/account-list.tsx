@@ -3,17 +3,22 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { basAccounts } from '@/data/bas-accounts';
+
 import AddIcon from '@mui/icons-material/Add';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
 import ToggleOnOutlinedIcon from '@mui/icons-material/ToggleOnOutlined';
-import { Divider } from '@mui/material';
+import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined';
 
 import {
   Alert,
   Box,
   Button,
+  Card,
+  CardContent,
+  Checkbox,
   Chip,
   Dialog,
   DialogActions,
@@ -32,6 +37,9 @@ import {
   TableRow,
   TextField,
   Typography,
+  FormControl,
+  InputLabel,
+  Select,
 } from '@mui/material';
 
 import { createClient } from '@/lib/supabase/client';
@@ -48,14 +56,18 @@ type Props = {
   companyId: string;
 };
 
+type AccountType = 'asset' | 'equity' | 'liability' | 'revenue' | 'expense';
+
 type AccountForm = {
   accountNumber: string;
   name: string;
+  accountType: AccountType | '';
 };
 
 const emptyForm: AccountForm = {
   accountNumber: '',
   name: '',
+  accountType: '',
 };
 
 export default function AccountList({ accounts, companyId }: Props) {
@@ -76,6 +88,96 @@ export default function AccountList({ accounts, companyId }: Props) {
 
   const [selectedAccount, setSelectedAccount] =
     useState<AccountListItem | null>(null);
+
+  const [basDialogOpen, setBasDialogOpen] = useState(false);
+  const [basSearch, setBasSearch] = useState('');
+  const [selectedBasAccounts, setSelectedBasAccounts] = useState<number[]>([]);
+  const [basSaving, setBasSaving] = useState(false);
+  const [basError, setBasError] = useState('');
+
+  const existingAccountNumbers = new Set(
+    accounts.map((account) => account.account_number),
+  );
+
+  function handleOpenBasDialog() {
+    setBasSearch('');
+    setSelectedBasAccounts([]);
+    setBasError('');
+    setBasDialogOpen(true);
+  }
+
+  function handleCloseBasDialog() {
+    if (basSaving) {
+      return;
+    }
+
+    setBasDialogOpen(false);
+    setBasSearch('');
+    setSelectedBasAccounts([]);
+    setBasError('');
+  }
+
+  function handleToggleBasAccount(accountNumber: number) {
+    setSelectedBasAccounts((current) =>
+      current.includes(accountNumber)
+        ? current.filter((number) => number !== accountNumber)
+        : [...current, accountNumber],
+    );
+  }
+
+  async function handleAddBasAccounts() {
+    if (selectedBasAccounts.length === 0) {
+      return;
+    }
+
+    setBasSaving(true);
+    setBasError('');
+
+    const accountsToAdd = basAccounts
+      .filter((account) => selectedBasAccounts.includes(account.accountNumber))
+      .map((account) => ({
+        company_id: companyId,
+        account_number: account.accountNumber,
+        name: account.name,
+        account_type: account.accountType,
+        is_custom: false,
+        active: true,
+      }));
+
+    const { error: insertError } = await supabase
+      .from('accounts')
+      .insert(accountsToAdd);
+
+    setBasSaving(false);
+
+    if (insertError) {
+      setBasError(insertError.message);
+      return;
+    }
+
+    setBasDialogOpen(false);
+    setSelectedBasAccounts([]);
+    setBasSearch('');
+
+    router.refresh();
+  }
+
+  const availableBasAccounts = basAccounts.filter(
+    (account) => !existingAccountNumbers.has(account.accountNumber),
+  );
+
+  const filteredBasAccounts = availableBasAccounts.filter((account) => {
+    const search = basSearch.trim().toLowerCase();
+
+    if (!search) {
+      return true;
+    }
+
+    return (
+      String(account.accountNumber).includes(search) ||
+      account.name.toLowerCase().includes(search)
+    );
+  });
 
   function handleOpenCreate() {
     setEditingAccount(null);
@@ -145,6 +247,11 @@ export default function AccountList({ accounts, companyId }: Props) {
       return;
     }
 
+    if (!editingAccount && !form.accountType) {
+      setError('Välj en kontotyp.');
+      return;
+    }
+
     const duplicate = accounts.some(
       (account) =>
         account.account_number === parsedAccountNumber &&
@@ -184,6 +291,8 @@ export default function AccountList({ accounts, companyId }: Props) {
         company_id: companyId,
         account_number: parsedAccountNumber,
         name: form.name.trim(),
+        account_type: form.accountType,
+        is_custom: true,
         active: true,
       });
 
@@ -261,15 +370,23 @@ export default function AccountList({ accounts, companyId }: Props) {
             </Typography>
           </Box>
 
-          <Button
-            variant='contained'
-            startIcon={<AddIcon />}
-            onClick={handleOpenCreate}
-            sx={{
-              flexShrink: 0,
-            }}>
-            Lägg till konto
-          </Button>
+          <Stack direction='row' spacing={1.5}>
+            <Button
+              variant='outlined'
+              startIcon={<LibraryAddOutlinedIcon />}
+              onClick={handleOpenBasDialog}
+              sx={{ flexShrink: 0 }}>
+              Lägg till från BAS
+            </Button>
+
+            <Button
+              variant='contained'
+              startIcon={<AddIcon />}
+              onClick={handleOpenCreate}
+              sx={{ flexShrink: 0 }}>
+              Skapa eget konto
+            </Button>
+          </Stack>
         </Box>
 
         {error && (
@@ -377,6 +494,131 @@ export default function AccountList({ accounts, companyId }: Props) {
       </Menu>
 
       <Dialog
+        open={basDialogOpen}
+        onClose={handleCloseBasDialog}
+        fullWidth
+        maxWidth='md'>
+        <DialogTitle>Lägg till från BAS</DialogTitle>
+
+        <DialogContent dividers>
+          <Stack spacing={2}>
+            {basError && <Alert severity='error'>{basError}</Alert>}
+
+            <TextField
+              placeholder='Sök på kontonummer eller kontonamn...'
+              value={basSearch}
+              onChange={(event) => setBasSearch(event.target.value)}
+              fullWidth
+              size='small'
+              autoFocus
+            />
+
+            <Typography variant='body2' color='text.secondary'>
+              {availableBasAccounts.length} konton finns tillgängliga att lägga
+              till.
+            </Typography>
+
+            <Box
+              sx={{
+                maxHeight: 480,
+                overflowY: 'auto',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1,
+              }}>
+              {filteredBasAccounts.length === 0 ? (
+                <Box sx={{ p: 3 }}>
+                  <Typography color='text.secondary'>
+                    Inga konton hittades.
+                  </Typography>
+                </Box>
+              ) : (
+                filteredBasAccounts.map((account) => {
+                  const checked = selectedBasAccounts.includes(
+                    account.accountNumber,
+                  );
+
+                  return (
+                    <Box
+                      key={account.accountNumber}
+                      onClick={() =>
+                        handleToggleBasAccount(account.accountNumber)
+                      }
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        px: 1.5,
+                        py: 0.75,
+                        cursor: 'pointer',
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
+                        '&:last-child': {
+                          borderBottom: 0,
+                        },
+                        '&:hover': {
+                          bgcolor: 'action.hover',
+                        },
+                      }}>
+                      <Checkbox
+                        checked={checked}
+                        onChange={() =>
+                          handleToggleBasAccount(account.accountNumber)
+                        }
+                        onClick={(event) => event.stopPropagation()}
+                        size='small'
+                      />
+
+                      <Typography
+                        sx={{
+                          width: 80,
+                          flexShrink: 0,
+                          fontWeight: 600,
+                          fontSize: 14,
+                        }}>
+                        {account.accountNumber}
+                      </Typography>
+
+                      <Typography sx={{ fontSize: 14 }}>
+                        {account.name}
+                      </Typography>
+                    </Box>
+                  );
+                })
+              )}
+            </Box>
+          </Stack>
+        </DialogContent>
+
+        <DialogActions>
+          <Typography
+            variant='body2'
+            color='text.secondary'
+            sx={{ mr: 'auto', ml: 1 }}>
+            {selectedBasAccounts.length === 0
+              ? 'Inga konton valda'
+              : `${selectedBasAccounts.length} valda`}
+          </Typography>
+
+          <Button onClick={handleCloseBasDialog} disabled={basSaving}>
+            Avbryt
+          </Button>
+
+          <Button
+            variant='contained'
+            onClick={handleAddBasAccounts}
+            disabled={basSaving || selectedBasAccounts.length === 0}>
+            {basSaving
+              ? 'Lägger till...'
+              : `Lägg till${
+                  selectedBasAccounts.length > 0
+                    ? ` (${selectedBasAccounts.length})`
+                    : ''
+                }`}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
         open={dialogOpen}
         onClose={handleCloseDialog}
         fullWidth
@@ -424,6 +666,29 @@ export default function AccountList({ accounts, companyId }: Props) {
               placeholder='Exempel: Sparkonto'
               autoFocus={Boolean(editingAccount)}
             />
+
+            {!editingAccount && (
+              <FormControl fullWidth size='small'>
+                <InputLabel id='account-type-label'>Kontotyp</InputLabel>
+
+                <Select
+                  labelId='account-type-label'
+                  label='Kontotyp'
+                  value={form.accountType}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      accountType: event.target.value as AccountType,
+                    }))
+                  }>
+                  <MenuItem value='asset'>Tillgång</MenuItem>
+                  <MenuItem value='equity'>Eget kapital</MenuItem>
+                  <MenuItem value='liability'>Skuld</MenuItem>
+                  <MenuItem value='revenue'>Intäkt</MenuItem>
+                  <MenuItem value='expense'>Kostnad</MenuItem>
+                </Select>
+              </FormControl>
+            )}
 
             {!editingAccount && (
               <Typography variant='caption' color='text.secondary'>
