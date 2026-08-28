@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 
-type ThemeMode = 'light' | 'dark';
+import { createAppTheme, type ThemeMode } from '@/theme/theme';
 
 type ThemeModeContextType = {
   mode: ThemeMode;
@@ -37,7 +37,7 @@ export default function AppThemeProvider({
 
   function toggleTheme() {
     setMode((currentMode) => {
-      const newMode = currentMode === 'light' ? 'dark' : 'light';
+      const newMode: ThemeMode = currentMode === 'light' ? 'dark' : 'light';
 
       localStorage.setItem('theme-mode', newMode);
 
@@ -45,38 +45,7 @@ export default function AppThemeProvider({
     });
   }
 
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode,
-
-          ...(mode === 'light'
-            ? {
-                background: {
-                  default: '#f7f8fa',
-                  paper: '#ffffff',
-                },
-              }
-            : {
-                background: {
-                  default: '#121212',
-                  paper: '#1e1e1e',
-                },
-              }),
-        },
-
-        shape: {
-          borderRadius: 8,
-        },
-
-        typography: {
-          fontFamily:
-            'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        },
-      }),
-    [mode],
-  );
+  const theme = useMemo(() => createAppTheme(mode), [mode]);
 
   return (
     <ThemeModeContext.Provider
@@ -86,7 +55,6 @@ export default function AppThemeProvider({
       }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-
         {children}
       </ThemeProvider>
     </ThemeModeContext.Provider>
