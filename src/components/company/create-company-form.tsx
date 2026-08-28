@@ -12,11 +12,14 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
+  FormControlLabel,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
 
+import { recommendedBasAccounts } from '@/data/bas-accounts';
 import { createClient } from '@/lib/supabase/client';
 
 export default function CreateCompanyForm() {
@@ -24,6 +27,8 @@ export default function CreateCompanyForm() {
 
   const [name, setName] = useState('');
   const [organisationNumber, setOrganisationNumber] = useState('');
+  const [addRecommendedAccounts, setAddRecommendedAccounts] = useState(true);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -52,20 +57,49 @@ export default function CreateCompanyForm() {
       return;
     }
 
-    const { error: insertError } = await supabase.from('companies').insert({
-      owner_id: user.id,
-      name: name.trim(),
-      organization_number: organisationNumber.trim() || null,
-      country: 'Sverige',
-      default_currency: 'SEK',
-      vat_registered: false,
-      f_tax: false,
-    });
+    // 1. Skapa företaget och hämta dess id
+    const { data: company, error: insertError } = await supabase
+      .from('companies')
+      .insert({
+        owner_id: user.id,
+        name: name.trim(),
+        organization_number: organisationNumber.trim() || null,
+        country: 'Sverige',
+        default_currency: 'SEK',
+        vat_registered: false,
+        f_tax: false,
+      })
+      .select('id')
+      .single();
 
-    if (insertError) {
+    if (insertError || !company) {
       setLoading(false);
-      setError(insertError.message);
+      setError(insertError?.message ?? 'Kunde inte skapa företaget.');
       return;
+    }
+
+    // 2. Lägg till rekommenderad BAS-kontoplan
+    if (addRecommendedAccounts) {
+      const accounts = recommendedBasAccounts.map((account) => ({
+        company_id: company.id,
+        account_number: account.accountNumber,
+        name: account.name,
+        account_type: account.accountType,
+        is_custom: false,
+        active: true,
+      }));
+
+      const { error: accountsError } = await supabase
+        .from('accounts')
+        .insert(accounts);
+
+      if (accountsError) {
+        setLoading(false);
+        setError(
+          `Företaget skapades, men kontoplanen kunde inte läggas till: ${accountsError.message}`,
+        );
+        return;
+      }
     }
 
     router.push('/');
@@ -110,20 +144,11 @@ export default function CreateCompanyForm() {
           </Box>
 
           <Box>
-            <Typography
-              variant='h4'
-              sx={{
-                fontWeight: 700,
-              }}>
+            <Typography variant='h4' sx={{ fontWeight: 700 }}>
               Skapa ditt företag
             </Typography>
 
-            <Typography
-              variant='body2'
-              color='text.secondary'
-              sx={{
-                mt: 0.5,
-              }}>
+            <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
               Fyll i grunduppgifterna för att komma igång med SIMOrdning.
             </Typography>
           </Box>
@@ -159,6 +184,36 @@ export default function CreateCompanyForm() {
                   fullWidth
                   placeholder='XXXXXX-XXXX'
                   helperText='Frivilligt – kan läggas till senare'
+                />
+
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={addRecommendedAccounts}
+                      onChange={(event) =>
+                        setAddRecommendedAccounts(event.target.checked)
+                      }
+                    />
+                  }
+                  label={
+                    <Box>
+                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                        Lägg till rekommenderad kontoplan
+                      </Typography>
+
+                      <Typography
+                        variant='body2'
+                        color='text.secondary'
+                        sx={{ mt: 0.25 }}>
+                        Lägger till vanliga BAS-konton för att snabbt komma
+                        igång.
+                      </Typography>
+                    </Box>
+                  }
+                  sx={{
+                    alignItems: 'flex-start',
+                    m: 0,
+                  }}
                 />
 
                 <Button
