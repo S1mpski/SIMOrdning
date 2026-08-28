@@ -9,6 +9,9 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import { useThemeMode } from '@/components/providers/theme-provider';
 
 import {
   Box,
@@ -57,6 +60,7 @@ const companyItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { mode, toggleTheme } = useThemeMode();
 
   function renderMenuItems(
     items: {
@@ -183,6 +187,105 @@ export default function Sidebar() {
         </Typography>
 
         <List disablePadding>{renderMenuItems(companyItems)}</List>
+        <Typography
+          sx={{
+            px: 1.5,
+            mt: 3,
+            mb: 1,
+            fontSize: 11,
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: 0.8,
+            color: 'rgba(255,255,255,0.4)',
+          }}>
+          Inställningar
+        </Typography>
+
+        <List disablePadding>
+          <ListItemButton
+            onClick={toggleTheme}
+            sx={{
+              minHeight: 44,
+              px: 1.5,
+              mb: 1,
+              borderRadius: 1,
+              color: 'rgba(255,255,255,0.72)',
+              '& .MuiListItemIcon-root': {
+                color: 'inherit',
+              },
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.06)',
+                color: '#fff',
+              },
+            }}>
+            <ListItemIcon
+              sx={{
+                minWidth: 36,
+                '& svg': {
+                  fontSize: 20,
+                },
+              }}>
+              <DarkModeOutlinedIcon />
+            </ListItemIcon>
+
+            <ListItemText
+              primary={mode === 'dark' ? 'Ljust läge' : 'Mörkt läge'}
+              slotProps={{
+                primary: {
+                  sx: {
+                    fontSize: 14,
+                    fontWeight: 600,
+                  },
+                },
+              }}
+            />
+          </ListItemButton>
+
+          <ListItemButton
+            component={Link}
+            href='/konto'
+            selected={pathname.startsWith('/konto')}
+            sx={{
+              minHeight: 44,
+              px: 1.5,
+              mb: 1,
+              borderRadius: 1,
+              color: 'rgba(255,255,255,0.72)',
+              '& .MuiListItemIcon-root': {
+                color: 'inherit',
+              },
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.06)',
+                color: '#fff',
+              },
+              '&.Mui-selected': {
+                bgcolor: 'rgba(255,255,255,0.1)',
+                color: '#fff',
+              },
+            }}>
+            <ListItemIcon
+              sx={{
+                minWidth: 36,
+                '& svg': {
+                  fontSize: 20,
+                },
+              }}>
+              <PersonOutlineOutlinedIcon />
+            </ListItemIcon>
+
+            <ListItemText
+              primary='Konto'
+              slotProps={{
+                primary: {
+                  sx: {
+                    fontSize: 14,
+                    fontWeight: 600,
+                  },
+                },
+              }}
+            />
+          </ListItemButton>
+        </List>
       </Box>
     </Box>
   );
