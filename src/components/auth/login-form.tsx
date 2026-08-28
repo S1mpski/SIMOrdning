@@ -16,10 +16,14 @@ import {
   Tab,
   Tabs,
   TextField,
+  textFieldClasses,
   Typography,
 } from '@mui/material';
-
+import { useTheme } from '@mui/material/styles';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
+import { ThemeContext } from '@emotion/react';
+import { Palette } from '@mui/icons-material';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -154,44 +158,27 @@ export default function LoginForm() {
           maxWidth: 440,
         }}>
         <Stack
-          spacing={2}
+          spacing={-2}
           sx={{
-            mb: 3,
+            mb: 1.5,
             textAlign: 'center',
           }}>
-          <Box
-            sx={{
-              width: 56,
-              height: 56,
-              mx: 'auto',
-              borderRadius: 2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: 'primary.main',
-              color: 'primary.contrastText',
-            }}>
-            <LockOutlinedIcon />
-          </Box>
-
           <Box>
-            <Typography
-              variant='h4'
-              sx={{
-                fontWeight: 700,
-              }}>
-              SIMOrdning
-            </Typography>
-
-            <Typography
-              variant='body2'
-              color='text.secondary'
-              sx={{
-                mt: 0.5,
-              }}>
-              Enkel och tydlig bokföring
-            </Typography>
+            <Image
+              src='/simordning-logo.png'
+              width={250}
+              height={100}
+              alt='SIMORDNINGLOGOMISSING'
+            />
           </Box>
+          <Typography
+            variant='caption'
+            color='text.secondary'
+            sx={{
+              mt: 0,
+            }}>
+            Enklel bokföring, långsam hemsida
+          </Typography>
         </Stack>
 
         <Card variant='outlined'>
@@ -286,6 +273,7 @@ export default function LoginForm() {
                   sx={{
                     py: 1.3,
                     fontWeight: 600,
+                    bgcolor: 'simBlue.main',
                   }}>
                   {loading
                     ? isRegister
