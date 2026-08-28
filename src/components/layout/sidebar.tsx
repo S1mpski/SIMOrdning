@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
+
 import {
   Box,
   List,
@@ -17,7 +19,7 @@ import {
   Typography,
 } from '@mui/material';
 
-const menuItems = [
+const bookkeepingItems = [
   {
     label: 'Översikt',
     href: '/',
@@ -43,6 +45,9 @@ const menuItems = [
     href: '/rapporter',
     icon: <AssessmentOutlinedIcon />,
   },
+];
+
+const companyItems = [
   {
     label: 'Företagsuppgifter',
     href: '/foretag',
@@ -52,6 +57,70 @@ const menuItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+
+  function renderMenuItems(
+    items: {
+      label: string;
+      href: string;
+      icon: React.ReactNode;
+    }[],
+  ) {
+    return items.map((item) => {
+      const selected =
+        item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+
+      return (
+        <ListItemButton
+          key={item.href}
+          component={Link}
+          href={item.href}
+          selected={selected}
+          sx={{
+            minHeight: 44,
+            px: 1.5,
+            mb: 1,
+            borderRadius: 1,
+            color: 'rgba(255,255,255,0.72)',
+            '& .MuiListItemIcon-root': {
+              color: 'inherit',
+            },
+            '&:hover': {
+              bgcolor: 'rgba(255,255,255,0.06)',
+              color: '#fff',
+            },
+            '&.Mui-selected': {
+              bgcolor: 'rgba(255,255,255,0.1)',
+              color: '#fff',
+            },
+            '&.Mui-selected:hover': {
+              bgcolor: 'rgba(255,255,255,0.12)',
+            },
+          }}>
+          <ListItemIcon
+            sx={{
+              minWidth: 36,
+              '& svg': {
+                fontSize: 20,
+              },
+            }}>
+            {item.icon}
+          </ListItemIcon>
+
+          <ListItemText
+            primary={item.label}
+            slotProps={{
+              primary: {
+                sx: {
+                  fontSize: 14,
+                  fontWeight: 600,
+                },
+              },
+            }}
+          />
+        </ListItemButton>
+      );
+    });
+  }
 
   return (
     <Box
@@ -97,69 +166,23 @@ export default function Sidebar() {
           Bokföring
         </Typography>
 
-        <List disablePadding>
-          {menuItems.map((item) => {
-            const selected =
-              item.href === '/'
-                ? pathname === '/'
-                : pathname.startsWith(item.href);
+        <List disablePadding>{renderMenuItems(bookkeepingItems)}</List>
 
-            return (
-              <ListItemButton
-                key={item.href}
-                component={Link}
-                href={item.href}
-                selected={selected}
-                sx={{
-                  minHeight: 44,
-                  px: 1.5,
-                  mb: 0.5,
-                  borderRadius: 1,
-                  color: 'rgba(255,255,255,0.72)',
+        <Typography
+          sx={{
+            px: 1.5,
+            mt: 3,
+            mb: 1,
+            fontSize: 11,
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: 0.8,
+            color: 'rgba(255,255,255,0.4)',
+          }}>
+          Företag
+        </Typography>
 
-                  '& .MuiListItemIcon-root': {
-                    color: 'inherit',
-                  },
-
-                  '&:hover': {
-                    bgcolor: 'rgba(255,255,255,0.06)',
-                    color: '#fff',
-                  },
-
-                  '&.Mui-selected': {
-                    bgcolor: 'rgba(255,255,255,0.1)',
-                    color: '#fff',
-                  },
-
-                  '&.Mui-selected:hover': {
-                    bgcolor: 'rgba(255,255,255,0.12)',
-                  },
-                }}>
-                <ListItemIcon
-                  sx={{
-                    minWidth: 36,
-
-                    '& svg': {
-                      fontSize: 20,
-                    },
-                  }}>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.label}
-                  slotProps={{
-                    primary: {
-                      sx: {
-                        fontSize: 14,
-                        fontWeight: 600,
-                      },
-                    },
-                  }}
-                />
-              </ListItemButton>
-            );
-          })}
-        </List>
+        <List disablePadding>{renderMenuItems(companyItems)}</List>
       </Box>
     </Box>
   );
