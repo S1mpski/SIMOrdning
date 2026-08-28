@@ -12,6 +12,8 @@ import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import { useThemeMode } from '@/components/providers/theme-provider';
+import LogoutButton from '@/components/auth/logout-button';
+import { Switch } from '@mui/material';
 
 import {
   Box,
@@ -185,8 +187,8 @@ export default function Sidebar() {
           }}>
           Företag
         </Typography>
-
         <List disablePadding>{renderMenuItems(companyItems)}</List>
+
         <Typography
           sx={{
             px: 1.5,
@@ -229,7 +231,7 @@ export default function Sidebar() {
             </ListItemIcon>
 
             <ListItemText
-              primary={mode === 'dark' ? 'Ljust läge' : 'Mörkt läge'}
+              primary='Mörkt läge'
               slotProps={{
                 primary: {
                   sx: {
@@ -237,6 +239,16 @@ export default function Sidebar() {
                     fontWeight: 600,
                   },
                 },
+              }}
+            />
+
+            <Switch
+              size='small'
+              checked={mode === 'dark'}
+              onChange={toggleTheme}
+              onClick={(event) => event.stopPropagation()}
+              sx={{
+                mr: -0.5,
               }}
             />
           </ListItemButton>
@@ -262,6 +274,9 @@ export default function Sidebar() {
                 bgcolor: 'rgba(255,255,255,0.1)',
                 color: '#fff',
               },
+              '&.Mui-selected:hover': {
+                bgcolor: 'rgba(255,255,255,0.12)',
+              },
             }}>
             <ListItemIcon
               sx={{
@@ -285,6 +300,8 @@ export default function Sidebar() {
               }}
             />
           </ListItemButton>
+
+          <LogoutButton />
         </List>
       </Box>
     </Box>

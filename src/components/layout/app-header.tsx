@@ -1,7 +1,5 @@
 import { Box, Typography } from '@mui/material';
 
-import LogoutButton from '@/components/auth/logout-button';
-
 type Props = {
   companyId: string;
   companyName: string;
@@ -12,12 +10,10 @@ export default function AppHeader({ companyName }: Props) {
     <Box
       component='header'
       sx={{
-        height: 72,
+        height: 88,
         px: 4,
-        py: 4,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
         bgcolor: 'background.paper',
         borderBottom: '1px solid',
         borderColor: 'divider',
@@ -26,27 +22,26 @@ export default function AppHeader({ companyName }: Props) {
         <Typography
           sx={{
             fontSize: 11,
-            fontWeight: 600,
+            fontWeight: 700,
             color: 'text.secondary',
             textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            my: 0.25,
+            letterSpacing: 0.8,
+            mb: 0.25,
           }}>
           Aktivt företag
         </Typography>
 
         <Typography
           sx={{
-            fontSize: 24,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            mb: 0.25,
+            fontSize: 22,
+            fontWeight: 700,
+            lineHeight: 1.2,
+            letterSpacing: '-0.3px',
+            color: 'text.primary',
           }}>
           {companyName}
         </Typography>
       </Box>
-
-      <LogoutButton />
     </Box>
   );
 }
