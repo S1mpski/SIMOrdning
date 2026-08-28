@@ -20,6 +20,11 @@ export default async function CreateCompanyPage() {
     .eq('owner_id', user.id)
     .maybeSingle();
 
+  console.log('SKAPA FÖRETAG:', {
+    userId: user.id,
+    company,
+  });
+
   if (company) {
     redirect('/');
   }

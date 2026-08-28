@@ -25,10 +25,14 @@ export default async function AppLayout({
     .from('companies')
     .select('id, name')
     .eq('owner_id', user.id)
-    .single();
+    .maybeSingle();
 
-  if (error || !company) {
-    return <main>Kunde inte hitta ditt företag.</main>;
+  if (error) {
+    return <main>Kunde inte läsa företagsinformationen.</main>;
+  }
+
+  if (!company) {
+    redirect('/skapa-foretag');
   }
 
   return (
