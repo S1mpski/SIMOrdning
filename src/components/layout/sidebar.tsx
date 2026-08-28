@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import Image from 'next/image';
+
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
@@ -142,20 +144,23 @@ export default function Sidebar() {
       }}>
       <Box
         sx={{
-          height: 72,
+          height: 88,
+          px: 2.5,
           display: 'flex',
           alignItems: 'center',
-          px: 3,
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}>
-        <Typography
-          sx={{
-            fontSize: 20,
-            fontWeight: 700,
-            letterSpacing: '-0.3px',
-          }}>
-          SIMOrdning
-        </Typography>
+        <Image
+          src='/simordning-logo.png'
+          alt='SIMOrdning'
+          width={170}
+          height={55}
+          priority
+          style={{
+            width: '210px',
+            height: 'auto',
+            objectFit: 'contain',
+          }}
+        />
       </Box>
 
       <Box sx={{ px: 1.5, py: 2 }}>
@@ -248,7 +253,13 @@ export default function Sidebar() {
               onChange={toggleTheme}
               onClick={(event) => event.stopPropagation()}
               sx={{
-                mr: -0.5,
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: 'simBlue.main',
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: 'simBlue.main',
+                  opacity: 1,
+                },
               }}
             />
           </ListItemButton>

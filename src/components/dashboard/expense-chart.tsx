@@ -2,6 +2,7 @@
 
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import { PieChart } from '@mui/x-charts/PieChart';
+import { useTheme } from '@mui/material/styles';
 
 export type ExpenseChartItem = {
   id: string;
@@ -22,6 +23,9 @@ function formatCurrency(value: number) {
 
 export default function ExpenseChart({ data }: Props) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
+  const theme = useTheme();
+
+  const chartColors = [theme.palette.simBlue.dark, theme.palette.simBlue.light];
 
   return (
     <Card
@@ -81,6 +85,7 @@ export default function ExpenseChart({ data }: Props) {
                 }}>
                 <PieChart
                   height={180}
+                  colors={chartColors}
                   series={[
                     {
                       data,

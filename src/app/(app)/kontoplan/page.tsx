@@ -29,7 +29,7 @@ export default async function AccountsPage() {
 
   const { data: accounts, error } = await supabase
     .from('accounts')
-    .select('id, account_number, name, active')
+    .select('id, account_number, name, active, account_type')
     .eq('company_id', company.id)
     .order('account_number');
 

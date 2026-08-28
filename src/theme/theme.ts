@@ -2,9 +2,32 @@ import { createTheme } from '@mui/material/styles';
 
 export type ThemeMode = 'light' | 'dark';
 
+declare module '@mui/material/styles' {
+  interface Palette {
+    simBlue: {
+      main: string;
+      dark: string;
+      light: string;
+    };
+  }
+
+  interface PaletteOptions {
+    simBlue?: {
+      main: string;
+      dark: string;
+      light: string;
+    };
+  }
+}
+
 export function createAppTheme(mode: ThemeMode) {
   return createTheme({
     palette: {
+      simBlue: {
+        main: '#0878F9',
+        light: '#0878F9',
+        dark: '#173B70',
+      },
       mode,
 
       primary: {
@@ -36,62 +59,6 @@ export function createAppTheme(mode: ThemeMode) {
       divider: mode === 'light' ? '#e5e7eb' : '#2f3338',
     },
 
-    shape: {
-      borderRadius: 8,
-    },
-
-    typography: {
-      fontFamily: 'Arial, Helvetica, sans-serif',
-
-      h4: {
-        fontSize: '1.75rem',
-        fontWeight: 700,
-      },
-
-      h6: {
-        fontWeight: 600,
-      },
-
-      body2: {
-        fontSize: '0.875rem',
-      },
-    },
-
-    components: {
-      MuiCard: {
-        styleOverrides: {
-          root: {
-            boxShadow: 'none',
-          },
-        },
-      },
-
-      MuiPaper: {
-        styleOverrides: {
-          root: {
-            backgroundImage: 'none',
-          },
-        },
-      },
-
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            textTransform: 'none',
-            fontWeight: 600,
-          },
-        },
-      },
-
-      MuiTableCell: {
-        styleOverrides: {
-          head: {
-            fontWeight: 600,
-            backgroundColor: mode === 'light' ? '#f9fafb' : '#202328',
-            color: mode === 'light' ? '#4b5563' : '#d1d5db',
-          },
-        },
-      },
-    },
+    // resten av ditt theme...
   });
 }

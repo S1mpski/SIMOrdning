@@ -49,6 +49,7 @@ export type AccountListItem = {
   account_number: number;
   name: string;
   active: boolean;
+  account_type: AccountType | null;
 };
 
 type Props = {
@@ -94,6 +95,7 @@ export default function AccountList({ accounts, companyId }: Props) {
   const [selectedBasAccounts, setSelectedBasAccounts] = useState<number[]>([]);
   const [basSaving, setBasSaving] = useState(false);
   const [basError, setBasError] = useState('');
+  const [accountSearch, setAccountSearch] = useState('');
 
   const existingAccountNumbers = new Set(
     accounts.map((account) => account.account_number),
@@ -179,6 +181,19 @@ export default function AccountList({ accounts, companyId }: Props) {
     );
   });
 
+  const filteredAccounts = accounts.filter((account) => {
+    const search = accountSearch.trim().toLowerCase();
+
+    if (!search) {
+      return true;
+    }
+
+    return (
+      String(account.account_number).includes(search) ||
+      account.name.toLowerCase().includes(search)
+    );
+  });
+
   function handleOpenCreate() {
     setEditingAccount(null);
     setForm(emptyForm);
@@ -192,6 +207,7 @@ export default function AccountList({ accounts, companyId }: Props) {
     setForm({
       accountNumber: String(account.account_number),
       name: account.name,
+      accountType: account.account_type ?? '',
     });
 
     setError('');
@@ -247,7 +263,7 @@ export default function AccountList({ accounts, companyId }: Props) {
       return;
     }
 
-    if (!editingAccount && !form.accountType) {
+    if (!form.accountType) {
       setError('Välj en kontotyp.');
       return;
     }
@@ -271,6 +287,7 @@ export default function AccountList({ accounts, companyId }: Props) {
         .update({
           account_number: parsedAccountNumber,
           name: form.name.trim(),
+          account_type: form.accountType,
         })
         .eq('id', editingAccount.id)
         .eq('company_id', companyId);
@@ -344,32 +361,12 @@ export default function AccountList({ accounts, companyId }: Props) {
   return (
     <>
       <Stack spacing={2}>
+        {/* Knappar */}
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 2,
+            justifyContent: 'flex-end',
           }}>
-          <Box>
-            <Typography
-              variant='h4'
-              sx={{
-                fontWeight: 700,
-              }}>
-              Kontoplan
-            </Typography>
-
-            <Typography
-              variant='body2'
-              color='text.secondary'
-              sx={{
-                mt: 0.5,
-              }}>
-              Konton som används i företagets bokföring.
-            </Typography>
-          </Box>
-
           <Stack direction='row' spacing={1.5}>
             <Button
               variant='outlined'
@@ -389,11 +386,37 @@ export default function AccountList({ accounts, companyId }: Props) {
           </Stack>
         </Box>
 
-        {error && (
-          <Alert severity='error' onClose={() => setError('')}>
-            {error}
-          </Alert>
-        )}
+        {/* Kontoplan vänster + sökfält höger */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'space-between',
+            gap: 2,
+          }}>
+          <Box>
+            <Typography variant='h4' sx={{ fontWeight: 700 }}>
+              Kontoplan
+            </Typography>
+
+            <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
+              Konton som används i företagets bokföring.
+            </Typography>
+          </Box>
+
+          <TextField
+            placeholder='Sök på kontonummer eller kontonamn...'
+            value={accountSearch}
+            onChange={(event) => setAccountSearch(event.target.value)}
+            size='small'
+            sx={{
+              width: {
+                xs: '100%',
+                sm: 360,
+              },
+            }}
+          />
+        </Box>
 
         {accounts.length === 0 ? (
           <Paper variant='outlined' sx={{ p: 4 }}>
@@ -407,19 +430,17 @@ export default function AccountList({ accounts, companyId }: Props) {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ width: 160 }}>Kontonummer</TableCell>
-
                   <TableCell>Kontonamn</TableCell>
-
+                  <TableCell sx={{ width: 160 }}>Kontotyp</TableCell>
                   <TableCell align='right' sx={{ width: 140 }}>
                     Status
                   </TableCell>
-
                   <TableCell align='right' sx={{ width: 70 }} />
                 </TableRow>
               </TableHead>
 
               <TableBody>
-                {accounts.map((account) => (
+                {filteredAccounts.map((account) => (
                   <TableRow
                     key={account.id}
                     hover
@@ -442,6 +463,20 @@ export default function AccountList({ accounts, companyId }: Props) {
 
                     <TableCell sx={{ fontWeight: 600 }}>
                       {account.name}{' '}
+                    </TableCell>
+
+                    <TableCell>
+                      {account.account_type === 'asset'
+                        ? 'Tillgång'
+                        : account.account_type === 'equity'
+                          ? 'Eget kapital'
+                          : account.account_type === 'liability'
+                            ? 'Skuld'
+                            : account.account_type === 'revenue'
+                              ? 'Intäkt'
+                              : account.account_type === 'expense'
+                                ? 'Kostnad'
+                                : '–'}
                     </TableCell>
 
                     <TableCell align='right'>
@@ -667,28 +702,26 @@ export default function AccountList({ accounts, companyId }: Props) {
               autoFocus={Boolean(editingAccount)}
             />
 
-            {!editingAccount && (
-              <FormControl fullWidth size='small'>
-                <InputLabel id='account-type-label'>Kontotyp</InputLabel>
+            <FormControl fullWidth size='small'>
+              <InputLabel id='account-type-label'>Kontotyp</InputLabel>
 
-                <Select
-                  labelId='account-type-label'
-                  label='Kontotyp'
-                  value={form.accountType}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      accountType: event.target.value as AccountType,
-                    }))
-                  }>
-                  <MenuItem value='asset'>Tillgång</MenuItem>
-                  <MenuItem value='equity'>Eget kapital</MenuItem>
-                  <MenuItem value='liability'>Skuld</MenuItem>
-                  <MenuItem value='revenue'>Intäkt</MenuItem>
-                  <MenuItem value='expense'>Kostnad</MenuItem>
-                </Select>
-              </FormControl>
-            )}
+              <Select
+                labelId='account-type-label'
+                label='Kontotyp'
+                value={form.accountType}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    accountType: event.target.value as AccountType,
+                  }))
+                }>
+                <MenuItem value='asset'>Tillgång</MenuItem>
+                <MenuItem value='equity'>Eget kapital</MenuItem>
+                <MenuItem value='liability'>Skuld</MenuItem>
+                <MenuItem value='revenue'>Intäkt</MenuItem>
+                <MenuItem value='expense'>Kostnad</MenuItem>
+              </Select>
+            </FormControl>
 
             {!editingAccount && (
               <Typography variant='caption' color='text.secondary'>

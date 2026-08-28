@@ -23,7 +23,7 @@ export default function AppHeader({ companyName }: Props) {
           sx={{
             fontSize: 11,
             fontWeight: 700,
-            color: 'text.secondary',
+            color: 'simBlue.main',
             textTransform: 'uppercase',
             letterSpacing: 0.8,
             mb: 0.25,
