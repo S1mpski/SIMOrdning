@@ -248,6 +248,8 @@ export default function VoucherForm() {
 
   return (
     <Box
+      component='form'
+      onSubmit={handleSubmit}
       sx={{
         width: '100%',
         maxWidth: 1100,
@@ -271,7 +273,19 @@ export default function VoucherForm() {
 
         {accountsError && <Alert severity='error'>{accountsError}</Alert>}
 
-        {successMessage && <Alert severity='success'>{successMessage}</Alert>}
+        {successMessage && (
+          <Alert
+            icon={<CheckCircleOutlineOutlinedIcon />}
+            sx={{
+              bgcolor: 'rgba(8, 120, 249, 0.10)',
+              color: 'simBlue.main',
+              '& .MuiAlert-icon': {
+                color: 'simBlue.main',
+              },
+            }}>
+            {successMessage}
+          </Alert>
+        )}
 
         {saveError && <Alert severity='error'>{saveError}</Alert>}
 
@@ -543,7 +557,7 @@ export default function VoucherForm() {
                   sx={{
                     alignItems: 'center',
                     pt: 0.5,
-                    color: 'success.main',
+                    color: 'simBlue.main',
                   }}>
                   <CheckCircleOutlineOutlinedIcon
                     sx={{
