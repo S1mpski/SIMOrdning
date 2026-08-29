@@ -61,7 +61,15 @@ export default function VoucherList({ vouchers }: Props) {
 
   return (
     <TableContainer component={Paper} variant='outlined'>
-      <Table>
+      <Table
+        sx={(theme) => ({
+          '& .MuiTableCell-root': {
+            borderBottomColor:
+              theme.palette.mode === 'light'
+                ? 'rgba(31, 41, 55, 0.14)'
+                : 'divider',
+          },
+        })}>
         <TableHead>
           <TableRow>
             <TableCell sx={{ width: 120 }}>Ver.nr</TableCell>

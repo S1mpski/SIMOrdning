@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import AppHeader from '@/components/layout/app-header';
 import Sidebar from '@/components/layout/sidebar';
 import { createClient } from '@/lib/supabase/server';
+import Footer from '@/components/layout/footer';
 
 import { Box } from '@mui/material';
 
@@ -61,6 +62,7 @@ export default async function AppLayout({
           }}>
           {children}
         </Box>
+        <Footer />
       </Box>
     </Box>
   );

@@ -117,7 +117,7 @@ export default function Dashboard({
                     alignItems: 'flex-start',
                   }}>
                   <Box>
-                    <Typography variant='body2' color='text.secondary'>
+                    <Typography variant='body1' color='text.secondary'>
                       Resultat
                     </Typography>
 

@@ -129,12 +129,25 @@ export default function CompanySettingsForm({ company }: Props) {
         </Typography>
 
         <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-          Hantera företagets grunduppgifter och bokföringsinställningar.
+          Hantera företagets uppgifter och bokföringsinställningar.
         </Typography>
       </Box>
 
       {success && (
-        <Alert severity='success'>Företagsuppgifterna har sparats.</Alert>
+        <Alert
+          severity='success'
+          sx={(theme) => ({
+            ...(theme.palette.mode === 'dark' && {
+              bgcolor: 'rgba(8, 120, 249, 0.15)',
+              color: 'simBlue.light',
+
+              '& .MuiAlert-icon': {
+                color: 'simBlue.light',
+              },
+            }),
+          })}>
+          Företagsuppgifterna har sparats.
+        </Alert>
       )}
 
       {error && <Alert severity='error'>{error}</Alert>}
