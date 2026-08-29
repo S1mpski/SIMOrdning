@@ -4,6 +4,7 @@ import AppHeader from '@/components/layout/app-header';
 import Sidebar from '@/components/layout/sidebar';
 import { createClient } from '@/lib/supabase/server';
 import Footer from '@/components/layout/footer';
+import { CompanyProvider } from '@/components/providers/company-provider';
 
 import { Box } from '@mui/material';
 
@@ -37,33 +38,35 @@ export default async function AppLayout({
   }
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        minHeight: '100vh',
-        bgcolor: 'background.default',
-      }}>
-      <Sidebar />
-
+    <CompanyProvider company={company}>
       <Box
         sx={{
-          flex: 1,
-          minWidth: 0,
           display: 'flex',
-          flexDirection: 'column',
+          minHeight: '100vh',
+          bgcolor: 'background.default',
         }}>
-        <AppHeader companyId={company.id} companyName={company.name} />
+        <Sidebar />
 
         <Box
-          component='main'
           sx={{
             flex: 1,
-            p: 4,
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
           }}>
-          {children}
+          <AppHeader companyId={company.id} companyName={company.name} />
+
+          <Box
+            component='main'
+            sx={{
+              flex: 1,
+              p: 4,
+            }}>
+            {children}
+          </Box>
+          <Footer />
         </Box>
-        <Footer />
       </Box>
-    </Box>
+    </CompanyProvider>
   );
 }

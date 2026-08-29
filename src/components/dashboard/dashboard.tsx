@@ -9,6 +9,7 @@ import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
 import { useTheme } from '@mui/material/styles';
 import SummaryDonut from '@/components/dashboard/summary-donut';
+import { useCompany } from '@/components/providers/company-provider';
 
 import {
   Box,
@@ -76,6 +77,7 @@ export default function Dashboard({
   const isLoss = result < 0;
   const hasResultData = revenue !== 0 || expenses !== 0;
   const resultMargin = revenue > 0 ? (result / revenue) * 100 : null;
+  const company = useCompany();
 
   return (
     <Box

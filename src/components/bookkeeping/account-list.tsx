@@ -392,7 +392,7 @@ export default function AccountList({ accounts, companyId }: Props) {
             display: 'flex',
             alignItems: 'flex-end',
             justifyContent: 'space-between',
-            gap: 2,
+            gap: 20,
           }}>
           <Box>
             <Typography variant='h4' sx={{ fontWeight: 700 }}>

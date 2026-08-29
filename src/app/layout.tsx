@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 
 import AppThemeProvider from '@/components/providers/theme-provider';
-// import ReportButton from '@/components/admin/report-button';
 
 import './globals.css';
 
