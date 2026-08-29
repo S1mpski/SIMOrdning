@@ -25,6 +25,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import { white } from 'next/dist/lib/picocolors';
 
 type Voucher = {
   id: string;
@@ -71,7 +72,9 @@ export default function Dashboard({
 }: Props) {
   const router = useRouter();
   const theme = useTheme();
-  const isProfit = result >= 0;
+  const isProfit = result > 0;
+  const isLoss = result < 0;
+  const isZeroResult = result === 0;
 
   const resultMargin = revenue > 0 ? (result / revenue) * 100 : null;
 
@@ -292,7 +295,9 @@ export default function Dashboard({
                     })} %`
                   : 'Resultatmarginal saknas'
               }
-              centerLabel={isProfit ? 'Vinst' : 'Förlust'}
+              centerLabel={
+                isProfit ? 'Vinst' : isLoss ? 'Förlust' : 'Nollresultat'
+              }
               centerValue={result}
               centerColor={isProfit ? undefined : theme.palette.error.dark}
               percentageBase={revenue}
@@ -330,6 +335,12 @@ export default function Dashboard({
                         label: 'Förlust',
                         value: result,
                         color: theme.palette.error.main,
+                      },
+                      {
+                        id: 'isZeroResult',
+                        label: 'Nollresultat',
+                        value: result,
+                        color: 'white',
                       },
                     ]
               }
