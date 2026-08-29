@@ -6,6 +6,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import PrintReportButton from './print-report-button';
 
 export type ReportAccount = {
   account_number: number;
@@ -50,6 +51,7 @@ export default function IncomeStatement({ accounts }: Props) {
 
   return (
     <Box
+      id='print-income-report'
       sx={{
         width: '100%',
         maxWidth: 1800,
@@ -61,15 +63,18 @@ export default function IncomeStatement({ accounts }: Props) {
         },
       }}>
       <Stack spacing={2}>
-        <Box>
-          <Typography variant='h4' sx={{ fontWeight: 700 }}>
-            Resultatrapport
-          </Typography>
+        <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
+          <Box>
+            <Typography variant='h4' sx={{ fontWeight: 700 }}>
+              Resultatrapport
+            </Typography>
 
-          <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-            Företagets intäkter och kostnader.
-          </Typography>
-        </Box>
+            <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
+              Företagets intäkter och kostnader.
+            </Typography>
+          </Box>
+          <PrintReportButton />
+        </Stack>
         <Card variant='outlined'>
           <CardContent>
             <Stack spacing={3}>
