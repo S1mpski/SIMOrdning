@@ -1,5 +1,8 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+I created this as a quick project to help out my mom at work to educate students/pupils about simple bookkeeping/accounting. 
+## This is vibe-coded, mainly for research and educational purposes to others
+
 ## Getting Started
 
 First, run the development server:
