@@ -572,6 +572,46 @@ export default function AccountList({ accounts, companyId }: Props) {
                   const checked = selectedBasAccounts.includes(
                     account.accountNumber,
                   );
+                  const typeChip = getAccountTypeChip(account.accountType);
+                  function getAccountTypeChip(accountType: string) {
+                    switch (accountType) {
+                      case 'asset':
+                        return {
+                          label: 'Tillgång',
+                          color: 'info' as const,
+                        };
+
+                      case 'equity':
+                        return {
+                          label: 'Eget kapital',
+                          color: 'secondary' as const,
+                        };
+
+                      case 'liability':
+                        return {
+                          label: 'Skuld',
+                          color: 'warning' as const,
+                        };
+
+                      case 'revenue':
+                        return {
+                          label: 'Intäkt',
+                          color: 'success' as const,
+                        };
+
+                      case 'expense':
+                        return {
+                          label: 'Kostnad',
+                          color: 'error' as const,
+                        };
+
+                      default:
+                        return {
+                          label: 'Okänd',
+                          color: 'default' as const,
+                        };
+                    }
+                  }
 
                   return (
                     <Box
@@ -616,6 +656,14 @@ export default function AccountList({ accounts, companyId }: Props) {
                       <Typography sx={{ fontSize: 14 }}>
                         {account.name}
                       </Typography>
+
+                      <Chip
+                        label={typeChip.label}
+                        color={typeChip.color}
+                        size='small'
+                        variant='outlined'
+                        sx={{ ml: 'auto', py: 2 }}
+                      />
                     </Box>
                   );
                 })
