@@ -14,20 +14,13 @@ export type SummaryDonutItem = {
 type Props = {
   title: string;
   subtitle?: string;
-
-  // Informationen som visas längst ner
   data: SummaryDonutItem[];
-
-  // Om satt används annan data enbart för själva diagrammet
   chartData?: SummaryDonutItem[];
-
   centerLabel: string;
   centerValue: number;
-
-  // Exempelvis intäkter = 100 %
   percentageBase?: number;
-
   centerColor?: string;
+  hasAccountingData?: boolean;
 };
 
 function formatCurrency(value: number) {
@@ -46,15 +39,14 @@ export default function SummaryDonut({
   centerValue,
   percentageBase,
   centerColor,
+  hasAccountingData = true,
 }: Props) {
   const theme = useTheme();
 
   const chartColors = [theme.palette.simBlue.dark, theme.palette.simBlue.light];
 
-  // Textvärden – behåll negativa värden
   const filteredData = data.filter((item) => item.value !== 0);
 
-  // Diagrammet får aldrig negativa segment
   const sourceChartData = chartData ?? data;
 
   const filteredChartData = sourceChartData
@@ -106,11 +98,45 @@ export default function SummaryDonut({
           </Typography>
         )}
 
-        {!hasData ? (
+        {!hasAccountingData ? (
           <Box
             sx={{
-              py: 6,
-              textAlign: 'center',
+              minHeight: 220,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Typography color='text.secondary'>Ingen data ännu.</Typography>
+          </Box>
+        ) : centerValue === 0 ? (
+          <Box
+            sx={{
+              minHeight: 220,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography
+                sx={{
+                  fontSize: 20,
+                  fontWeight: 700,
+                }}>
+                0 kr
+              </Typography>
+
+              <Typography variant='body2' color='text.secondary'>
+                Nollresultat
+              </Typography>
+            </Box>
+          </Box>
+        ) : !hasData ? (
+          <Box
+            sx={{
+              minHeight: 220,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
             <Typography color='text.secondary'>Ingen data ännu.</Typography>
           </Box>
@@ -123,7 +149,6 @@ export default function SummaryDonut({
               gap: 2,
               alignItems: 'stretch',
             }}>
-            {/* Information längst ner */}
             <Stack
               spacing={1.5}
               sx={{
@@ -160,7 +185,6 @@ export default function SummaryDonut({
               })}
             </Stack>
 
-            {/* Diagram till höger */}
             <Box
               sx={{
                 position: 'relative',

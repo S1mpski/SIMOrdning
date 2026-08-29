@@ -74,8 +74,7 @@ export default function Dashboard({
   const theme = useTheme();
   const isProfit = result > 0;
   const isLoss = result < 0;
-  const isZeroResult = result === 0;
-
+  const hasResultData = revenue !== 0 || expenses !== 0;
   const resultMargin = revenue > 0 ? (result / revenue) * 100 : null;
 
   return (
@@ -296,10 +295,10 @@ export default function Dashboard({
                   : 'Resultatmarginal saknas'
               }
               centerLabel={
-                isProfit ? 'Vinst' : isLoss ? 'Förlust' : 'Nollresultat'
+                result > 0 ? 'Vinst' : result < 0 ? 'Förlust' : 'Nollresultat'
               }
               centerValue={result}
-              centerColor={isProfit ? undefined : theme.palette.error.dark}
+              hasAccountingData={hasResultData}
               percentageBase={revenue}
               data={
                 isProfit
@@ -334,25 +333,7 @@ export default function Dashboard({
                         id: 'loss',
                         label: 'Förlust',
                         value: result,
-                        color: theme.palette.error.main,
-                      },
-                      {
-                        id: 'isZeroResult',
-                        label: 'Nollresultat',
-                        value: result,
-                        color: 'white',
-                      },
-                    ]
-              }
-              chartData={
-                isProfit
-                  ? undefined
-                  : [
-                      {
-                        id: 'loss',
-                        label: 'Förlust',
-                        value: Math.abs(result),
-                        color: theme.palette.error.main,
+                        color: theme.palette.error.dark,
                       },
                     ]
               }
