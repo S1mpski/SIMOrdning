@@ -40,6 +40,7 @@ import {
   FormControl,
   InputLabel,
   Select,
+  Divider,
 } from '@mui/material';
 
 import { createClient } from '@/lib/supabase/client';
@@ -426,7 +427,13 @@ export default function AccountList({ accounts, companyId }: Props) {
           </Paper>
         ) : (
           <TableContainer component={Paper} variant='outlined'>
-            <Table>
+            <Table
+              sx={{
+                '& .MuiTableCell-root': {
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                },
+              }}>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ width: 160 }}>Kontonummer</TableCell>

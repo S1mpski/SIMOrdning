@@ -10,6 +10,7 @@ import {
   Chip,
   IconButton,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -72,15 +73,11 @@ export default function VoucherList({ vouchers }: Props) {
         })}>
         <TableHead>
           <TableRow>
-            <TableCell sx={{ width: 120 }}>Ver.nr</TableCell>
-
-            <TableCell sx={{ width: 160 }}>Datum</TableCell>
-
+            <TableCell sx={{ width: 160, pl: 4 }}>Ver.nr</TableCell>
+            <TableCell sx={{ width: 210 }}>Datum</TableCell>
             <TableCell>Beskrivning</TableCell>
 
-            <TableCell align='right' sx={{ width: 180 }}>
-              Belopp
-            </TableCell>
+            <TableCell sx={{ width: 180, pl: 10 }}>Belopp</TableCell>
 
             <TableCell sx={{ width: 60 }} />
           </TableRow>
@@ -99,11 +96,14 @@ export default function VoucherList({ vouchers }: Props) {
                 },
               }}>
               <TableCell>
-                <Chip
-                  label={voucher.voucher_number}
-                  size='small'
-                  variant='outlined'
-                />
+                <Box
+                  sx={{ display: 'flex', justifyContent: 'flex-start', pl: 2 }}>
+                  <Chip
+                    label={voucher.voucher_number}
+                    size='medium'
+                    variant='outlined'
+                  />
+                </Box>
               </TableCell>
 
               <TableCell>

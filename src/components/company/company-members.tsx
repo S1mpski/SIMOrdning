@@ -187,7 +187,17 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
   }
 
   return (
-    <>
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: 2000,
+        mx: 'auto',
+        px: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
+      }}>
       <Card
         variant='outlined'
         sx={{
@@ -385,6 +395,6 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Box>
   );
 }

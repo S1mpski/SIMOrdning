@@ -267,7 +267,7 @@ export default function Sidebar() {
           <ListItemButton
             component={Link}
             href='/konto'
-            selected={pathname.startsWith('/konto')}
+            selected={pathname === '/konto' || pathname.startsWith('/konto/')}
             sx={{
               minHeight: 44,
               px: 1.5,
