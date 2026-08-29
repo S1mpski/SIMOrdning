@@ -1,21 +1,33 @@
 'use client';
 
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
-import { PieChart } from '@mui/x-charts/PieChart';
 import { useTheme } from '@mui/material/styles';
+import { PieChart } from '@mui/x-charts/PieChart';
 
 export type SummaryDonutItem = {
   id: string;
   label: string;
   value: number;
+  color?: string;
 };
 
 type Props = {
   title: string;
   subtitle?: string;
+
+  // Informationen som visas längst ner
   data: SummaryDonutItem[];
+
+  // Om satt används annan data enbart för själva diagrammet
+  chartData?: SummaryDonutItem[];
+
   centerLabel: string;
   centerValue: number;
+
+  // Exempelvis intäkter = 100 %
+  percentageBase?: number;
+
+  centerColor?: string;
 };
 
 function formatCurrency(value: number) {
@@ -29,15 +41,42 @@ export default function SummaryDonut({
   title,
   subtitle,
   data,
+  chartData,
   centerLabel,
   centerValue,
+  percentageBase,
+  centerColor,
 }: Props) {
-  const filteredData = data.filter((item) => item.value > 0);
-
-  const total = filteredData.reduce((sum, item) => sum + item.value, 0);
   const theme = useTheme();
 
   const chartColors = [theme.palette.simBlue.dark, theme.palette.simBlue.light];
+
+  // Textvärden – behåll negativa värden
+  const filteredData = data.filter((item) => item.value !== 0);
+
+  // Diagrammet får aldrig negativa segment
+  const sourceChartData = chartData ?? data;
+
+  const filteredChartData = sourceChartData
+    .filter((item) => item.value !== 0)
+    .map((item, index) => ({
+      ...item,
+      value: Math.abs(item.value),
+      color: item.color ?? chartColors[index % chartColors.length],
+    }));
+
+  const chartTotal = filteredChartData.reduce(
+    (sum, item) => sum + item.value,
+    0,
+  );
+
+  const percentageTotal =
+    percentageBase !== undefined && Math.abs(percentageBase) > 0
+      ? Math.abs(percentageBase)
+      : filteredData.reduce((sum, item) => sum + Math.abs(item.value), 0);
+
+  const hasData =
+    filteredData.length > 0 && filteredChartData.length > 0 && chartTotal > 0;
 
   return (
     <Card
@@ -67,7 +106,7 @@ export default function SummaryDonut({
           </Typography>
         )}
 
-        {filteredData.length === 0 || total === 0 ? (
+        {!hasData ? (
           <Box
             sx={{
               py: 6,
@@ -77,76 +116,27 @@ export default function SummaryDonut({
           </Box>
         ) : (
           <Stack
-            direction='column'
+            direction='row'
             sx={{
               mt: 1.5,
-              alignItems: 'center',
-              gap: 1.5,
+              minHeight: 220,
+              gap: 2,
+              alignItems: 'stretch',
             }}>
-            <Box
-              sx={{
-                position: 'relative',
-                width: 150,
-                height: 150,
-                flexShrink: 0,
-              }}>
-              <PieChart
-                width={150}
-                height={150}
-                colors={chartColors}
-                series={[
-                  {
-                    data: filteredData,
-                    innerRadius: 45,
-                    outerRadius: 68,
-                    paddingAngle: 2,
-                    cornerRadius: 3,
-                    highlightScope: {
-                      fade: 'global',
-                      highlight: 'item',
-                    },
-                    faded: {
-                      innerRadius: 45,
-                      additionalRadius: -4,
-                    },
-                  },
-                ]}
-                hideLegend
-              />
-
-              <Box
-                sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  pointerEvents: 'none',
-                }}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography
-                    sx={{
-                      fontSize: 16,
-                      fontWeight: 700,
-                    }}>
-                    {formatCurrency(centerValue)} kr
-                  </Typography>
-
-                  <Typography variant='caption' color='text.secondary'>
-                    {centerLabel}
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-
+            {/* Information längst ner */}
             <Stack
               spacing={1.5}
               sx={{
                 flex: 1,
-                width: '100%',
+                minWidth: 0,
+                justifyContent: 'flex-end',
+                pb: 1,
               }}>
               {filteredData.map((item) => {
-                const percentage = total > 0 ? (item.value / total) * 100 : 0;
+                const percentage =
+                  percentageTotal > 0
+                    ? (item.value / percentageTotal) * 100
+                    : 0;
 
                 return (
                   <Box key={item.id}>
@@ -169,6 +159,69 @@ export default function SummaryDonut({
                 );
               })}
             </Stack>
+
+            {/* Diagram till höger */}
+            <Box
+              sx={{
+                position: 'relative',
+                width: 150,
+                height: 150,
+                flexShrink: 0,
+                ml: 'auto',
+                mt: 0.5,
+              }}>
+              <PieChart
+                width={150}
+                height={150}
+                series={[
+                  {
+                    data: filteredChartData,
+                    innerRadius: 40,
+                    outerRadius: 70,
+                    paddingAngle: 2,
+                    cornerRadius: 3,
+                    highlightScope: {
+                      fade: 'global',
+                      highlight: 'item',
+                    },
+                    faded: {
+                      innerRadius: 40,
+                      additionalRadius: -4,
+                    },
+                  },
+                ]}
+                hideLegend
+              />
+
+              <Box
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  pointerEvents: 'none',
+                }}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography
+                    sx={{
+                      fontSize: 16,
+                      fontWeight: 700,
+                      color: centerColor ?? 'text.primary',
+                    }}>
+                    {formatCurrency(centerValue)} kr
+                  </Typography>
+
+                  <Typography
+                    variant='caption'
+                    sx={{
+                      color: centerColor ?? 'text.secondary',
+                    }}>
+                    {centerLabel}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
           </Stack>
         )}
       </CardContent>

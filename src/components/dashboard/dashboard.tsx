@@ -7,7 +7,7 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
-
+import { useTheme } from '@mui/material/styles';
 import SummaryDonut from '@/components/dashboard/summary-donut';
 
 import {
@@ -70,6 +70,10 @@ export default function Dashboard({
   vouchers,
 }: Props) {
   const router = useRouter();
+  const theme = useTheme();
+  const isProfit = result >= 0;
+
+  const resultMargin = revenue > 0 ? (result / revenue) * 100 : null;
 
   return (
     <Box
@@ -162,7 +166,7 @@ export default function Dashboard({
                   }}>
                   <Box>
                     <Typography variant='body2' color='text.secondary'>
-                      Verifikationer
+                      Antal verifikationer
                     </Typography>
 
                     <Typography
@@ -199,7 +203,7 @@ export default function Dashboard({
                   },
                 }}>
                 <Typography variant='body2' color='text.secondary'>
-                  Senaste verifikation
+                  Senaste verifikationen
                 </Typography>
 
                 {vouchers.length > 0 ? (
@@ -211,7 +215,7 @@ export default function Dashboard({
                         lineHeight: 1.2,
                         fontWeight: 700,
                       }}>
-                      #{vouchers[0].voucher_number}
+                      {vouchers[0].description}
                     </Typography>
 
                     <Typography
@@ -219,7 +223,7 @@ export default function Dashboard({
                       color='text.secondary'
                       noWrap
                       sx={{ mt: 0.5 }}>
-                      {vouchers[0].description}
+                      {vouchers[0].voucher_date}
                     </Typography>
                   </>
                 ) : (
@@ -239,19 +243,19 @@ export default function Dashboard({
           <Grid size={{ xs: 12, lg: 4 }}>
             <SummaryDonut
               title='Tillgångar'
-              subtitle='Fördelning av företagets tillgångar.'
+              subtitle='Fördelning av företagets tillgångar'
               centerLabel='Tillgångar'
               centerValue={assets}
               data={[
                 {
                   id: 'fixed-assets',
                   label: 'Anläggningstillgångar',
-                  value: Math.max(0, fixedAssets),
+                  value: fixedAssets,
                 },
                 {
                   id: 'current-assets',
                   label: 'Omsättningstillgångar',
-                  value: Math.max(0, currentAssets),
+                  value: currentAssets,
                 },
               ]}
             />
@@ -260,19 +264,19 @@ export default function Dashboard({
           <Grid size={{ xs: 12, lg: 4 }}>
             <SummaryDonut
               title='Eget kapital & skulder'
-              subtitle='Hur företagets finansiering är fördelad.'
+              subtitle='Finansiering av företagets tillgångar'
               centerLabel='Totalt'
-              centerValue={Math.max(0, equity) + Math.max(0, liabilities)}
+              centerValue={equity + liabilities}
               data={[
                 {
                   id: 'equity',
                   label: 'Eget kapital',
-                  value: Math.max(0, equity),
+                  value: equity,
                 },
                 {
                   id: 'liabilities',
                   label: 'Skulder',
-                  value: Math.max(0, liabilities),
+                  value: liabilities,
                 },
               ]}
             />
@@ -281,21 +285,66 @@ export default function Dashboard({
           <Grid size={{ xs: 12, lg: 4 }}>
             <SummaryDonut
               title='Resultat'
-              subtitle='Intäkter och kostnader för perioden.'
-              centerLabel='Resultat'
+              subtitle={
+                resultMargin !== null
+                  ? `Resultatmarginal ${resultMargin.toLocaleString('sv-SE', {
+                      maximumFractionDigits: 1,
+                    })} %`
+                  : 'Resultatmarginal saknas'
+              }
+              centerLabel={isProfit ? 'Vinst' : 'Förlust'}
               centerValue={result}
-              data={[
-                {
-                  id: 'revenue',
-                  label: 'Intäkter',
-                  value: Math.max(0, revenue),
-                },
-                {
-                  id: 'expenses',
-                  label: 'Kostnader',
-                  value: Math.max(0, expenses),
-                },
-              ]}
+              centerColor={isProfit ? undefined : theme.palette.error.dark}
+              percentageBase={revenue}
+              data={
+                isProfit
+                  ? [
+                      {
+                        id: 'profit',
+                        label: 'Vinst',
+                        value: result,
+                        color: theme.palette.simBlue.light,
+                      },
+                      {
+                        id: 'expenses',
+                        label: 'Kostnader',
+                        value: expenses,
+                        color: theme.palette.simBlue.dark,
+                      },
+                    ]
+                  : [
+                      {
+                        id: 'revenue',
+                        label: 'Intäkter',
+                        value: revenue,
+                        color: theme.palette.simBlue.light,
+                      },
+                      {
+                        id: 'expenses',
+                        label: 'Kostnader',
+                        value: expenses,
+                        color: theme.palette.simBlue.dark,
+                      },
+                      {
+                        id: 'loss',
+                        label: 'Förlust',
+                        value: result,
+                        color: theme.palette.error.main,
+                      },
+                    ]
+              }
+              chartData={
+                isProfit
+                  ? undefined
+                  : [
+                      {
+                        id: 'loss',
+                        label: 'Förlust',
+                        value: Math.abs(result),
+                        color: theme.palette.error.main,
+                      },
+                    ]
+              }
             />
           </Grid>
         </Grid>

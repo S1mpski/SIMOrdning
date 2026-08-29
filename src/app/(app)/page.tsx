@@ -1,13 +1,15 @@
 import Dashboard from '@/components/dashboard/dashboard';
-
 import { createClient } from '@/lib/supabase/server';
 
-function getAccount(
-  accounts:
-    | { account_number: number; name?: string }[]
-    | { account_number: number; name?: string }
-    | null,
-) {
+export const dynamic = 'force-dynamic';
+
+type Account = {
+  account_number: number;
+  name?: string;
+  account_type: string | null;
+};
+
+function getAccount(accounts: Account[] | Account | null) {
   if (!accounts) {
     return null;
   }
@@ -36,7 +38,7 @@ export default async function HomePage() {
     return null;
   }
 
-  const { data: vouchers } = await supabase
+  const { data: vouchers, error } = await supabase
     .from('vouchers')
     .select(
       `
@@ -49,7 +51,8 @@ export default async function HomePage() {
         credit,
         accounts (
           account_number,
-          name
+          name,
+          account_type
         )
       )
     `,
@@ -58,6 +61,10 @@ export default async function HomePage() {
     .order('voucher_number', {
       ascending: false,
     });
+
+  if (error) {
+    console.error('Dashboard vouchers error:', error);
+  }
 
   const allVouchers = vouchers ?? [];
 
@@ -82,52 +89,42 @@ export default async function HomePage() {
       const debit = Number(row.debit ?? 0);
       const credit = Number(row.credit ?? 0);
 
-      /*
-       * Tillgångar
-       * Tillgångskonton har normalt debetsaldo.
-       */
-      if (accountNumber >= 1000 && accountNumber <= 1399) {
-        fixedAssets += debit - credit;
+      // Tillgångar
+      if (account.account_type === 'asset') {
+        const balance = debit - credit;
+
+        if (accountNumber >= 1000 && accountNumber <= 1399) {
+          fixedAssets += balance;
+        } else if (accountNumber >= 1400 && accountNumber <= 1999) {
+          currentAssets += balance;
+        }
       }
 
-      if (accountNumber >= 1400 && accountNumber <= 1999) {
-        currentAssets += debit - credit;
-      }
-
-      /*
-       * Eget kapital
-       * Har normalt kreditsaldo.
-       */
-      if (accountNumber >= 2000 && accountNumber <= 2099) {
+      // Eget kapital
+      if (account.account_type === 'equity') {
         equity += credit - debit;
       }
 
-      /*
-       * Skulder
-       */
-      if (accountNumber >= 2100 && accountNumber <= 2999) {
+      // Skulder
+      if (account.account_type === 'liability') {
         liabilities += credit - debit;
       }
 
-      /*
-       * Intäkter
-       */
-      if (accountNumber >= 3000 && accountNumber <= 3999) {
+      // Intäkter
+      if (account.account_type === 'revenue') {
         revenue += credit - debit;
       }
 
-      /*
-       * Kostnader
-       */
-      if (accountNumber >= 4000 && accountNumber <= 8999) {
+      // Kostnader
+      if (account.account_type === 'expense') {
         expenses += debit - credit;
       }
     }
   }
 
   const result = revenue - expenses;
-
   const assets = fixedAssets + currentAssets;
+  const totalEquity = equity + result;
 
   const recentVouchers = allVouchers.slice(0, 5).map((voucher) => ({
     id: voucher.id,
@@ -148,7 +145,7 @@ export default async function HomePage() {
       assets={assets}
       fixedAssets={fixedAssets}
       currentAssets={currentAssets}
-      equity={equity}
+      equity={totalEquity}
       liabilities={liabilities}
       voucherCount={allVouchers.length}
       vouchers={recentVouchers}
