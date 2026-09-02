@@ -87,8 +87,8 @@ export default function VoucherForm() {
       const { data: company, error: companyError } = await supabase
         .from('companies')
         .select('id')
-        .eq('owner_id', user.id)
-        .single();
+        .limit(1)
+        .maybeSingle();
 
       if (companyError || !company) {
         setAccountsError('Kunde inte hitta företaget.');
@@ -190,8 +190,8 @@ export default function VoucherForm() {
     const { data: company, error: companyError } = await supabase
       .from('companies')
       .select('id')
-      .eq('owner_id', user.id)
-      .single();
+      .limit(1)
+      .maybeSingle();
 
     if (companyError || !company) {
       setSaveError('Kunde inte hitta företaget.');

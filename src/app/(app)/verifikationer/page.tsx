@@ -22,8 +22,8 @@ export default async function VouchersPage() {
   const { data: company } = await supabase
     .from('companies')
     .select('id, name')
-    .eq('owner_id', user.id)
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   if (!company) {
     return <Typography color='error'>Kunde inte hitta företaget.</Typography>;

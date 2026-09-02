@@ -20,8 +20,8 @@ export default async function ReportsPage() {
   const { data: company } = await supabase
     .from('companies')
     .select('id')
-    .eq('owner_id', user.id)
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   if (!company) {
     return <Typography color='error'>Kunde inte hitta företaget.</Typography>;
