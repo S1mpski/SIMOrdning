@@ -8,6 +8,8 @@ import { createAppTheme, type ThemeMode } from '@/theme/theme';
 
 import { GlobalStyles } from '@mui/material';
 
+import { createClient } from '@/lib/supabase/client';
+
 type ThemeModeContextType = {
   mode: ThemeMode;
   toggleTheme: () => void;

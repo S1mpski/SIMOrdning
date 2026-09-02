@@ -2,9 +2,9 @@
 
 import { FormEvent, useState } from 'react';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {
   Alert,
   Box,
@@ -16,26 +16,25 @@ import {
   Tab,
   Tabs,
   TextField,
-  textFieldClasses,
   Typography,
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import Image from 'next/image';
+
+import ForgotPassword from '@/components/auth/forgot-password';
 import { createClient } from '@/lib/supabase/client';
-import { ThemeContext } from '@emotion/react';
-import { Palette } from '@mui/icons-material';
 
 export default function LoginForm() {
   const router = useRouter();
 
   const [mode, setMode] = useState<'login' | 'register'>('login');
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const [forgotPassword, setForgotPassword] = useState(false);
 
   const isRegister = mode === 'register';
 
@@ -46,21 +45,20 @@ export default function LoginForm() {
     setConfirmPassword('');
   }
 
-  async function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setError('');
 
-    const cleanUsername = username
-      .trim()
-      .toLowerCase()
-      .replaceAll('å', 'a')
-      .replaceAll('ä', 'a')
-      .replaceAll('ö', 'o')
-      .replace(/\s+/g, '.');
+    const cleanEmail = email.trim().toLowerCase();
 
-    if (!cleanUsername) {
-      setError('Ange ett användarnamn.');
+    if (!cleanEmail) {
+      setError('Ange en e-postadress.');
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setError('Ange en giltig e-postadress.');
       return;
     }
 
@@ -81,64 +79,67 @@ export default function LoginForm() {
 
     setLoading(true);
 
-    const supabase = createClient();
+    try {
+      const supabase = createClient();
 
-    const email = `${cleanUsername}@example.com`;
+      if (isRegister) {
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email: cleanEmail,
+          password,
+        });
 
-    if (!/^[a-zA-Z0-9._-]+$/.test(cleanUsername)) {
-      setError(
-        'Användarnamnet får bara innehålla bokstäver, siffror, punkt, bindestreck och understreck.',
-      );
-      return;
-    }
+        if (signUpError) {
+          const message = signUpError.message.toLowerCase();
 
-    if (isRegister) {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+          if (
+            message.includes('already registered') ||
+            message.includes('already exists')
+          ) {
+            setError('Det finns redan ett konto med den e-postadressen.');
+            return;
+          }
 
-      if (signUpError) {
-        setLoading(false);
-
-        if (
-          signUpError.message.toLowerCase().includes('already registered') ||
-          signUpError.message.toLowerCase().includes('already exists')
-        ) {
-          setError('Användarnamnet är redan upptaget.');
+          setError(signUpError.message);
           return;
         }
 
-        setError(signUpError.message);
+        if (!data.user) {
+          setError('Kontot kunde inte skapas.');
+          return;
+        }
+
+        if (!data.session) {
+          setError(
+            'Kontot skapades. Kontrollera din e-post för att bekräfta kontot innan du loggar in.',
+          );
+          return;
+        }
+
+        router.push('/skapa-foretag');
+        router.refresh();
+
         return;
       }
 
-      if (!data.session) {
-        setLoading(false);
-        setError(
-          'Kontot skapades, men automatisk inloggning misslyckades. Kontrollera inställningen för e-postbekräftelse i Supabase.',
-        );
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password,
+      });
+
+      if (signInError) {
+        setError('Fel e-postadress eller lösenord.');
         return;
       }
 
-      router.push('/skapa-foretag');
+      router.push('/');
       router.refresh();
-      return;
-    }
+    } catch (error) {
+      console.error(error);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (signInError) {
+      setError('Något gick fel. Försök igen.');
+    } finally {
       setLoading(false);
-      setError('Fel användarnamn eller lösenord.');
-      return;
     }
-
-    router.push('/');
-    router.refresh();
   }
 
   return (
@@ -168,16 +169,18 @@ export default function LoginForm() {
               src='/simordning-logo.png'
               width={250}
               height={100}
-              alt='SIMORDNINGLOGOMISSING'
+              alt='SIMOrdning'
+              priority
             />
           </Box>
+
           <Typography
             variant='caption'
             color='text.secondary'
             sx={{
               mt: 0,
             }}>
-            Enklel bokföring, långsam hemsida
+            Enkel bokföring, långsam hemsida
           </Typography>
         </Stack>
 
@@ -189,126 +192,160 @@ export default function LoginForm() {
                 sm: 4,
               },
             }}>
-            <Tabs
-              value={mode}
-              onChange={(_, value) =>
-                handleModeChange(value as 'login' | 'register')
-              }
-              variant='fullWidth'
-              sx={{
-                mb: 3,
-              }}>
-              <Tab value='login' label='Logga in' />
-
-              <Tab value='register' label='Skapa konto' />
-            </Tabs>
-
-            <Box component='form' onSubmit={handleSubmit}>
-              <Stack spacing={2.5}>
-                <Box>
-                  <Typography
-                    variant='h6'
-                    sx={{
-                      fontWeight: 700,
-                    }}>
-                    {isRegister ? 'Skapa ditt konto' : 'Välkommen tillbaka'}
-                  </Typography>
-
-                  <Typography
-                    variant='body2'
-                    color='text.secondary'
-                    sx={{
-                      mt: 0.5,
-                    }}>
-                    {isRegister
-                      ? 'Välj ett användarnamn och lösenord för att komma igång.'
-                      : 'Logga in för att fortsätta till ditt företag.'}
-                  </Typography>
-                </Box>
-
-                <Divider />
-
-                {error && <Alert severity='error'>{error}</Alert>}
-
-                <TextField
-                  label='Användarnamn'
-                  value={username}
-                  onChange={(event) => setUsername(event.target.value)}
-                  required
-                  fullWidth
-                  autoComplete='username'
-                  autoFocus
-                />
-
-                <TextField
-                  label='Lösenord'
-                  type='password'
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  required
-                  fullWidth
-                  autoComplete={
-                    isRegister ? 'new-password' : 'current-password'
+            {forgotPassword ? (
+              <ForgotPassword
+                onBack={() => {
+                  setForgotPassword(false);
+                  setError('');
+                }}
+              />
+            ) : (
+              <>
+                <Tabs
+                  value={mode}
+                  onChange={(_, value) =>
+                    handleModeChange(value as 'login' | 'register')
                   }
-                />
-
-                {isRegister && (
-                  <TextField
-                    label='Bekräfta lösenord'
-                    type='password'
-                    value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
-                    required
-                    fullWidth
-                    autoComplete='new-password'
-                  />
-                )}
-
-                <Button
-                  type='submit'
-                  variant='contained'
-                  size='large'
-                  fullWidth
-                  disabled={loading}
+                  variant='fullWidth'
                   sx={{
-                    py: 1.3,
-                    fontWeight: 600,
-                    bgcolor: 'simBlue.main',
+                    mb: 3,
                   }}>
-                  {loading
-                    ? isRegister
-                      ? 'Skapar konto...'
-                      : 'Loggar in...'
-                    : isRegister
-                      ? 'Skapa konto'
-                      : 'Logga in'}
-                </Button>
+                  <Tab value='login' label='Logga in' />
 
-                <Typography
-                  variant='body2'
-                  color='text.secondary'
-                  sx={{
-                    textAlign: 'center',
-                  }}>
-                  {isRegister
-                    ? 'Har du redan ett konto?'
-                    : 'Har du inget konto ännu?'}
+                  <Tab value='register' label='Skapa konto' />
+                </Tabs>
 
-                  <Button
-                    type='button'
-                    variant='text'
-                    size='small'
-                    onClick={() =>
-                      handleModeChange(isRegister ? 'login' : 'register')
-                    }
-                    sx={{
-                      ml: 0.5,
-                    }}>
-                    {isRegister ? 'Logga in' : 'Skapa konto'}
-                  </Button>
-                </Typography>
-              </Stack>
-            </Box>
+                <Box component='form' onSubmit={handleSubmit}>
+                  <Stack spacing={2.5}>
+                    <Box>
+                      <Typography
+                        variant='h6'
+                        sx={{
+                          fontWeight: 700,
+                        }}>
+                        {isRegister ? 'Skapa ditt konto' : 'Välkommen tillbaka'}
+                      </Typography>
+
+                      <Typography
+                        variant='body2'
+                        color='text.secondary'
+                        sx={{
+                          mt: 0.5,
+                        }}>
+                        {isRegister
+                          ? 'Ange din e-postadress och ett lösenord du kommer ihåg.'
+                          : 'Logga in för att fortsätta till ditt företag.'}
+                      </Typography>
+                    </Box>
+
+                    <Divider />
+
+                    {error && <Alert severity='error'>{error}</Alert>}
+
+                    <TextField
+                      label='E-post'
+                      type='email'
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      required
+                      fullWidth
+                      autoComplete='email'
+                      autoFocus
+                    />
+
+                    <TextField
+                      label='Lösenord'
+                      type='password'
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      required
+                      fullWidth
+                      autoComplete={
+                        isRegister ? 'new-password' : 'current-password'
+                      }
+                    />
+
+                    {!isRegister && (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          mt: -1,
+                        }}></Box>
+                    )}
+
+                    {isRegister && (
+                      <TextField
+                        label='Bekräfta lösenord'
+                        type='password'
+                        value={confirmPassword}
+                        onChange={(event) =>
+                          setConfirmPassword(event.target.value)
+                        }
+                        required
+                        fullWidth
+                        autoComplete='new-password'
+                      />
+                    )}
+
+                    <Button
+                      type='submit'
+                      variant='contained'
+                      size='large'
+                      fullWidth
+                      disabled={loading}
+                      sx={{
+                        py: 1.3,
+                        fontWeight: 600,
+                        bgcolor: 'simBlue.main',
+                      }}>
+                      {loading
+                        ? isRegister
+                          ? 'Skapar konto...'
+                          : 'Loggar in...'
+                        : isRegister
+                          ? 'Skapa konto'
+                          : 'Logga in'}
+                    </Button>
+
+                    <Typography
+                      variant='body2'
+                      color='text.secondary'
+                      sx={{
+                        textAlign: 'center',
+                      }}>
+                      {isRegister
+                        ? 'Har du redan ett konto?'
+                        : 'Har du inget konto ännu?'}
+
+                      <Button
+                        type='button'
+                        variant='text'
+                        size='small'
+                        onClick={() =>
+                          handleModeChange(isRegister ? 'login' : 'register')
+                        }
+                        sx={{
+                          ml: 0.5,
+                        }}>
+                        {isRegister ? 'Logga in' : 'Skapa konto'}
+                      </Button>
+                    </Typography>
+                    <Button
+                      type='button'
+                      variant='text'
+                      size='small'
+                      sx={{ py: -3 }}
+                      onClick={() => {
+                        setError('');
+                        setForgotPassword(true);
+                      }}>
+                      Glömt lösenord?
+                    </Button>
+                  </Stack>
+                </Box>
+              </>
+            )}
           </CardContent>
         </Card>
       </Box>
