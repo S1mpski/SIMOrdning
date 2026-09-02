@@ -208,17 +208,18 @@ export default function CompanyMembers({
       }
 
       setMembers((current) => [...current, data]);
-
-      setSaving(false);
-      handleClose();
     }
 
-    async function handleInvite() {
-      if (!canManage) {
-        setInviteError('Du har inte behörighet att bjuda in användare.');
-        return;
-      }
+    setSaving(false);
+    handleClose();
+  }
+
+  async function handleInvite() {
+    if (!canManage) {
+      setInviteError('Du har inte behörighet att bjuda in användare.');
+      return;
     }
+
     const email = inviteEmail.trim().toLowerCase();
 
     if (!email) {

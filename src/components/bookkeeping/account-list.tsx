@@ -73,7 +73,6 @@ const emptyForm: AccountForm = {
   name: '',
   accountType: '',
 };
-const company = useCompany();
 
 export default function AccountList({ accounts, companyId }: Props) {
   const router = useRouter();
@@ -559,12 +558,27 @@ export default function AccountList({ accounts, companyId }: Props) {
               size='small'
               autoFocus
             />
+            <Stack direction='row' sx={{ alignItems: 'center', gap: 1 }}>
+              {
+                <Typography
+                  variant='h6'
+                  color='text.secondary'
+                  sx={{ fontWeight: 500 }}>
+                  {availableBasAccounts.length}
+                </Typography>
+              }
 
-            <Typography variant='body2' color='text.secondary'>
-              {availableBasAccounts.length} konton finns tillgängliga att lägga
-              till.
-            </Typography>
+              <sup>
+                <Box sx={{ mr: 0.25, ml: -0.8, mb: -0.5 }}>st</Box>
+              </sup>
 
+              <Typography
+                variant='h6'
+                color='text.secondary'
+                sx={{ fontWeight: 500 }}>
+                konton finns tillgängliga att lägga till.
+              </Typography>
+            </Stack>
             <Box
               sx={{
                 maxHeight: 480,

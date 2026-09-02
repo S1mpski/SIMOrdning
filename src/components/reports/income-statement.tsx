@@ -51,6 +51,8 @@ export default function IncomeStatement({ accounts }: Props) {
 
   const result = totalRevenue - totalExpenses;
 
+  const company = useCompany();
+
   return (
     <Box
       id='print-income-report'
