@@ -49,8 +49,6 @@ type Props = {
   canEdit: boolean;
 };
 
-const company = useCompany();
-
 export default function CompanySettingsForm({ company, canEdit }: Props) {
   const supabase = createClient();
   const router = useRouter();

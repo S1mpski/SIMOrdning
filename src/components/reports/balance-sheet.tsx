@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Box,
   Card,
@@ -14,8 +16,6 @@ type Props = {
   accounts: ReportAccount[];
 };
 
-const company = useCompany();
-
 function formatCurrency(value: number) {
   return value.toLocaleString('sv-SE', {
     minimumFractionDigits: 2,
@@ -24,6 +24,7 @@ function formatCurrency(value: number) {
 }
 
 export default function BalanceSheet({ accounts }: Props) {
+  const company = useCompany();
   const assetAccounts = accounts.filter(
     (account) =>
       account.account_number >= 1000 && account.account_number < 2000,

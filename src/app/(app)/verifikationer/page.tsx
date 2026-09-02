@@ -61,7 +61,6 @@ export default async function VouchersPage() {
       (total, row) => total + Number(row.debit),
       0,
     );
-    const company = useCompany();
 
     return {
       id: voucher.id,

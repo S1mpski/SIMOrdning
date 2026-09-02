@@ -1,3 +1,4 @@
+'use client';
 import {
   Box,
   Card,
@@ -29,6 +30,7 @@ function formatCurrency(value: number) {
 }
 
 export default function IncomeStatement({ accounts }: Props) {
+  const company = useCompany();
   const revenueAccounts = accounts.filter(
     (account) =>
       account.account_number >= 3000 && account.account_number < 4000,
@@ -50,8 +52,6 @@ export default function IncomeStatement({ accounts }: Props) {
   );
 
   const result = totalRevenue - totalExpenses;
-
-  const company = useCompany();
 
   return (
     <Box
