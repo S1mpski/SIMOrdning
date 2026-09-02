@@ -723,12 +723,12 @@ export default function AccountList({ accounts, companyId }: Props) {
 
             <TextField
               label='Kontonummer'
-              type='number'
+              type='text'
               value={form.accountNumber}
               onChange={(event) =>
                 setForm((current) => ({
                   ...current,
-                  accountNumber: event.target.value,
+                  accountNumber: event.target.value.replace(/\D/g, ''),
                 }))
               }
               fullWidth
@@ -736,8 +736,7 @@ export default function AccountList({ accounts, companyId }: Props) {
               autoFocus={!editingAccount}
               slotProps={{
                 htmlInput: {
-                  min: 1000,
-                  max: 9999,
+                  inputMode: 'numeric',
                 },
               }}
             />
