@@ -43,6 +43,7 @@ export default function BalanceSheet({ accounts }: Props) {
 
   return (
     <Box
+      id='print-balance-report'
       sx={{
         width: '100%',
         maxWidth: 1800,

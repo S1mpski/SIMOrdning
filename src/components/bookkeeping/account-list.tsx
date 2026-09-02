@@ -40,6 +40,7 @@ import {
   FormControl,
   InputLabel,
   Select,
+  Divider,
 } from '@mui/material';
 
 import { createClient } from '@/lib/supabase/client';
@@ -392,7 +393,7 @@ export default function AccountList({ accounts, companyId }: Props) {
             display: 'flex',
             alignItems: 'flex-end',
             justifyContent: 'space-between',
-            gap: 2,
+            gap: 20,
           }}>
           <Box>
             <Typography variant='h4' sx={{ fontWeight: 700 }}>
@@ -426,7 +427,13 @@ export default function AccountList({ accounts, companyId }: Props) {
           </Paper>
         ) : (
           <TableContainer component={Paper} variant='outlined'>
-            <Table>
+            <Table
+              sx={{
+                '& .MuiTableCell-root': {
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                },
+              }}>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ width: 160 }}>Kontonummer</TableCell>
@@ -572,6 +579,46 @@ export default function AccountList({ accounts, companyId }: Props) {
                   const checked = selectedBasAccounts.includes(
                     account.accountNumber,
                   );
+                  const typeChip = getAccountTypeChip(account.accountType);
+                  function getAccountTypeChip(accountType: string) {
+                    switch (accountType) {
+                      case 'asset':
+                        return {
+                          label: 'Tillgång',
+                          color: 'info' as const,
+                        };
+
+                      case 'equity':
+                        return {
+                          label: 'Eget kapital',
+                          color: 'secondary' as const,
+                        };
+
+                      case 'liability':
+                        return {
+                          label: 'Skuld',
+                          color: 'warning' as const,
+                        };
+
+                      case 'revenue':
+                        return {
+                          label: 'Intäkt',
+                          color: 'success' as const,
+                        };
+
+                      case 'expense':
+                        return {
+                          label: 'Kostnad',
+                          color: 'error' as const,
+                        };
+
+                      default:
+                        return {
+                          label: 'Okänd',
+                          color: 'default' as const,
+                        };
+                    }
+                  }
 
                   return (
                     <Box
@@ -616,6 +663,14 @@ export default function AccountList({ accounts, companyId }: Props) {
                       <Typography sx={{ fontSize: 14 }}>
                         {account.name}
                       </Typography>
+
+                      <Chip
+                        label={typeChip.label}
+                        color={typeChip.color}
+                        size='small'
+                        variant='outlined'
+                        sx={{ ml: 'auto', py: 2 }}
+                      />
                     </Box>
                   );
                 })
@@ -668,12 +723,12 @@ export default function AccountList({ accounts, companyId }: Props) {
 
             <TextField
               label='Kontonummer'
-              type='number'
+              type='text'
               value={form.accountNumber}
               onChange={(event) =>
                 setForm((current) => ({
                   ...current,
-                  accountNumber: event.target.value,
+                  accountNumber: event.target.value.replace(/\D/g, ''),
                 }))
               }
               fullWidth
@@ -681,8 +736,7 @@ export default function AccountList({ accounts, companyId }: Props) {
               autoFocus={!editingAccount}
               slotProps={{
                 htmlInput: {
-                  min: 1000,
-                  max: 9999,
+                  inputMode: 'numeric',
                 },
               }}
             />

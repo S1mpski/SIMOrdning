@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation';
 
 import AppHeader from '@/components/layout/app-header';
+import Footer from '@/components/layout/footer';
 import Sidebar from '@/components/layout/sidebar';
+import { CompanyProvider } from '@/components/providers/company-provider';
 import { createClient } from '@/lib/supabase/server';
 
 import { Box } from '@mui/material';
@@ -24,7 +26,7 @@ export default async function AppLayout({
   const { data: company, error } = await supabase
     .from('companies')
     .select('id, name')
-    .eq('owner_id', user.id)
+    .limit(1)
     .maybeSingle();
 
   if (error) {
@@ -36,32 +38,36 @@ export default async function AppLayout({
   }
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        minHeight: '100vh',
-        bgcolor: 'background.default',
-      }}>
-      <Sidebar />
-
+    <CompanyProvider company={company}>
       <Box
         sx={{
-          flex: 1,
-          minWidth: 0,
           display: 'flex',
-          flexDirection: 'column',
+          minHeight: '100vh',
+          bgcolor: 'background.default',
         }}>
-        <AppHeader companyId={company.id} companyName={company.name} />
+        <Sidebar />
 
         <Box
-          component='main'
           sx={{
             flex: 1,
-            p: 4,
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
           }}>
-          {children}
+          <AppHeader companyId={company.id} companyName={company.name} />
+
+          <Box
+            component='main'
+            sx={{
+              flex: 1,
+              p: 4,
+            }}>
+            {children}
+          </Box>
+
+          <Footer />
         </Box>
       </Box>
-    </Box>
+    </CompanyProvider>
   );
 }

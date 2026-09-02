@@ -37,8 +37,8 @@ export default async function CompanyPage() {
       default_currency
     `,
     )
-    .eq('owner_id', user.id)
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   if (!company) {
     return null;

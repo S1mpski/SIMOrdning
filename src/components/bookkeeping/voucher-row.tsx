@@ -39,6 +39,7 @@ export default function VoucherRow({
   onChange,
   onDelete,
   canDelete,
+
   mobile = false,
 }: Props) {
   const debitField = (

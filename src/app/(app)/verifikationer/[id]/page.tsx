@@ -26,8 +26,8 @@ export default async function VoucherPage({ params }: Props) {
   const { data: company } = await supabase
     .from('companies')
     .select('id')
-    .eq('owner_id', user.id)
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   if (!company) {
     notFound();

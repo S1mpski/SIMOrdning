@@ -21,9 +21,9 @@ export default async function VouchersPage() {
 
   const { data: company } = await supabase
     .from('companies')
-    .select('id')
-    .eq('owner_id', user.id)
-    .single();
+    .select('id, name')
+    .limit(1)
+    .maybeSingle();
 
   if (!company) {
     return <Typography color='error'>Kunde inte hitta företaget.</Typography>;
@@ -78,9 +78,8 @@ export default async function VouchersPage() {
         maxWidth: 1600,
         mx: 'auto',
         px: {
-          xs: 2,
-          sm: 3,
-          md: 4,
+          sm: 1,
+          md: 1,
         },
       }}>
       <Box sx={{ mb: 3 }}>
@@ -89,7 +88,7 @@ export default async function VouchersPage() {
         </Typography>
 
         <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-          Alla bokförda verifikationer för företaget.
+          Alla bokförda verifikationer för {company.name || 'företaget'}
         </Typography>
       </Box>
 

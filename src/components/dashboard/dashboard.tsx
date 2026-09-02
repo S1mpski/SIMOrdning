@@ -7,8 +7,9 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
-
+import { useTheme } from '@mui/material/styles';
 import SummaryDonut from '@/components/dashboard/summary-donut';
+import { useCompany } from '@/components/providers/company-provider';
 
 import {
   Box,
@@ -25,6 +26,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import { white } from 'next/dist/lib/picocolors';
 
 type Voucher = {
   id: string;
@@ -70,6 +72,12 @@ export default function Dashboard({
   vouchers,
 }: Props) {
   const router = useRouter();
+  const theme = useTheme();
+  const isProfit = result > 0;
+  const isLoss = result < 0;
+  const hasResultData = revenue !== 0 || expenses !== 0;
+  const resultMargin = revenue > 0 ? (result / revenue) * 100 : null;
+  const company = useCompany();
 
   return (
     <Box
@@ -90,7 +98,7 @@ export default function Dashboard({
           </Typography>
 
           <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-            Överblickande information om företaget.
+            Överblickande information om {company.name || 'företaget.'}
           </Typography>
         </Box>
 
@@ -117,7 +125,7 @@ export default function Dashboard({
                     alignItems: 'flex-start',
                   }}>
                   <Box>
-                    <Typography variant='body2' color='text.secondary'>
+                    <Typography variant='body1' color='text.secondary'>
                       Resultat
                     </Typography>
 
@@ -133,7 +141,7 @@ export default function Dashboard({
                     </Typography>
                   </Box>
 
-                  <TrendingUpOutlinedIcon color='action' />
+                  <TrendingUpOutlinedIcon sx={{ fontSize: '50px' }} />
                 </Stack>
               </CardContent>
             </Card>
@@ -162,7 +170,7 @@ export default function Dashboard({
                   }}>
                   <Box>
                     <Typography variant='body2' color='text.secondary'>
-                      Verifikationer
+                      Antal verifikationer
                     </Typography>
 
                     <Typography
@@ -177,7 +185,7 @@ export default function Dashboard({
                     </Typography>
                   </Box>
 
-                  <ReceiptLongOutlinedIcon color='action' />
+                  <ReceiptLongOutlinedIcon sx={{ fontSize: '40px' }} />
                 </Stack>
               </CardContent>
             </Card>
@@ -199,7 +207,7 @@ export default function Dashboard({
                   },
                 }}>
                 <Typography variant='body2' color='text.secondary'>
-                  Senaste verifikation
+                  Senaste verifikationen
                 </Typography>
 
                 {vouchers.length > 0 ? (
@@ -211,7 +219,7 @@ export default function Dashboard({
                         lineHeight: 1.2,
                         fontWeight: 700,
                       }}>
-                      #{vouchers[0].voucher_number}
+                      {vouchers[0].description}
                     </Typography>
 
                     <Typography
@@ -219,7 +227,7 @@ export default function Dashboard({
                       color='text.secondary'
                       noWrap
                       sx={{ mt: 0.5 }}>
-                      {vouchers[0].description}
+                      {vouchers[0].voucher_date}
                     </Typography>
                   </>
                 ) : (
@@ -230,6 +238,7 @@ export default function Dashboard({
                     Ingen ännu
                   </Typography>
                 )}
+                <TrendingUpOutlinedIcon sx={{ fontSize: '50px' }} />
               </CardContent>
             </Card>
           </Grid>
@@ -239,19 +248,19 @@ export default function Dashboard({
           <Grid size={{ xs: 12, lg: 4 }}>
             <SummaryDonut
               title='Tillgångar'
-              subtitle='Fördelning av företagets tillgångar.'
+              subtitle={`Fördelning av ${company.name || 'företagets'} tillgångar`}
               centerLabel='Tillgångar'
               centerValue={assets}
               data={[
                 {
                   id: 'fixed-assets',
                   label: 'Anläggningstillgångar',
-                  value: Math.max(0, fixedAssets),
+                  value: fixedAssets,
                 },
                 {
                   id: 'current-assets',
                   label: 'Omsättningstillgångar',
-                  value: Math.max(0, currentAssets),
+                  value: currentAssets,
                 },
               ]}
             />
@@ -260,19 +269,19 @@ export default function Dashboard({
           <Grid size={{ xs: 12, lg: 4 }}>
             <SummaryDonut
               title='Eget kapital & skulder'
-              subtitle='Hur företagets finansiering är fördelad.'
+              subtitle={`Finansiering av ${company.name || 'företagets'} tillgångar`}
               centerLabel='Totalt'
-              centerValue={Math.max(0, equity) + Math.max(0, liabilities)}
+              centerValue={equity + liabilities}
               data={[
                 {
                   id: 'equity',
                   label: 'Eget kapital',
-                  value: Math.max(0, equity),
+                  value: equity,
                 },
                 {
                   id: 'liabilities',
                   label: 'Skulder',
-                  value: Math.max(0, liabilities),
+                  value: liabilities,
                 },
               ]}
             />
@@ -281,21 +290,56 @@ export default function Dashboard({
           <Grid size={{ xs: 12, lg: 4 }}>
             <SummaryDonut
               title='Resultat'
-              subtitle='Intäkter och kostnader för perioden.'
-              centerLabel='Resultat'
+              subtitle={
+                resultMargin !== null
+                  ? `Resultatmarginal ${resultMargin.toLocaleString('sv-SE', {
+                      maximumFractionDigits: 1,
+                    })} %`
+                  : 'Resultatmarginal saknas'
+              }
+              centerLabel={
+                result > 0 ? 'Vinst' : result < 0 ? 'Förlust' : 'Nollresultat'
+              }
               centerValue={result}
-              data={[
-                {
-                  id: 'revenue',
-                  label: 'Intäkter',
-                  value: Math.max(0, revenue),
-                },
-                {
-                  id: 'expenses',
-                  label: 'Kostnader',
-                  value: Math.max(0, expenses),
-                },
-              ]}
+              hasAccountingData={hasResultData}
+              percentageBase={revenue}
+              data={
+                isProfit
+                  ? [
+                      {
+                        id: 'profit',
+                        label: 'Vinst',
+                        value: result,
+                        color: theme.palette.simBlue.light,
+                      },
+                      {
+                        id: 'expenses',
+                        label: 'Kostnader',
+                        value: expenses,
+                        color: theme.palette.simBlue.dark,
+                      },
+                    ]
+                  : [
+                      {
+                        id: 'revenue',
+                        label: 'Intäkter',
+                        value: revenue,
+                        color: theme.palette.simBlue.light,
+                      },
+                      {
+                        id: 'expenses',
+                        label: 'Kostnader',
+                        value: expenses,
+                        color: theme.palette.simBlue.dark,
+                      },
+                      {
+                        id: 'loss',
+                        label: 'Förlust',
+                        value: result,
+                        color: theme.palette.error.dark,
+                      },
+                    ]
+              }
             />
           </Grid>
         </Grid>

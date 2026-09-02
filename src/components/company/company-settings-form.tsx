@@ -122,312 +122,348 @@ export default function CompanySettingsForm({ company }: Props) {
   }
 
   return (
-    <Stack spacing={3}>
-      <Box>
-        <Typography variant='h4' sx={{ fontWeight: 700 }}>
-          Företagsuppgifter
-        </Typography>
-
-        <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-          Hantera företagets grunduppgifter och bokföringsinställningar.
-        </Typography>
-      </Box>
-
-      {success && (
-        <Alert severity='success'>Företagsuppgifterna har sparats.</Alert>
-      )}
-
-      {error && <Alert severity='error'>{error}</Alert>}
-
-      <Card variant='outlined'>
-        <CardContent>
-          <Stack spacing={3}>
-            <Typography
-              sx={{
-                fontSize: 16,
-                fontWeight: 600,
-              }}>
-              Grunduppgifter
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: 2000,
+        mx: 'auto',
+        px: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
+      }}>
+      <Stack spacing={3}>
+        <Stack
+          direction='row'
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <Box>
+            <Typography variant='h4' sx={{ fontWeight: 700 }}>
+              Företagsuppgifter
             </Typography>
 
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label='Företagsnamn'
-                  value={form.name}
-                  onChange={(event) => updateField('name', event.target.value)}
-                  fullWidth
-                  size='small'
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label='Organisationsnummer'
-                  value={form.organization_number}
-                  onChange={(event) =>
-                    updateField('organization_number', event.target.value)
-                  }
-                  fullWidth
-                  size='small'
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl fullWidth size='small'>
-                  <InputLabel>Företagsform</InputLabel>
-
-                  <Select
-                    label='Företagsform'
-                    value={form.company_type}
-                    onChange={(event) =>
-                      updateField('company_type', event.target.value)
-                    }>
-                    <MenuItem value=''>
-                      <em>Ej angiven</em>
-                    </MenuItem>
-                    <MenuItem value='enskild_firma'>Enskild firma</MenuItem>
-                    <MenuItem value='aktiebolag'>Aktiebolag</MenuItem>
-                    <MenuItem value='handelsbolag'>Handelsbolag</MenuItem>
-                    <MenuItem value='kommanditbolag'>Kommanditbolag</MenuItem>
-                    <MenuItem value='ekonomisk_forening'>
-                      Ekonomisk förening
-                    </MenuItem>
-                    <MenuItem value='ideell_forening'>Ideell förening</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl fullWidth size='small'>
-                  <InputLabel>Standardvaluta</InputLabel>
-
-                  <Select
-                    label='Standardvaluta'
-                    value={form.default_currency}
-                    onChange={(event) =>
-                      updateField('default_currency', event.target.value)
-                    }>
-                    <MenuItem value='SEK'>SEK</MenuItem>
-                    <MenuItem value='EUR'>EUR</MenuItem>
-                    <MenuItem value='USD'>USD</MenuItem>
-                    <MenuItem value='NOK'>NOK</MenuItem>
-                    <MenuItem value='DKK'>DKK</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          </Stack>
-        </CardContent>
-      </Card>
-
-      <Card variant='outlined'>
-        <CardContent>
-          <Stack spacing={3}>
-            <Typography
-              sx={{
-                fontSize: 16,
-                fontWeight: 600,
-              }}>
-              Kontaktuppgifter
+            <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
+              Hantera företagets uppgifter och bokföringsinställningar.
             </Typography>
+          </Box>
 
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  label='Adress'
-                  value={form.address}
-                  onChange={(event) =>
-                    updateField('address', event.target.value)
-                  }
-                  fullWidth
-                  size='small'
-                />
-              </Grid>
+          <Button variant='contained' onClick={handleSave} disabled={saving}>
+            {saving ? 'Sparar...' : 'Spara ändringar'}
+          </Button>
+        </Stack>
 
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  label='Postnummer'
-                  value={form.postal_code}
-                  onChange={(event) =>
-                    updateField('postal_code', event.target.value)
-                  }
-                  fullWidth
-                  size='small'
-                />
-              </Grid>
+        {success && (
+          <Alert
+            severity='success'
+            sx={(theme) => ({
+              ...(theme.palette.mode === 'dark' && {
+                bgcolor: 'rgba(8, 120, 249, 0.15)',
+                color: 'simBlue.light',
 
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  label='Ort'
-                  value={form.city}
-                  onChange={(event) => updateField('city', event.target.value)}
-                  fullWidth
-                  size='small'
-                />
-              </Grid>
+                '& .MuiAlert-icon': {
+                  color: 'simBlue.light',
+                },
+              }),
+            })}>
+            Företagsuppgifterna har sparats.
+          </Alert>
+        )}
 
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  label='Land'
-                  value={form.country}
-                  onChange={(event) =>
-                    updateField('country', event.target.value)
-                  }
-                  fullWidth
-                  size='small'
-                />
-              </Grid>
+        {error && <Alert severity='error'>{error}</Alert>}
 
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label='E-post'
-                  type='email'
-                  value={form.email}
-                  onChange={(event) => updateField('email', event.target.value)}
-                  fullWidth
-                  size='small'
-                />
-              </Grid>
+        <Card variant='outlined'>
+          <CardContent>
+            <Stack spacing={3}>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                }}>
+                Grunduppgifter
+              </Typography>
 
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label='Telefon'
-                  value={form.phone}
-                  onChange={(event) => updateField('phone', event.target.value)}
-                  fullWidth
-                  size='small'
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  label='Webbplats'
-                  value={form.website}
-                  onChange={(event) =>
-                    updateField('website', event.target.value)
-                  }
-                  fullWidth
-                  size='small'
-                />
-              </Grid>
-            </Grid>
-          </Stack>
-        </CardContent>
-      </Card>
-
-      <Card variant='outlined'>
-        <CardContent>
-          <Stack spacing={3}>
-            <Typography
-              sx={{
-                fontSize: 16,
-                fontWeight: 600,
-              }}>
-              Skatt och moms
-            </Typography>
-
-            <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={form.vat_registered}
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label='Företagsnamn'
+                    value={form.name}
                     onChange={(event) =>
-                      updateField('vat_registered', event.target.checked)
+                      updateField('name', event.target.value)
                     }
+                    fullWidth
+                    size='small'
                   />
-                }
-                label='Momsregistrerad'
-              />
+                </Grid>
 
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={form.f_tax}
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label='Organisationsnummer'
+                    value={form.organization_number}
                     onChange={(event) =>
-                      updateField('f_tax', event.target.checked)
+                      updateField('organization_number', event.target.value)
                     }
+                    fullWidth
+                    size='small'
                   />
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <FormControl fullWidth size='small'>
+                    <InputLabel>Företagsform</InputLabel>
+
+                    <Select
+                      label='Företagsform'
+                      value={form.company_type}
+                      onChange={(event) =>
+                        updateField('company_type', event.target.value)
+                      }>
+                      <MenuItem value=''>
+                        <em>Ej angiven</em>
+                      </MenuItem>
+                      <MenuItem value='enskild_firma'>Enskild firma</MenuItem>
+                      <MenuItem value='aktiebolag'>Aktiebolag</MenuItem>
+                      <MenuItem value='handelsbolag'>Handelsbolag</MenuItem>
+                      <MenuItem value='kommanditbolag'>Kommanditbolag</MenuItem>
+                      <MenuItem value='ekonomisk_forening'>
+                        Ekonomisk förening
+                      </MenuItem>
+                      <MenuItem value='ideell_forening'>
+                        Ideell förening
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <FormControl fullWidth size='small'>
+                    <InputLabel>Standardvaluta</InputLabel>
+
+                    <Select
+                      label='Standardvaluta'
+                      value={form.default_currency}
+                      onChange={(event) =>
+                        updateField('default_currency', event.target.value)
+                      }>
+                      <MenuItem value='SEK'>SEK</MenuItem>
+                      <MenuItem value='EUR'>EUR</MenuItem>
+                      <MenuItem value='USD'>USD</MenuItem>
+                      <MenuItem value='NOK'>NOK</MenuItem>
+                      <MenuItem value='DKK'>DKK</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Stack>
+          </CardContent>
+        </Card>
+
+        <Card variant='outlined'>
+          <CardContent>
+            <Stack spacing={3}>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                }}>
+                Kontaktuppgifter
+              </Typography>
+
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12 }}>
+                  <TextField
+                    label='Adress'
+                    value={form.address}
+                    onChange={(event) =>
+                      updateField('address', event.target.value)
+                    }
+                    fullWidth
+                    size='small'
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <TextField
+                    label='Postnummer'
+                    value={form.postal_code}
+                    onChange={(event) =>
+                      updateField('postal_code', event.target.value)
+                    }
+                    fullWidth
+                    size='small'
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <TextField
+                    label='Ort'
+                    value={form.city}
+                    onChange={(event) =>
+                      updateField('city', event.target.value)
+                    }
+                    fullWidth
+                    size='small'
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <TextField
+                    label='Land'
+                    value={form.country}
+                    onChange={(event) =>
+                      updateField('country', event.target.value)
+                    }
+                    fullWidth
+                    size='small'
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label='E-post'
+                    type='email'
+                    value={form.email}
+                    onChange={(event) =>
+                      updateField('email', event.target.value)
+                    }
+                    fullWidth
+                    size='small'
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label='Telefon'
+                    value={form.phone}
+                    onChange={(event) =>
+                      updateField('phone', event.target.value)
+                    }
+                    fullWidth
+                    size='small'
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12 }}>
+                  <TextField
+                    label='Webbplats'
+                    value={form.website}
+                    onChange={(event) =>
+                      updateField('website', event.target.value)
+                    }
+                    fullWidth
+                    size='small'
+                  />
+                </Grid>
+              </Grid>
+            </Stack>
+          </CardContent>
+        </Card>
+
+        <Card variant='outlined'>
+          <CardContent>
+            <Stack spacing={3}>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                }}>
+                Skatt och moms
+              </Typography>
+
+              <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2 }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={form.vat_registered}
+                      onChange={(event) =>
+                        updateField('vat_registered', event.target.checked)
+                      }
+                    />
+                  }
+                  label='Momsregistrerad'
+                />
+
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={form.f_tax}
+                      onChange={(event) =>
+                        updateField('f_tax', event.target.checked)
+                      }
+                    />
+                  }
+                  label='Godkänd för F-skatt'
+                />
+              </Stack>
+
+              <TextField
+                label='VAT-nummer'
+                value={form.vat_number}
+                onChange={(event) =>
+                  updateField('vat_number', event.target.value)
                 }
-                label='Godkänd för F-skatt'
+                fullWidth
+                size='small'
+                disabled={!form.vat_registered}
               />
             </Stack>
+          </CardContent>
+        </Card>
 
-            <TextField
-              label='VAT-nummer'
-              value={form.vat_number}
-              onChange={(event) =>
-                updateField('vat_number', event.target.value)
-              }
-              fullWidth
-              size='small'
-              disabled={!form.vat_registered}
-            />
-          </Stack>
-        </CardContent>
-      </Card>
+        <Card variant='outlined'>
+          <CardContent>
+            <Stack spacing={3}>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                }}>
+                Räkenskapsår
+              </Typography>
 
-      <Card variant='outlined'>
-        <CardContent>
-          <Stack spacing={3}>
-            <Typography
-              sx={{
-                fontSize: 16,
-                fontWeight: 600,
-              }}>
-              Räkenskapsår
-            </Typography>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label='Startdatum'
+                    type='date'
+                    value={form.fiscal_year_start}
+                    onChange={(event) =>
+                      updateField('fiscal_year_start', event.target.value)
+                    }
+                    fullWidth
+                    size='small'
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true,
+                      },
+                    }}
+                  />
+                </Grid>
 
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label='Startdatum'
-                  type='date'
-                  value={form.fiscal_year_start}
-                  onChange={(event) =>
-                    updateField('fiscal_year_start', event.target.value)
-                  }
-                  fullWidth
-                  size='small'
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
-                />
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    label='Slutdatum'
+                    type='date'
+                    value={form.fiscal_year_end}
+                    onChange={(event) =>
+                      updateField('fiscal_year_end', event.target.value)
+                    }
+                    fullWidth
+                    size='small'
+                    slotProps={{
+                      inputLabel: {
+                        shrink: true,
+                      },
+                    }}
+                  />
+                </Grid>
               </Grid>
-
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  label='Slutdatum'
-                  type='date'
-                  value={form.fiscal_year_end}
-                  onChange={(event) =>
-                    updateField('fiscal_year_end', event.target.value)
-                  }
-                  fullWidth
-                  size='small'
-                  slotProps={{
-                    inputLabel: {
-                      shrink: true,
-                    },
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Stack>
-        </CardContent>
-      </Card>
-
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-        }}>
-        <Button variant='contained' onClick={handleSave} disabled={saving}>
-          {saving ? 'Sparar...' : 'Spara ändringar'}
-        </Button>
-      </Box>
-    </Stack>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Stack>
+    </Box>
   );
 }
