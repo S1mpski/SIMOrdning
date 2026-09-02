@@ -98,7 +98,7 @@ export default function Dashboard({
           </Typography>
 
           <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-            Överblickande information om {company.name || 'företaget.'}
+            Överblickande information om {company?.name ?? 'företaget'}
           </Typography>
         </Box>
 
@@ -248,7 +248,7 @@ export default function Dashboard({
           <Grid size={{ xs: 12, lg: 4 }}>
             <SummaryDonut
               title='Tillgångar'
-              subtitle={`Fördelning av ${company.name || 'företagets'} tillgångar`}
+              subtitle={`Fördelning av ${company?.name ?? 'företaget'} tillgångar`}
               centerLabel='Tillgångar'
               centerValue={assets}
               data={[
@@ -269,7 +269,7 @@ export default function Dashboard({
           <Grid size={{ xs: 12, lg: 4 }}>
             <SummaryDonut
               title='Eget kapital & skulder'
-              subtitle={`Finansiering av ${company.name || 'företagets'} tillgångar`}
+              subtitle={`Finansiering av ${company?.name ?? 'företaget'} tillgångar`}
               centerLabel='Totalt'
               centerValue={equity + liabilities}
               data={[

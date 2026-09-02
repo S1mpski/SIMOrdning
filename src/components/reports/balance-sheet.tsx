@@ -8,10 +8,13 @@ import {
 } from '@mui/material';
 
 import type { ReportAccount } from './income-statement';
+import { useCompany } from '@/components/providers/company-provider';
 
 type Props = {
   accounts: ReportAccount[];
 };
+
+const company = useCompany();
 
 function formatCurrency(value: number) {
   return value.toLocaleString('sv-SE', {
@@ -70,7 +73,8 @@ export default function BalanceSheet({ accounts }: Props) {
             sx={{
               mt: 0.5,
             }}>
-            Företagets tillgångar, eget kapital och skulder.
+            {company?.name ?? 'företaget'}
+            {'s'} tillgångar, eget kapital och skulder.
           </Typography>
         </Box>
 

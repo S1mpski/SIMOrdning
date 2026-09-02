@@ -43,6 +43,8 @@ import {
   Divider,
 } from '@mui/material';
 
+import { useCompany } from '@/components/providers/company-provider';
+
 import { createClient } from '@/lib/supabase/client';
 
 export type AccountListItem = {
@@ -71,6 +73,7 @@ const emptyForm: AccountForm = {
   name: '',
   accountType: '',
 };
+const company = useCompany();
 
 export default function AccountList({ accounts, companyId }: Props) {
   const router = useRouter();
@@ -97,6 +100,7 @@ export default function AccountList({ accounts, companyId }: Props) {
   const [basSaving, setBasSaving] = useState(false);
   const [basError, setBasError] = useState('');
   const [accountSearch, setAccountSearch] = useState('');
+  const company = useCompany();
 
   const existingAccountNumbers = new Set(
     accounts.map((account) => account.account_number),
@@ -401,7 +405,8 @@ export default function AccountList({ accounts, companyId }: Props) {
             </Typography>
 
             <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-              Konton som används i företagets bokföring.
+              Bokföringskonton som finns tillängliga i{' '}
+              {company?.name ?? 'företaget'}.
             </Typography>
           </Box>
 

@@ -8,6 +8,8 @@ import {
 } from '@mui/material';
 import PrintReportButton from './print-report-button';
 
+import { useCompany } from '@/components/providers/company-provider';
+
 export type ReportAccount = {
   account_number: number;
   name: string;
@@ -70,7 +72,8 @@ export default function IncomeStatement({ accounts }: Props) {
             </Typography>
 
             <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-              Företagets intäkter och kostnader.
+              {company?.name ?? 'företaget'}
+              {'s'} intäkter och kostnader.
             </Typography>
           </Box>
           <PrintReportButton />
