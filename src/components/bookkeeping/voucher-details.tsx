@@ -75,7 +75,12 @@ export default function VoucherDetails({
 
               <Divider />
 
-              <Table>
+              <Table
+                sx={{
+                  '& .MuiTableCell-root': {
+                    borderColor: 'text.disabled',
+                  },
+                }}>
                 <TableHead>
                   <TableRow>
                     <TableCell>Konto</TableCell>
