@@ -17,7 +17,7 @@ export default async function CreateCompanyPage() {
   const { data: company } = await supabase
     .from('companies')
     .select('id')
-    .eq('owner_id', user.id)
+    .limit(1)
     .maybeSingle();
 
   if (company) {

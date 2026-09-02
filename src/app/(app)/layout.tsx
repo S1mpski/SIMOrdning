@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation';
 
 import AppHeader from '@/components/layout/app-header';
-import Sidebar from '@/components/layout/sidebar';
-import { createClient } from '@/lib/supabase/server';
 import Footer from '@/components/layout/footer';
+import Sidebar from '@/components/layout/sidebar';
 import { CompanyProvider } from '@/components/providers/company-provider';
+import { createClient } from '@/lib/supabase/server';
 
 import { Box } from '@mui/material';
 
@@ -26,7 +26,7 @@ export default async function AppLayout({
   const { data: company, error } = await supabase
     .from('companies')
     .select('id, name')
-    .eq('owner_id', user.id)
+    .limit(1)
     .maybeSingle();
 
   if (error) {
@@ -64,6 +64,7 @@ export default async function AppLayout({
             }}>
             {children}
           </Box>
+
           <Footer />
         </Box>
       </Box>

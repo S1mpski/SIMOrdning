@@ -57,7 +57,6 @@ export default function CreateCompanyForm() {
       return;
     }
 
-    // 1. Skapa företaget och hämta dess id
     const { data: company, error: insertError } = await supabase
       .from('companies')
       .insert({
@@ -69,8 +68,14 @@ export default function CreateCompanyForm() {
         vat_registered: false,
         f_tax: false,
       })
-      .select('id')
+      .select('id, owner_id')
       .single();
+
+    console.log({
+      userId: user.id,
+      company,
+      insertError,
+    });
 
     if (insertError || !company) {
       setLoading(false);
