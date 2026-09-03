@@ -69,7 +69,14 @@ export default function Footer() {
               gap: 0.75,
               fontSize: 14,
             }}>
-            <GitHubIcon fontSize='small' />
+            <GitHubIcon
+              sx={{
+                width: 20,
+                height: 20,
+                fontSize: 20,
+                flexShrink: 0,
+              }}
+            />
             GitHub
           </Link>
 
