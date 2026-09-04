@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 type Props = {
   companyId: string;
@@ -11,85 +11,163 @@ type Props = {
 
 export default function AppHeader({ companyName }: Props) {
   const [animationEnabled, setAnimationEnabled] = useState(false);
-  const [headerWidth, setHeaderWidth] = useState(0);
 
-  const headerRef = useRef<HTMLDivElement>(null);
+  const companyRef = useRef<HTMLDivElement>(null);
+
+  const positionRef = useRef({
+    x: 0,
+    y: 0,
+    vx: -0.7,
+    vy: 0.45,
+  });
+
+  const frameRef = useRef<number | null>(null);
+
+  function toggleAnimation() {
+    const company = companyRef.current;
+
+    if (!company) return;
+
+    if (!animationEnabled) {
+      // Läs den riktiga vilopositionen innan elementet blir fixed
+      const rect = company.getBoundingClientRect();
+
+      positionRef.current = {
+        x: rect.left,
+        y: rect.top,
+        vx: -0.7,
+        vy: 0.45,
+      };
+
+      setAnimationEnabled(true);
+    } else {
+      setAnimationEnabled(false);
+    }
+  }
 
   useEffect(() => {
-    const header = headerRef.current;
+    const company = companyRef.current;
 
-    if (!header) return;
+    if (!company) return;
 
-    const observer = new ResizeObserver(([entry]) => {
-      setHeaderWidth(entry.contentRect.width);
-    });
+    if (!animationEnabled) {
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
 
-    observer.observe(header);
+      // Viktigt: ta bort tidigare translate-position
+      company.style.transform = 'none';
 
-    return () => observer.disconnect();
-  }, []);
+      return;
+    }
 
-  const startX = 80;
+    let lastTime = performance.now();
 
-  const rightPadding = 140;
+    const animate = (time: number) => {
+      const delta = Math.min((time - lastTime) / 16.67, 2);
 
-  const endX = Math.max(headerWidth - rightPadding, startX);
+      lastTime = time;
 
-  const distance = endX - startX;
+      /*
+       * Eftersom elementet använder transform måste vi inte använda
+       * getBoundingClientRect() för x/y-positionen här.
+       * Vi behöver bara dess storlek.
+       */
+      const companyWidth = company.offsetWidth;
+      const companyHeight = company.offsetHeight;
 
-  const motionPath = `M ${startX} 30 C ${
-    startX + distance * 0.08
-  } 112, ${startX + distance * 0.16} -50, ${
-    startX + distance * 0.24
-  } 30 C ${startX + distance * 0.32} 64, ${
-    startX + distance * 0.4
-  } 62, ${startX + distance * 0.48} 30 C ${
-    startX + distance * 0.56
-  } -1, ${startX + distance * 0.64} -3, ${
-    startX + distance * 0.72
-  } 30 C ${startX + distance * 0.78} 64, ${
-    startX + distance * 0.84
-  } 62, ${startX + distance * 0.9} 30 C ${
-    startX + distance * 0.94
-  } -1, ${startX + distance * 0.97} -3, ${endX} 30`;
+      const padding = 12;
+
+      const minX = padding;
+      const maxX = window.innerWidth - companyWidth - padding;
+
+      const minY = padding;
+      const maxY = window.innerHeight - companyHeight - padding;
+
+      const pos = positionRef.current;
+
+      pos.x += pos.vx * delta;
+      pos.y += pos.vy * delta;
+
+      if (pos.x <= minX) {
+        pos.x = minX;
+        pos.vx = Math.abs(pos.vx);
+      }
+
+      if (pos.x >= maxX) {
+        pos.x = maxX;
+        pos.vx = -Math.abs(pos.vx);
+      }
+
+      if (pos.y <= minY) {
+        pos.y = minY;
+        pos.vy = Math.abs(pos.vy);
+      }
+
+      if (pos.y >= maxY) {
+        pos.y = maxY;
+        pos.vy = -Math.abs(pos.vy);
+      }
+
+      company.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+
+      frameRef.current = requestAnimationFrame(animate);
+    };
+
+    frameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+    };
+  }, [animationEnabled]);
 
   return (
     <Box
-      ref={headerRef}
       component='header'
       sx={{
         height: 88,
         px: 4,
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'visible',
         bgcolor: 'background.paper',
         borderBottom: '1px solid',
         borderColor: 'divider',
       }}>
       <Box
+        ref={companyRef}
+        onClick={toggleAnimation}
+        role='button'
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleAnimation();
+          }
+        }}
         sx={{
-          position: 'absolute',
-          left: 0,
-          top: 14,
+          position: animationEnabled ? 'fixed' : 'absolute',
+
+          left: animationEnabled ? 0 : 'auto',
+          right: animationEnabled ? 'auto' : 40,
+
+          top: animationEnabled ? 0 : 20,
+
           width: 'fit-content',
           whiteSpace: 'nowrap',
 
-          offsetPath: `path("${motionPath}")`,
-          offsetRotate: '0deg',
+          zIndex: animationEnabled ? 9999 : 'auto',
 
-          animation: animationEnabled
-            ? 'companyWave 30s linear infinite alternate'
-            : 'none',
+          cursor: 'pointer',
+          userSelect: 'none',
 
-          offsetDistance: animationEnabled ? undefined : '100%',
+          willChange: 'transform',
 
-          '@keyframes companyWave': {
-            from: {
-              offsetDistance: '100%',
-            },
-            to: {
-              offsetDistance: '0%',
-            },
+          '&:hover': {
+            opacity: 0.85,
           },
         }}>
         <Typography
@@ -100,6 +178,7 @@ export default function AppHeader({ companyName }: Props) {
             textTransform: 'uppercase',
             letterSpacing: 0.8,
             mb: 0.25,
+            textAlign: 'center',
           }}>
           Aktivt företag
         </Typography>
@@ -115,36 +194,6 @@ export default function AppHeader({ companyName }: Props) {
           {companyName}
         </Typography>
       </Box>
-
-      <IconButton
-        onClick={() => setAnimationEnabled((prev) => !prev)}
-        disableRipple
-        aria-label='Toggle company animation'
-        sx={{
-          position: 'absolute',
-          right: 28,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          p: 0.5,
-          opacity: 0.18,
-          transition: 'opacity 0.2s ease, transform 0.2s ease',
-
-          '&:hover': {
-            opacity: 0.8,
-            transform: 'translateY(-50%) scale(1.08)',
-          },
-        }}>
-        <Box
-          component='img'
-          src='/blu-ray-logo.svg'
-          alt=''
-          sx={{
-            width: 42,
-            height: 'auto',
-            display: 'block',
-          }}
-        />
-      </IconButton>
     </Box>
   );
 }
