@@ -29,13 +29,12 @@ export default function AppHeader({ companyName }: Props) {
     return () => observer.disconnect();
   }, []);
 
-  // THESE MUST BE HERE, NOT INSIDE useEffect
-  const startX = 40;
+  const startX = 80;
 
-  // lämna plats för texten + knappen till höger
   const rightPadding = 140;
 
-  const endX = Math.max(headerWidth - rightPadding, 600);
+  const endX = Math.max(headerWidth - rightPadding, startX);
+
   const distance = endX - startX;
 
   const motionPath = `M ${startX} 30 C ${
