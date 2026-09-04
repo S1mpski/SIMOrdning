@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 
 import type { ReportAccount } from './income-statement';
+
 import { useCompany } from '@/components/providers/company-provider';
 
 type Props = {
@@ -25,12 +26,13 @@ function formatCurrency(value: number) {
 
 export default function BalanceSheet({ accounts }: Props) {
   const company = useCompany();
+
   const assetAccounts = accounts.filter(
     (account) =>
       account.account_number >= 1000 && account.account_number < 2000,
   );
 
-  const liabilityAccounts = accounts.filter(
+  const equityAndLiabilityAccounts = accounts.filter(
     (account) =>
       account.account_number >= 2000 && account.account_number < 3000,
   );
@@ -40,10 +42,12 @@ export default function BalanceSheet({ accounts }: Props) {
     0,
   );
 
-  const totalLiabilities = liabilityAccounts.reduce(
+  const totalEquityAndLiabilities = equityAndLiabilityAccounts.reduce(
     (total, account) => total + account.credit - account.debit,
     0,
   );
+
+  const gridColumns = '160px 1fr 180px';
 
   return (
     <Box
@@ -82,94 +86,235 @@ export default function BalanceSheet({ accounts }: Props) {
         <Card variant='outlined'>
           <CardContent>
             <Stack spacing={3}>
-              <Stack spacing={1}>
-                <Typography variant='h6'>Tillgångar</Typography>
+              {/* TILLGÅNGAR */}
+              <Stack spacing={0}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: gridColumns,
+                    px: 2,
+                    py: 1.5,
+                    alignItems: 'center',
+                  }}>
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      textAlign: 'center',
+                    }}>
+                    Kontonummer
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      pl: 16,
+                    }}>
+                    Kontonamn
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      textAlign: 'right',
+                    }}>
+                    Tillgångar
+                  </Typography>
+                </Box>
+
+                <Divider />
 
                 {assetAccounts.map((account) => {
                   const amount = account.debit - account.credit;
 
                   return (
-                    <Stack
-                      key={account.account_number}
-                      direction='row'
-                      sx={{
-                        justifyContent: 'space-between',
-                      }}>
-                      <Typography>
-                        {account.account_number} – {account.name}
-                      </Typography>
+                    <Box key={account.account_number}>
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: gridColumns,
+                          px: 2,
+                          py: 1.5,
+                          alignItems: 'center',
+                        }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            textAlign: 'center',
+                          }}>
+                          {account.account_number}
+                        </Typography>
 
-                      <Typography>{formatCurrency(amount)} kr</Typography>
-                    </Stack>
+                        <Typography
+                          sx={{
+                            pl: 16,
+                          }}>
+                          {account.name}
+                        </Typography>
+
+                        <Typography
+                          sx={{
+                            textAlign: 'right',
+                          }}>
+                          {formatCurrency(amount)} kr
+                        </Typography>
+                      </Box>
+
+                      <Divider />
+                    </Box>
                   );
                 })}
 
-                <Stack
-                  direction='row'
+                <Box
                   sx={{
-                    justifyContent: 'space-between',
-                    pt: 1,
+                    display: 'grid',
+                    gridTemplateColumns: gridColumns,
+                    px: 2,
+                    pt: 3,
+                    pb: 0.5,
                   }}>
-                  <Typography
+                  <Box
                     sx={{
-                      fontWeight: 700,
+                      gridColumn: '2 / 4',
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'baseline',
+                      gap: 1.5,
+                      whiteSpace: 'nowrap',
                     }}>
-                    Summa tillgångar
-                  </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 22,
+                        fontWeight: 700,
+                      }}>
+                      Summa tillgångar :
+                    </Typography>
 
-                  <Typography
-                    sx={{
-                      fontWeight: 700,
-                    }}>
-                    {formatCurrency(totalAssets)} kr
-                  </Typography>
-                </Stack>
+                    <Typography
+                      sx={{
+                        fontSize: 22,
+                        fontWeight: 700,
+                      }}>
+                      {formatCurrency(totalAssets)} kr
+                    </Typography>
+                  </Box>
+                </Box>
               </Stack>
 
               <Divider />
 
-              <Stack spacing={1}>
-                <Typography variant='h6'>Eget kapital och skulder</Typography>
-
-                {liabilityAccounts.map((account) => {
-                  const amount = account.credit - account.debit;
-
-                  return (
-                    <Stack
-                      key={account.account_number}
-                      direction='row'
-                      sx={{
-                        justifyContent: 'space-between',
-                      }}>
-                      <Typography>
-                        {account.account_number} – {account.name}
-                      </Typography>
-
-                      <Typography>{formatCurrency(amount)} kr</Typography>
-                    </Stack>
-                  );
-                })}
-
-                <Stack
-                  direction='row'
+              {/* EGET KAPITAL OCH SKULDER */}
+              <Stack spacing={0}>
+                <Box
                   sx={{
-                    justifyContent: 'space-between',
-                    pt: 1,
+                    display: 'grid',
+                    gridTemplateColumns: gridColumns,
+                    px: 2,
+                    py: 1.5,
+                    alignItems: 'center',
                   }}>
                   <Typography
                     sx={{
-                      fontWeight: 700,
+                      fontWeight: 600,
+                      textAlign: 'center',
                     }}>
-                    Summa eget kapital och skulder
+                    Kontonummer
                   </Typography>
 
                   <Typography
                     sx={{
-                      fontWeight: 700,
+                      fontWeight: 600,
+                      pl: 16,
                     }}>
-                    {formatCurrency(totalLiabilities)} kr
+                    Kontonamn
                   </Typography>
-                </Stack>
+
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      textAlign: 'right',
+                      whiteSpace: 'nowrap',
+                    }}>
+                    Eget kapital och skulder
+                  </Typography>
+                </Box>
+
+                <Divider />
+
+                {equityAndLiabilityAccounts.map((account) => {
+                  const amount = account.credit - account.debit;
+
+                  return (
+                    <Box key={account.account_number}>
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: gridColumns,
+                          px: 2,
+                          py: 1.5,
+                          alignItems: 'center',
+                        }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            textAlign: 'center',
+                          }}>
+                          {account.account_number}
+                        </Typography>
+
+                        <Typography
+                          sx={{
+                            pl: 16,
+                          }}>
+                          {account.name}
+                        </Typography>
+
+                        <Typography
+                          sx={{
+                            textAlign: 'right',
+                          }}>
+                          {formatCurrency(amount)} kr
+                        </Typography>
+                      </Box>
+
+                      <Divider />
+                    </Box>
+                  );
+                })}
+
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: gridColumns,
+                    px: 2,
+                    pt: 3,
+                    pb: 0.5,
+                  }}>
+                  <Box
+                    sx={{
+                      gridColumn: '2 / 4',
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'baseline',
+                      gap: 1.5,
+                      whiteSpace: 'nowrap',
+                    }}>
+                    <Typography
+                      sx={{
+                        fontSize: 22,
+                        fontWeight: 700,
+                      }}>
+                      Summa eget kapital och skulder :
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontSize: 22,
+                        fontWeight: 700,
+                      }}>
+                      {formatCurrency(totalEquityAndLiabilities)} kr
+                    </Typography>
+                  </Box>
+                </Box>
               </Stack>
             </Stack>
           </CardContent>

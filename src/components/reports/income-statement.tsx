@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Box,
   Card,
@@ -7,6 +8,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+
 import PrintReportButton from './print-report-button';
 
 import { useCompany } from '@/components/providers/company-provider';
@@ -31,6 +33,7 @@ function formatCurrency(value: number) {
 
 export default function IncomeStatement({ accounts }: Props) {
   const company = useCompany();
+
   const revenueAccounts = accounts.filter(
     (account) =>
       account.account_number >= 3000 && account.account_number < 4000,
@@ -53,6 +56,8 @@ export default function IncomeStatement({ accounts }: Props) {
 
   const result = totalRevenue - totalExpenses;
 
+  const gridColumns = '160px 1fr 180px';
+
   return (
     <Box
       id='print-income-report'
@@ -67,136 +72,299 @@ export default function IncomeStatement({ accounts }: Props) {
         },
       }}>
       <Stack spacing={2}>
-        <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
+        <Stack
+          direction='row'
+          sx={{
+            justifyContent: 'space-between',
+          }}>
           <Box>
-            <Typography variant='h4' sx={{ fontWeight: 700 }}>
+            <Typography
+              variant='h4'
+              sx={{
+                fontWeight: 700,
+              }}>
               Resultatrapport
             </Typography>
 
-            <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{
+                mt: 0.5,
+              }}>
               {company?.name ?? 'företaget'}
               {'s'} intäkter och kostnader.
             </Typography>
           </Box>
+
           <PrintReportButton />
         </Stack>
+
         <Card variant='outlined'>
           <CardContent>
             <Stack spacing={3}>
-              <Stack spacing={1}>
-                <Typography variant='h6'>Intäkter</Typography>
+              {/* INTÄKTER */}
+              <Stack spacing={0}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: gridColumns,
+                    px: 2,
+                    py: 1.5,
+                    alignItems: 'center',
+                  }}>
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      pl: 2,
+                    }}>
+                    Kontonummer
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      pl: 16,
+                    }}>
+                    Kontonamn
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      textAlign: 'right',
+                    }}>
+                    Intäkter
+                  </Typography>
+                </Box>
+
+                <Divider />
 
                 {revenueAccounts.map((account) => {
                   const amount = account.credit - account.debit;
 
                   return (
-                    <Stack
-                      key={account.account_number}
-                      direction='row'
-                      sx={{
-                        justifyContent: 'space-between',
-                      }}>
-                      <Typography>
-                        {account.account_number} – {account.name}
-                      </Typography>
+                    <Box key={account.account_number}>
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: gridColumns,
+                          px: 2,
+                          py: 1.5,
+                          alignItems: 'center',
+                        }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            textAlign: 'center',
+                          }}>
+                          {account.account_number}
+                        </Typography>
 
-                      <Typography>{formatCurrency(amount)} kr</Typography>
-                    </Stack>
+                        <Typography
+                          sx={{
+                            pl: 16,
+                          }}>
+                          {account.name}
+                        </Typography>
+
+                        <Typography
+                          sx={{
+                            textAlign: 'right',
+                          }}>
+                          {formatCurrency(amount)} kr
+                        </Typography>
+                      </Box>
+
+                      <Divider />
+                    </Box>
                   );
                 })}
 
-                <Stack
-                  direction='row'
+                <Box
                   sx={{
-                    justifyContent: 'space-between',
-                    pt: 1,
+                    display: 'grid',
+                    gridTemplateColumns: gridColumns,
+                    px: 2,
+                    pt: 3,
+                    pb: 0.5,
+                  }}>
+                  <Box
+                    sx={{
+                      gridColumn: '2 / 4',
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'baseline',
+                      gap: 1.5,
+                      whiteSpace: 'nowrap',
+                    }}>
+                    <Typography
+                      sx={{
+                        fontSize: 22,
+                        fontWeight: 700,
+                      }}>
+                      Summa intäkter :
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontSize: 22,
+                        fontWeight: 700,
+                      }}>
+                      {formatCurrency(totalRevenue)} kr
+                    </Typography>
+                  </Box>
+                </Box>
+              </Stack>
+
+              <Divider sx={{}} />
+
+              {/* KOSTNADER */}
+              <Stack spacing={0}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: gridColumns,
+                    px: 2,
+                    py: 1.5,
+                    alignItems: 'center',
                   }}>
                   <Typography
                     sx={{
-                      fontWeight: 700,
+                      fontWeight: 600,
+                      textAlign: 'center',
                     }}>
-                    Summa intäkter
+                    Kontonummer
                   </Typography>
 
                   <Typography
                     sx={{
-                      fontWeight: 700,
+                      fontWeight: 600,
+                      pl: 16,
                     }}>
-                    {formatCurrency(totalRevenue)} kr
+                    Kontonamn
                   </Typography>
-                </Stack>
-              </Stack>
 
-              <Divider />
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      textAlign: 'right',
+                    }}>
+                    Kostnader
+                  </Typography>
+                </Box>
 
-              <Stack spacing={1}>
-                <Typography variant='h6'>Kostnader</Typography>
+                <Divider />
 
                 {expenseAccounts.map((account) => {
                   const amount = account.debit - account.credit;
 
                   return (
-                    <Stack
-                      key={account.account_number}
-                      direction='row'
-                      sx={{
-                        justifyContent: 'space-between',
-                      }}>
-                      <Typography>
-                        {account.account_number} – {account.name}
-                      </Typography>
+                    <Box key={account.account_number}>
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: gridColumns,
+                          px: 2,
+                          py: 1.5,
+                          alignItems: 'center',
+                        }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            textAlign: 'center',
+                          }}>
+                          {account.account_number}
+                        </Typography>
 
-                      <Typography>{formatCurrency(amount)} kr</Typography>
-                    </Stack>
+                        <Typography
+                          sx={{
+                            pl: 16,
+                          }}>
+                          {account.name}
+                        </Typography>
+
+                        <Typography
+                          sx={{
+                            textAlign: 'right',
+                          }}>
+                          {formatCurrency(amount)} kr
+                        </Typography>
+                      </Box>
+
+                      <Divider />
+                    </Box>
                   );
                 })}
 
-                <Stack
-                  direction='row'
+                <Box
                   sx={{
-                    justifyContent: 'space-between',
-                    pt: 1,
+                    display: 'grid',
+                    gridTemplateColumns: gridColumns,
+                    px: 2,
+                    pt: 3,
+                    pb: 0.5,
                   }}>
-                  <Typography
+                  <Box
                     sx={{
-                      fontWeight: 700,
+                      gridColumn: '2 / 4',
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'baseline',
+                      gap: 1.5,
+                      whiteSpace: 'nowrap',
                     }}>
-                    Summa kostnader
-                  </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 22,
+                        fontWeight: 700,
+                      }}>
+                      Summa kostnader :
+                    </Typography>
 
-                  <Typography
-                    sx={{
-                      fontWeight: 700,
-                    }}>
-                    {formatCurrency(totalExpenses)} kr
-                  </Typography>
-                </Stack>
+                    <Typography
+                      sx={{
+                        fontSize: 22,
+                        fontWeight: 700,
+                      }}>
+                      {formatCurrency(totalExpenses)} kr
+                    </Typography>
+                  </Box>
+                </Box>
               </Stack>
 
               <Divider />
 
-              <Stack
-                direction='row'
+              {/* RESULTAT */}
+              <Box
                 sx={{
-                  justifyContent: 'space-between',
+                  display: 'grid',
+                  gridTemplateColumns: gridColumns,
+                  px: 2,
+                  py: 1.5,
+                  alignItems: 'center',
                 }}>
                 <Typography
                   variant='h6'
                   sx={{
                     fontWeight: 700,
+                    textAlign: 'center',
                   }}>
-                  Resultat:
+                  Resultat
                 </Typography>
+
+                <Box />
 
                 <Typography
                   variant='h6'
                   sx={{
                     fontWeight: 700,
+                    textAlign: 'right',
                   }}
                   color={result >= 0 ? 'success.main' : 'error.main'}>
                   {formatCurrency(result)} kr
                 </Typography>
-              </Stack>
+              </Box>
             </Stack>
           </CardContent>
         </Card>
