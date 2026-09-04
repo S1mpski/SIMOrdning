@@ -29,7 +29,6 @@ export default function AppHeader({ companyName }: Props) {
     if (!company) return;
 
     if (!animationEnabled) {
-      // Läs den riktiga vilopositionen innan elementet blir fixed
       const rect = company.getBoundingClientRect();
 
       positionRef.current = {
@@ -56,7 +55,6 @@ export default function AppHeader({ companyName }: Props) {
         frameRef.current = null;
       }
 
-      // Viktigt: ta bort tidigare translate-position
       company.style.transform = 'none';
 
       return;
@@ -69,11 +67,6 @@ export default function AppHeader({ companyName }: Props) {
 
       lastTime = time;
 
-      /*
-       * Eftersom elementet använder transform måste vi inte använda
-       * getBoundingClientRect() för x/y-positionen här.
-       * Vi behöver bara dess storlek.
-       */
       const companyWidth = company.offsetWidth;
       const companyHeight = company.offsetHeight;
 
@@ -172,7 +165,7 @@ export default function AppHeader({ companyName }: Props) {
         }}>
         <Typography
           sx={{
-            fontSize: 11,
+            fontSize: animationEnabled ? 16 : 11,
             fontWeight: 700,
             color: 'simBlue.main',
             textTransform: 'uppercase',
@@ -185,7 +178,7 @@ export default function AppHeader({ companyName }: Props) {
 
         <Typography
           sx={{
-            fontSize: 22,
+            fontSize: animationEnabled ? 32 : 22,
             fontWeight: 700,
             lineHeight: 1.2,
             letterSpacing: '-0.3px',
