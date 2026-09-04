@@ -43,6 +43,8 @@ import {
   Divider,
 } from '@mui/material';
 
+import { useCompany } from '@/components/providers/company-provider';
+
 import { createClient } from '@/lib/supabase/client';
 
 export type AccountListItem = {
@@ -97,6 +99,7 @@ export default function AccountList({ accounts, companyId }: Props) {
   const [basSaving, setBasSaving] = useState(false);
   const [basError, setBasError] = useState('');
   const [accountSearch, setAccountSearch] = useState('');
+  const company = useCompany();
 
   const existingAccountNumbers = new Set(
     accounts.map((account) => account.account_number),
@@ -401,7 +404,8 @@ export default function AccountList({ accounts, companyId }: Props) {
             </Typography>
 
             <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-              Konton som används i företagets bokföring.
+              Bokföringskonton som finns tillängliga i{' '}
+              {company?.name ?? 'företaget'}.
             </Typography>
           </Box>
 
@@ -554,12 +558,27 @@ export default function AccountList({ accounts, companyId }: Props) {
               size='small'
               autoFocus
             />
+            <Stack direction='row' sx={{ alignItems: 'center', gap: 1 }}>
+              {
+                <Typography
+                  variant='h6'
+                  color='text.secondary'
+                  sx={{ fontWeight: 500 }}>
+                  {availableBasAccounts.length}
+                </Typography>
+              }
 
-            <Typography variant='body2' color='text.secondary'>
-              {availableBasAccounts.length} konton finns tillgängliga att lägga
-              till.
-            </Typography>
+              <sup>
+                <Box sx={{ mr: 0.25, ml: -0.8, mb: -0.5 }}>st</Box>
+              </sup>
 
+              <Typography
+                variant='h6'
+                color='text.secondary'
+                sx={{ fontWeight: 500 }}>
+                konton finns tillgängliga att lägga till.
+              </Typography>
+            </Stack>
             <Box
               sx={{
                 maxHeight: 480,

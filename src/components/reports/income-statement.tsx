@@ -1,3 +1,4 @@
+'use client';
 import {
   Box,
   Card,
@@ -7,6 +8,8 @@ import {
   Typography,
 } from '@mui/material';
 import PrintReportButton from './print-report-button';
+
+import { useCompany } from '@/components/providers/company-provider';
 
 export type ReportAccount = {
   account_number: number;
@@ -27,6 +30,7 @@ function formatCurrency(value: number) {
 }
 
 export default function IncomeStatement({ accounts }: Props) {
+  const company = useCompany();
   const revenueAccounts = accounts.filter(
     (account) =>
       account.account_number >= 3000 && account.account_number < 4000,
@@ -70,7 +74,8 @@ export default function IncomeStatement({ accounts }: Props) {
             </Typography>
 
             <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-              Företagets intäkter och kostnader.
+              {company?.name ?? 'företaget'}
+              {'s'} intäkter och kostnader.
             </Typography>
           </Box>
           <PrintReportButton />

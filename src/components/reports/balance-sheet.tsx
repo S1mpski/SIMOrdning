@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Box,
   Card,
@@ -8,6 +10,7 @@ import {
 } from '@mui/material';
 
 import type { ReportAccount } from './income-statement';
+import { useCompany } from '@/components/providers/company-provider';
 
 type Props = {
   accounts: ReportAccount[];
@@ -21,6 +24,7 @@ function formatCurrency(value: number) {
 }
 
 export default function BalanceSheet({ accounts }: Props) {
+  const company = useCompany();
   const assetAccounts = accounts.filter(
     (account) =>
       account.account_number >= 1000 && account.account_number < 2000,
@@ -70,7 +74,8 @@ export default function BalanceSheet({ accounts }: Props) {
             sx={{
               mt: 0.5,
             }}>
-            Företagets tillgångar, eget kapital och skulder.
+            {company?.name ?? 'företaget'}
+            {'s'} tillgångar, eget kapital och skulder.
           </Typography>
         </Box>
 

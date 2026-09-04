@@ -3,6 +3,7 @@
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { useTheme } from '@mui/material/styles';
+import { useCompany } from '@/components/providers/company-provider';
 
 export type ExpenseChartItem = {
   id: string;
@@ -26,6 +27,7 @@ export default function ExpenseChart({ data }: Props) {
   const theme = useTheme();
 
   const chartColors = [theme.palette.simBlue.dark, theme.palette.simBlue.light];
+  const company = useCompany();
 
   return (
     <Card
@@ -55,7 +57,8 @@ export default function ExpenseChart({ data }: Props) {
               variant='body2'
               color='text.secondary'
               sx={{ mt: 0.25 }}>
-              Fördelning av företagets bokförda kostnader.
+              Fördelning av {company?.name ?? 'företaget'}
+              {'s'} bokförda kostnader.
             </Typography>
           </Box>
 

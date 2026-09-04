@@ -7,7 +7,7 @@ import VoucherList, {
 } from '@/components/bookkeeping/voucher-list';
 
 import { createClient } from '@/lib/supabase/server';
-
+import { useCompany } from '@/components/providers/company-provider';
 export default async function VouchersPage() {
   const supabase = await createClient();
 
@@ -33,15 +33,15 @@ export default async function VouchersPage() {
     .from('vouchers')
     .select(
       `
-      id,
-      voucher_number,
-      voucher_date,
-      description,
-      voucher_rows (
-        debit,
-        credit
+    id,
+    voucher_number,
+    voucher_date,
+    description,
+    voucher_rows (
+      debit,
+      credit
       )
-    `,
+      `,
     )
     .eq('company_id', company.id)
     .order('voucher_number', {
@@ -88,7 +88,7 @@ export default async function VouchersPage() {
         </Typography>
 
         <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-          Alla bokförda verifikationer för {company.name || 'företaget'}
+          Alla bokförda verifikationer för {company?.name ?? 'företaget'}
         </Typography>
       </Box>
 

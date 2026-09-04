@@ -5,6 +5,7 @@ import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+
 import {
   Alert,
   Box,
@@ -23,10 +24,14 @@ import {
 } from '@mui/material';
 
 import { createClient } from '@/lib/supabase/client';
+import { Description } from '@mui/icons-material';
+import { name } from 'next/dist/server/ci-info';
+import { useCompany } from '@/components/providers/company-provider';
 
 type CompanyMember = {
   id: string;
   company_id: string;
+  user_id: string | null;
   name: string;
   email: string | null;
   phone: string | null;
@@ -37,6 +42,7 @@ type CompanyMember = {
 type Props = {
   companyId: string;
   initialMembers: CompanyMember[];
+  canManage: boolean;
 };
 
 type MemberForm = {
@@ -53,7 +59,30 @@ const emptyForm: MemberForm = {
   role: '',
 };
 
-export default function CompanyMembers({ companyId, initialMembers }: Props) {
+const inviteRoles = [
+  {
+    value: 'member',
+    label: 'Medlem',
+    description: 'Medlemmar kan se alla sidor, men kan inte justera något.',
+  },
+  {
+    value: 'ceo',
+    label: 'VD',
+    description:
+      'VD:n kan läsa alla sidor, men endast justera företagsuppgifter.',
+  },
+  {
+    value: 'co_owner',
+    label: 'Delägare',
+    description: 'Delägare kan både läsa och justera alla sidor.',
+  },
+];
+
+export default function CompanyMembers({
+  companyId,
+  initialMembers,
+  canManage,
+}: Props) {
   const supabase = createClient();
 
   const [members, setMembers] = useState<CompanyMember[]>(initialMembers);
@@ -61,12 +90,26 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
   const [form, setForm] = useState<MemberForm>(emptyForm);
 
   const [open, setOpen] = useState(false);
+
   const [editingMember, setEditingMember] = useState<CompanyMember | null>(
     null,
   );
 
   const [saving, setSaving] = useState(false);
+
   const [error, setError] = useState('');
+
+  const [inviteOpen, setInviteOpen] = useState(false);
+
+  const [inviteEmail, setInviteEmail] = useState('');
+
+  const [inviteSaving, setInviteSaving] = useState(false);
+
+  const [inviteError, setInviteError] = useState('');
+
+  const [inviteSuccess, setInviteSuccess] = useState('');
+
+  const [inviteRole, setInviteRole] = useState('member');
 
   function handleOpenCreate() {
     setEditingMember(null);
@@ -108,6 +151,11 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
   }
 
   async function handleSave() {
+    if (!canManage) {
+      setError('Du har endast läsbehörighet för personer i företaget.');
+      return;
+    }
+
     if (!form.name.trim()) {
       setError('Namn måste anges.');
       return;
@@ -166,7 +214,68 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
     handleClose();
   }
 
+  async function handleInvite() {
+    if (!canManage) {
+      setInviteError('Du har inte behörighet att bjuda in användare.');
+      return;
+    }
+
+    const email = inviteEmail.trim().toLowerCase();
+
+    if (!email) {
+      setInviteError('E-post måste anges.');
+      return;
+    }
+
+    setInviteSaving(true);
+    setInviteError('');
+    setInviteSuccess('');
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      setInviteSaving(false);
+      setInviteError('Kunde inte identifiera den inloggade användaren.');
+      return;
+    }
+
+    const { error: insertError } = await supabase
+      .from('company_invitations')
+      .insert({
+        company_id: companyId,
+        email,
+        role: inviteRole,
+        invited_by: user.id,
+      });
+
+    if (insertError) {
+      setInviteSaving(false);
+
+      if (insertError.code === '23505') {
+        setInviteError(
+          'Det finns redan en aktiv inbjudan till den e-postadressen.',
+        );
+        return;
+      }
+
+      setInviteError(insertError.message);
+      return;
+    }
+
+    setInviteSaving(false);
+    setInviteEmail('');
+    setInviteSuccess(`En inbjudan har skapats för ${email}.`);
+  }
+
   async function handleDelete(member: CompanyMember) {
+    if (!canManage) {
+      setError('Du har inte behörighet att ta bort personer.');
+      return;
+    }
+
     const confirmed = window.confirm(`Vill du ta bort ${member.name}?`);
 
     if (!confirmed) {
@@ -185,6 +294,8 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
 
     setMembers((current) => current.filter((item) => item.id !== member.id));
   }
+
+  const company = useCompany();
 
   return (
     <Box
@@ -225,7 +336,7 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
                     fontSize: 16,
                     fontWeight: 600,
                   }}>
-                  Personer i företaget
+                  Personer i {company?.name ?? 'företaget'}
                 </Typography>
 
                 <Typography
@@ -236,13 +347,30 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
                 </Typography>
               </Box>
 
-              <Button
-                variant='contained'
-                size='small'
-                startIcon={<AddIcon />}
-                onClick={handleOpenCreate}>
-                Lägg till person
-              </Button>
+              {canManage && (
+                <Stack direction='row' spacing={1}>
+                  <Button
+                    variant='outlined'
+                    size='small'
+                    onClick={() => {
+                      setInviteEmail('');
+                      setInviteRole('member');
+                      setInviteError('');
+                      setInviteSuccess('');
+                      setInviteOpen(true);
+                    }}>
+                    Bjud in användare
+                  </Button>
+
+                  <Button
+                    variant='contained'
+                    size='small'
+                    startIcon={<AddIcon />}
+                    onClick={handleOpenCreate}>
+                    Lägg till person
+                  </Button>
+                </Stack>
+              )}
             </Box>
 
             {error && <Alert severity='error'>{error}</Alert>}
@@ -283,35 +411,43 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
 
                       {member.role && (
                         <Typography variant='body2' color='text.secondary'>
-                          {member.role}
+                          {member.role === 'member'
+                            ? 'Medlem'
+                            : member.role === 'ceo'
+                              ? 'VD'
+                              : member.role === 'co_owner'
+                                ? 'Delägare'
+                                : member.role === 'owner'
+                                  ? 'Ägare'
+                                  : member.role}
                         </Typography>
                       )}
 
                       {(member.email || member.phone) && (
                         <Typography variant='caption' color='text.secondary'>
                           {member.email}
-
                           {member.email && member.phone ? ' • ' : ''}
-
                           {member.phone}
                         </Typography>
                       )}
                     </Box>
 
-                    <Stack direction='row' spacing={0.5}>
-                      <IconButton
-                        size='small'
-                        onClick={() => handleOpenEdit(member)}>
-                        <EditOutlinedIcon fontSize='small' />
-                      </IconButton>
+                    {canManage && (
+                      <Stack direction='row' spacing={0.5}>
+                        <IconButton
+                          size='small'
+                          onClick={() => handleOpenEdit(member)}>
+                          <EditOutlinedIcon fontSize='small' />
+                        </IconButton>
 
-                      <IconButton
-                        size='small'
-                        color='error'
-                        onClick={() => handleDelete(member)}>
-                        <DeleteOutlineOutlinedIcon fontSize='small' />
-                      </IconButton>
-                    </Stack>
+                        <IconButton
+                          size='small'
+                          color='error'
+                          onClick={() => handleDelete(member)}>
+                          <DeleteOutlineOutlinedIcon fontSize='small' />
+                        </IconButton>
+                      </Stack>
+                    )}
                   </Box>
                 ))}
               </Stack>
@@ -346,23 +482,14 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
               fullWidth
               size='small'>
               <MenuItem value=''>Ej angiven</MenuItem>
-
               <MenuItem value='Ägare'>Ägare</MenuItem>
-
               <MenuItem value='Delägare'>Delägare</MenuItem>
-
               <MenuItem value='VD'>VD</MenuItem>
-
               <MenuItem value='Styrelseledamot'>Styrelseledamot</MenuItem>
-
               <MenuItem value='Firmatecknare'>Firmatecknare</MenuItem>
-
               <MenuItem value='Revisor'>Revisor</MenuItem>
-
               <MenuItem value='Bokförare'>Bokförare</MenuItem>
-
               <MenuItem value='Anställd'>Anställd</MenuItem>
-
               <MenuItem value='Kontaktperson'>Kontaktperson</MenuItem>
             </TextField>
 
@@ -392,6 +519,129 @@ export default function CompanyMembers({ companyId, initialMembers }: Props) {
 
           <Button variant='contained' onClick={handleSave} disabled={saving}>
             {saving ? 'Sparar...' : editingMember ? 'Spara' : 'Lägg till'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={inviteOpen}
+        onClose={() => {
+          if (!inviteSaving) {
+            setInviteOpen(false);
+            setInviteError('');
+            setInviteSuccess('');
+          }
+        }}
+        fullWidth
+        maxWidth='sm'>
+        <DialogTitle>
+          Bjud in användare till {company?.name ?? 'företaget'}
+        </DialogTitle>
+
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <Stack spacing={0} sx={{ mt: -1 }}>
+              <Typography variant='body2' color='text.secondary'>
+                Användaren får tillgång till bokföring av{' '}
+                {company?.name ?? 'företaget'}
+                {'s'} när inbjudan har accepterats.
+              </Typography>
+              <Typography variant='body2' color='text.secondary'>
+                Se över vilka behörigheter du vill ge.
+              </Typography>
+            </Stack>
+            {inviteError && <Alert severity='error'>{inviteError}</Alert>}
+
+            {inviteSuccess && <Alert severity='success'>{inviteSuccess}</Alert>}
+
+            <TextField
+              label='E-post'
+              type='email'
+              value={inviteEmail}
+              onChange={(event) => setInviteEmail(event.target.value)}
+              fullWidth
+              size='medium'
+              required
+              disabled={inviteSaving}
+            />
+
+            <TextField
+              select
+              label='Bjud in som'
+              value={inviteRole}
+              onChange={(event) => setInviteRole(event.target.value)}
+              fullWidth
+              size='medium'
+              disabled={inviteSaving}
+              slotProps={{
+                select: {
+                  renderValue: (value) =>
+                    inviteRoles.find((role) => role.value === value)?.label ??
+                    '',
+                },
+              }}>
+              {inviteRoles.map((role) => (
+                <MenuItem key={role.value} value={role.value}>
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontSize: 16,
+                        fontWeight: 700,
+                      }}>
+                      {role.label}
+                    </Typography>
+
+                    <Typography
+                      variant='caption'
+                      color='text.secondary'
+                      sx={{
+                        display: 'block',
+                      }}>
+                      {role.description}
+                    </Typography>
+                  </Box>
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: 1.5,
+                bgcolor: 'action.hover',
+                border: 1,
+                borderColor: 'gray',
+              }}>
+              <Typography variant='body2' sx={{ fontWeight: 600 }}>
+                Behörighet
+              </Typography>
+
+              <Typography variant='body2' color='text.secondary'>
+                {
+                  inviteRoles.find((role) => role.value === inviteRole)
+                    ?.description
+                }
+              </Typography>
+            </Box>
+          </Stack>
+        </DialogContent>
+
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setInviteOpen(false);
+              setInviteError('');
+              setInviteSuccess('');
+            }}
+            disabled={inviteSaving}>
+            Stäng
+          </Button>
+
+          <Button
+            variant='contained'
+            onClick={handleInvite}
+            disabled={inviteSaving || !inviteEmail.trim()}>
+            {inviteSaving ? 'Skapar inbjudan...' : 'Bjud in'}
           </Button>
         </DialogActions>
       </Dialog>
