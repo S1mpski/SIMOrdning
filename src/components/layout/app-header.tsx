@@ -38,12 +38,20 @@ export default function AppHeader({ companyName }: Props) {
   const distance = endX - startX;
 
   const motionPath = `M ${startX} 30 C ${
-    startX + distance * 0.12
-  } 75, ${startX + distance * 0.24} -5, ${
-    startX + distance * 0.36
-  } 30 S ${startX + distance * 0.58} 75, ${
-    startX + distance * 0.7
-  } 30 S ${startX + distance * 0.88} -5, ${endX} 30`;
+    startX + distance * 0.08
+  } 112, ${startX + distance * 0.16} -50, ${
+    startX + distance * 0.24
+  } 30 C ${startX + distance * 0.32} 64, ${
+    startX + distance * 0.4
+  } 62, ${startX + distance * 0.48} 30 C ${
+    startX + distance * 0.56
+  } -1, ${startX + distance * 0.64} -3, ${
+    startX + distance * 0.72
+  } 30 C ${startX + distance * 0.78} 64, ${
+    startX + distance * 0.84
+  } 62, ${startX + distance * 0.9} 30 C ${
+    startX + distance * 0.94
+  } -1, ${startX + distance * 0.97} -3, ${endX} 30`;
 
   return (
     <Box
@@ -70,7 +78,7 @@ export default function AppHeader({ companyName }: Props) {
           offsetRotate: '0deg',
 
           animation: animationEnabled
-            ? 'companyWave 25s ease-in-out infinite alternate'
+            ? 'companyWave 30s linear infinite alternate'
             : 'none',
 
           offsetDistance: animationEnabled ? undefined : '100%',
