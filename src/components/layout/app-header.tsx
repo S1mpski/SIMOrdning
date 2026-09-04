@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 type Props = {
   companyId: string;
@@ -11,95 +11,174 @@ type Props = {
 
 export default function AppHeader({ companyName }: Props) {
   const [animationEnabled, setAnimationEnabled] = useState(false);
-  const [headerWidth, setHeaderWidth] = useState(0);
 
-  const headerRef = useRef<HTMLDivElement>(null);
+  const companyRef = useRef<HTMLDivElement>(null);
+
+  const positionRef = useRef({
+    x: 0,
+    y: 0,
+    vx: -0.7,
+    vy: 0.45,
+  });
+
+  const frameRef = useRef<number | null>(null);
+
+  function toggleAnimation() {
+    const company = companyRef.current;
+
+    if (!company) return;
+
+    if (!animationEnabled) {
+      const rect = company.getBoundingClientRect();
+
+      positionRef.current = {
+        x: rect.left,
+        y: rect.top,
+        vx: 0.7,
+        vy: 0.45,
+      };
+
+      setAnimationEnabled(true);
+    } else {
+      setAnimationEnabled(false);
+    }
+  }
 
   useEffect(() => {
-    const header = headerRef.current;
+    const company = companyRef.current;
 
-    if (!header) return;
+    if (!company) return;
 
-    const observer = new ResizeObserver(([entry]) => {
-      setHeaderWidth(entry.contentRect.width);
-    });
+    if (!animationEnabled) {
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
 
-    observer.observe(header);
+      company.style.transform = 'none';
 
-    return () => observer.disconnect();
-  }, []);
+      return;
+    }
 
-  // THESE MUST BE HERE, NOT INSIDE useEffect
-  const startX = 40;
+    let lastTime = performance.now();
 
-  // lämna plats för texten + knappen till höger
-  const rightPadding = 140;
+    const animate = (time: number) => {
+      const delta = Math.min((time - lastTime) / 16.67, 2);
 
-  const endX = Math.max(headerWidth - rightPadding, 600);
-  const distance = endX - startX;
+      lastTime = time;
 
-  const motionPath = `M ${startX} 30 C ${
-    startX + distance * 0.12
-  } 75, ${startX + distance * 0.24} -5, ${
-    startX + distance * 0.36
-  } 30 S ${startX + distance * 0.58} 75, ${
-    startX + distance * 0.7
-  } 30 S ${startX + distance * 0.88} -5, ${endX} 30`;
+      const companyWidth = company.offsetWidth;
+      const companyHeight = company.offsetHeight;
+
+      const padding = 12;
+
+      const minX = padding;
+      const maxX = window.innerWidth - companyWidth - padding;
+
+      const minY = padding;
+      const maxY = window.innerHeight - companyHeight - padding;
+
+      const pos = positionRef.current;
+
+      pos.x += pos.vx * delta;
+      pos.y += pos.vy * delta;
+
+      if (pos.x <= minX) {
+        pos.x = minX;
+        pos.vx = Math.abs(pos.vx);
+      }
+
+      if (pos.x >= maxX) {
+        pos.x = maxX;
+        pos.vx = -Math.abs(pos.vx);
+      }
+
+      if (pos.y <= minY) {
+        pos.y = minY;
+        pos.vy = Math.abs(pos.vy);
+      }
+
+      if (pos.y >= maxY) {
+        pos.y = maxY;
+        pos.vy = -Math.abs(pos.vy);
+      }
+
+      company.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+
+      frameRef.current = requestAnimationFrame(animate);
+    };
+
+    frameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+    };
+  }, [animationEnabled]);
 
   return (
     <Box
-      ref={headerRef}
       component='header'
       sx={{
         height: 88,
         px: 4,
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'visible',
         bgcolor: 'background.paper',
         borderBottom: '1px solid',
         borderColor: 'divider',
       }}>
       <Box
+        ref={companyRef}
+        onClick={toggleAnimation}
+        role='button'
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleAnimation();
+          }
+        }}
         sx={{
-          position: 'absolute',
-          left: 0,
-          top: 14,
+          position: animationEnabled ? 'fixed' : 'absolute',
+
+          left: animationEnabled ? 0 : 'auto',
+          right: animationEnabled ? 'auto' : 40,
+
+          top: animationEnabled ? 0 : 20,
+
           width: 'fit-content',
           whiteSpace: 'nowrap',
 
-          offsetPath: `path("${motionPath}")`,
-          offsetRotate: '0deg',
+          zIndex: animationEnabled ? 9999 : 'auto',
 
-          animation: animationEnabled
-            ? 'companyWave 25s ease-in-out infinite alternate'
-            : 'none',
+          cursor: 'pointer',
+          userSelect: 'none',
 
-          offsetDistance: animationEnabled ? undefined : '100%',
+          willChange: 'transform',
 
-          '@keyframes companyWave': {
-            from: {
-              offsetDistance: '100%',
-            },
-            to: {
-              offsetDistance: '0%',
-            },
+          '&:hover': {
+            opacity: 0.85,
           },
         }}>
         <Typography
           sx={{
-            fontSize: 11,
+            fontSize: animationEnabled ? 16 : 11,
             fontWeight: 700,
             color: 'simBlue.main',
             textTransform: 'uppercase',
             letterSpacing: 0.8,
             mb: 0.25,
+            textAlign: 'center',
           }}>
           Aktivt företag
         </Typography>
 
         <Typography
           sx={{
-            fontSize: 22,
+            fontSize: animationEnabled ? 32 : 22,
             fontWeight: 700,
             lineHeight: 1.2,
             letterSpacing: '-0.3px',
@@ -108,36 +187,6 @@ export default function AppHeader({ companyName }: Props) {
           {companyName}
         </Typography>
       </Box>
-
-      <IconButton
-        onClick={() => setAnimationEnabled((prev) => !prev)}
-        disableRipple
-        aria-label='Toggle company animation'
-        sx={{
-          position: 'absolute',
-          right: 28,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          p: 0.5,
-          opacity: 0.18,
-          transition: 'opacity 0.2s ease, transform 0.2s ease',
-
-          '&:hover': {
-            opacity: 0.8,
-            transform: 'translateY(-50%) scale(1.08)',
-          },
-        }}>
-        <Box
-          component='img'
-          src='/blu-ray-logo.svg'
-          alt=''
-          sx={{
-            width: 42,
-            height: 'auto',
-            display: 'block',
-          }}
-        />
-      </IconButton>
     </Box>
   );
 }
