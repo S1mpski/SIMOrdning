@@ -32,6 +32,7 @@ export default function LoginForm() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [forgotPassword, setForgotPassword] = useState(false);
@@ -41,6 +42,7 @@ export default function LoginForm() {
   function handleModeChange(newMode: 'login' | 'register') {
     setMode(newMode);
     setError('');
+    setSuccess('');
     setPassword('');
     setConfirmPassword('');
   }
@@ -49,6 +51,7 @@ export default function LoginForm() {
     event.preventDefault();
 
     setError('');
+    setSuccess('');
 
     const cleanEmail = email.trim().toLowerCase();
 
@@ -86,6 +89,9 @@ export default function LoginForm() {
         const { data, error: signUpError } = await supabase.auth.signUp({
           email: cleanEmail,
           password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/login`,
+          },
         });
 
         if (signUpError) {
@@ -109,9 +115,12 @@ export default function LoginForm() {
         }
 
         if (!data.session) {
-          setError(
-            'Kontot skapades. Kontrollera din e-post för att bekräfta kontot innan du loggar in.',
+          setSuccess(
+            'Kontot skapades. Kontrollera din e-post och bekräfta kontot innan du loggar in.',
           );
+          setMode('login');
+          setPassword('');
+          setConfirmPassword('');
           return;
         }
 
@@ -241,6 +250,7 @@ export default function LoginForm() {
                     <Divider />
 
                     {error && <Alert severity='error'>{error}</Alert>}
+                    {success && <Alert severity='success'>{success}</Alert>}
 
                     <TextField
                       label='E-post'
@@ -331,17 +341,20 @@ export default function LoginForm() {
                         {isRegister ? 'Logga in' : 'Skapa konto'}
                       </Button>
                     </Typography>
-                    <Button
-                      type='button'
-                      variant='text'
-                      size='small'
-                      sx={{ py: -3 }}
-                      onClick={() => {
-                        setError('');
-                        setForgotPassword(true);
-                      }}>
-                      Glömt lösenord?
-                    </Button>
+                    {!isRegister && (
+                      <Button
+                        type='button'
+                        variant='text'
+                        size='small'
+                        sx={{ py: -3 }}
+                        onClick={() => {
+                          setError('');
+                          setSuccess('');
+                          setForgotPassword(true);
+                        }}>
+                        Glömt lösenord?
+                      </Button>
+                    )}
                   </Stack>
                 </Box>
               </>

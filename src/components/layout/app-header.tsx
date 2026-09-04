@@ -31,7 +31,11 @@ export default function AppHeader({ companyName }: Props) {
 
   // THESE MUST BE HERE, NOT INSIDE useEffect
   const startX = 40;
-  const endX = Math.max(headerWidth - 260, 600);
+
+  // lämna plats för texten + knappen till höger
+  const rightPadding = 140;
+
+  const endX = Math.max(headerWidth - rightPadding, 600);
   const distance = endX - startX;
 
   const motionPath = `M ${startX} 30 C ${
