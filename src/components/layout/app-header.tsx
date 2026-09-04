@@ -35,7 +35,7 @@ export default function AppHeader({ companyName }: Props) {
       positionRef.current = {
         x: rect.left,
         y: rect.top,
-        vx: -0.7,
+        vx: 0.7,
         vy: 0.45,
       };
 
