@@ -18,6 +18,7 @@ import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
+import NotesOutlinedIcon from '@mui/icons-material/NotesOutlined';
 
 import {
   Box,
@@ -68,6 +69,11 @@ const companyItems = [
     label: 'Företagsuppgifter',
     href: '/foretag',
     icon: <BusinessOutlinedIcon />,
+  },
+  {
+    label: 'Anteckningar',
+    href: '/anteckningar',
+    icon: <NotesOutlinedIcon />,
   },
 ];
 
