@@ -43,12 +43,12 @@ export default function PrintReportButton() {
 
           width: {
             xs: '100%',
-            sm: 'auto',
+            md: 'auto',
           },
 
           alignSelf: {
             xs: 'stretch',
-            sm: 'flex-start',
+            md: 'flex-start',
           },
         }}>
         Skriv ut

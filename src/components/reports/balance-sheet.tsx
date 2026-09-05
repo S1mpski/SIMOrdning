@@ -48,19 +48,22 @@ export default function BalanceSheet({ accounts }: Props) {
   );
 
   const gridColumns = {
-    xs: '120px minmax(220px, 1fr) 150px',
-    sm: '140px minmax(260px, 1fr) 170px',
-    lg: '160px minmax(320px, 1fr) 180px',
+    xs: '82px minmax(0, 1fr) 112px',
+    sm: '95px minmax(0, 1fr) 125px',
+    md: '130px minmax(0, 1fr) 160px',
+    lg: '160px minmax(0, 1fr) 180px',
   };
 
   const namePadding = {
-    xs: 4,
-    sm: 8,
-    lg: 16,
+    xs: 1,
+    sm: 1.5,
+    md: 4,
+    lg: 8,
   };
 
   const totalFontSize = {
-    xs: 18,
+    xs: 16,
+    sm: 18,
     md: 22,
   };
 
@@ -83,7 +86,7 @@ export default function BalanceSheet({ accounts }: Props) {
         mx: 'auto',
 
         px: {
-          xs: 2,
+          xs: 1.5,
           sm: 2,
           md: 3,
           lg: 4,
@@ -120,6 +123,7 @@ export default function BalanceSheet({ accounts }: Props) {
         <Card
           variant='outlined'
           sx={{
+            width: '100%',
             minWidth: 0,
             overflow: 'hidden',
             borderRadius: 1.5,
@@ -127,15 +131,15 @@ export default function BalanceSheet({ accounts }: Props) {
           <CardContent
             sx={{
               p: {
-                xs: 1.5,
-                sm: 2,
+                xs: 1,
+                sm: 1.5,
                 md: 2.5,
               },
 
               '&:last-child': {
                 pb: {
-                  xs: 1.5,
-                  sm: 2,
+                  xs: 1,
+                  sm: 1.5,
                   md: 2.5,
                 },
               },
@@ -145,7 +149,7 @@ export default function BalanceSheet({ accounts }: Props) {
               sx={{
                 width: '100%',
                 minWidth: 0,
-                overflowX: 'auto',
+                overflowX: 'hidden',
 
                 '@media print': {
                   overflow: 'visible',
@@ -155,15 +159,12 @@ export default function BalanceSheet({ accounts }: Props) {
                 className='report-content'
                 spacing={3}
                 sx={{
-                  minWidth: {
-                    xs: 560,
-                    sm: 620,
-                    lg: 0,
-                  },
+                  width: '100%',
+                  minWidth: 0,
 
                   '@media print': {
-                    minWidth: 0,
                     width: '100%',
+                    minWidth: 0,
                   },
                 }}>
                 {/* TILLGÅNGAR */}
@@ -172,7 +173,13 @@ export default function BalanceSheet({ accounts }: Props) {
                     sx={{
                       display: 'grid',
                       gridTemplateColumns: gridColumns,
-                      px: 2,
+
+                      px: {
+                        xs: 0.75,
+                        sm: 1,
+                        md: 2,
+                      },
+
                       py: 1.5,
                       alignItems: 'center',
                     }}>
@@ -180,6 +187,12 @@ export default function BalanceSheet({ accounts }: Props) {
                       sx={{
                         fontWeight: 600,
                         textAlign: 'center',
+
+                        fontSize: {
+                          xs: 12,
+                          sm: 13,
+                          md: 14,
+                        },
                       }}>
                       Kontonummer
                     </Typography>
@@ -188,6 +201,12 @@ export default function BalanceSheet({ accounts }: Props) {
                       sx={{
                         fontWeight: 600,
                         pl: namePadding,
+
+                        fontSize: {
+                          xs: 12,
+                          sm: 13,
+                          md: 14,
+                        },
                       }}>
                       Kontonamn
                     </Typography>
@@ -197,6 +216,12 @@ export default function BalanceSheet({ accounts }: Props) {
                         fontWeight: 600,
                         textAlign: 'right',
                         whiteSpace: 'nowrap',
+
+                        fontSize: {
+                          xs: 12,
+                          sm: 13,
+                          md: 14,
+                        },
                       }}>
                       Tillgångar
                     </Typography>
@@ -212,8 +237,15 @@ export default function BalanceSheet({ accounts }: Props) {
                         <Box
                           sx={{
                             display: 'grid',
+
                             gridTemplateColumns: gridColumns,
-                            px: 2,
+
+                            px: {
+                              xs: 0.75,
+                              sm: 1,
+                              md: 2,
+                            },
+
                             py: 1.5,
                             alignItems: 'center',
                           }}>
@@ -221,6 +253,12 @@ export default function BalanceSheet({ accounts }: Props) {
                             sx={{
                               fontWeight: 600,
                               textAlign: 'center',
+
+                              fontSize: {
+                                xs: 12,
+                                sm: 13,
+                                md: 14,
+                              },
                             }}>
                             {account.account_number}
                           </Typography>
@@ -229,9 +267,17 @@ export default function BalanceSheet({ accounts }: Props) {
                             className='report-account-name'
                             sx={{
                               pl: namePadding,
+                              minWidth: 0,
+
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
+
+                              fontSize: {
+                                xs: 12,
+                                sm: 13,
+                                md: 14,
+                              },
 
                               '@media print': {
                                 pl: 4,
@@ -247,6 +293,12 @@ export default function BalanceSheet({ accounts }: Props) {
                             sx={{
                               textAlign: 'right',
                               whiteSpace: 'nowrap',
+
+                              fontSize: {
+                                xs: 12,
+                                sm: 13,
+                                md: 14,
+                              },
                             }}>
                             {formatCurrency(amount)} kr
                           </Typography>
@@ -263,17 +315,29 @@ export default function BalanceSheet({ accounts }: Props) {
                     sx={{
                       display: 'grid',
                       gridTemplateColumns: gridColumns,
-                      px: 2,
-                      pt: 3,
+
+                      px: {
+                        xs: 0.75,
+                        sm: 1,
+                        md: 2,
+                      },
+
+                      pt: 2.5,
                       pb: 0.5,
                     }}>
                     <Box
                       sx={{
                         gridColumn: '2 / 4',
+
                         display: 'flex',
                         justifyContent: 'flex-end',
                         alignItems: 'baseline',
-                        gap: 1.5,
+
+                        gap: {
+                          xs: 0.75,
+                          md: 1.5,
+                        },
+
                         whiteSpace: 'nowrap',
                       }}>
                       <Typography sx={totalTextSx}>
@@ -295,7 +359,13 @@ export default function BalanceSheet({ accounts }: Props) {
                     sx={{
                       display: 'grid',
                       gridTemplateColumns: gridColumns,
-                      px: 2,
+
+                      px: {
+                        xs: 0.75,
+                        sm: 1,
+                        md: 2,
+                      },
+
                       py: 1.5,
                       alignItems: 'center',
                     }}>
@@ -303,6 +373,12 @@ export default function BalanceSheet({ accounts }: Props) {
                       sx={{
                         fontWeight: 600,
                         textAlign: 'center',
+
+                        fontSize: {
+                          xs: 12,
+                          sm: 13,
+                          md: 14,
+                        },
                       }}>
                       Kontonummer
                     </Typography>
@@ -311,6 +387,12 @@ export default function BalanceSheet({ accounts }: Props) {
                       sx={{
                         fontWeight: 600,
                         pl: namePadding,
+
+                        fontSize: {
+                          xs: 12,
+                          sm: 13,
+                          md: 14,
+                        },
                       }}>
                       Kontonamn
                     </Typography>
@@ -320,6 +402,12 @@ export default function BalanceSheet({ accounts }: Props) {
                         fontWeight: 600,
                         textAlign: 'right',
                         whiteSpace: 'nowrap',
+
+                        fontSize: {
+                          xs: 11,
+                          sm: 12,
+                          md: 14,
+                        },
                       }}>
                       Eget kapital och skulder
                     </Typography>
@@ -335,8 +423,15 @@ export default function BalanceSheet({ accounts }: Props) {
                         <Box
                           sx={{
                             display: 'grid',
+
                             gridTemplateColumns: gridColumns,
-                            px: 2,
+
+                            px: {
+                              xs: 0.75,
+                              sm: 1,
+                              md: 2,
+                            },
+
                             py: 1.5,
                             alignItems: 'center',
                           }}>
@@ -344,6 +439,12 @@ export default function BalanceSheet({ accounts }: Props) {
                             sx={{
                               fontWeight: 600,
                               textAlign: 'center',
+
+                              fontSize: {
+                                xs: 12,
+                                sm: 13,
+                                md: 14,
+                              },
                             }}>
                             {account.account_number}
                           </Typography>
@@ -352,9 +453,17 @@ export default function BalanceSheet({ accounts }: Props) {
                             className='report-account-name'
                             sx={{
                               pl: namePadding,
+                              minWidth: 0,
+
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
+
+                              fontSize: {
+                                xs: 12,
+                                sm: 13,
+                                md: 14,
+                              },
 
                               '@media print': {
                                 pl: 4,
@@ -370,6 +479,12 @@ export default function BalanceSheet({ accounts }: Props) {
                             sx={{
                               textAlign: 'right',
                               whiteSpace: 'nowrap',
+
+                              fontSize: {
+                                xs: 12,
+                                sm: 13,
+                                md: 14,
+                              },
                             }}>
                             {formatCurrency(amount)} kr
                           </Typography>
@@ -380,23 +495,35 @@ export default function BalanceSheet({ accounts }: Props) {
                     );
                   })}
 
-                  {/* SUMMA EGET KAPITAL OCH SKULDER */}
+                  {/* SUMMA */}
                   <Box
                     className='report-total'
                     sx={{
                       display: 'grid',
                       gridTemplateColumns: gridColumns,
-                      px: 2,
-                      pt: 3,
+
+                      px: {
+                        xs: 0.75,
+                        sm: 1,
+                        md: 2,
+                      },
+
+                      pt: 2.5,
                       pb: 0.5,
                     }}>
                     <Box
                       sx={{
-                        gridColumn: '2 / 4',
+                        gridColumn: '1 / 4',
+
                         display: 'flex',
                         justifyContent: 'flex-end',
                         alignItems: 'baseline',
-                        gap: 1.5,
+
+                        gap: {
+                          xs: 0.75,
+                          md: 1.5,
+                        },
+
                         whiteSpace: 'nowrap',
                       }}>
                       <Typography sx={totalTextSx}>
