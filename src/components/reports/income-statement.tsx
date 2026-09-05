@@ -56,32 +56,70 @@ export default function IncomeStatement({ accounts }: Props) {
 
   const result = totalRevenue - totalExpenses;
 
-  const gridColumns = '160px 1fr 180px';
+  const gridColumns = {
+    xs: '120px minmax(220px, 1fr) 150px',
+    sm: '140px minmax(260px, 1fr) 170px',
+    lg: '160px minmax(320px, 1fr) 180px',
+  };
+
+  const namePadding = {
+    xs: 4,
+    sm: 8,
+    lg: 16,
+  };
+
+  const totalFontSize = {
+    xs: 18,
+    md: 22,
+  };
+
+  const totalTextSx = {
+    fontSize: totalFontSize,
+    fontWeight: 700,
+    '@media print': {
+      fontSize: 16,
+    },
+  };
 
   return (
     <Box
       id='print-income-report'
       sx={{
         width: '100%',
+        minWidth: 0,
         maxWidth: 1800,
         mx: 'auto',
         px: {
           xs: 2,
-          sm: 3,
-          md: 4,
+          sm: 2,
+          md: 3,
+          lg: 4,
         },
       }}>
       <Stack spacing={2}>
+        {/* HEADER */}
         <Stack
-          direction='row'
+          direction={{
+            xs: 'column',
+            sm: 'row',
+          }}
+          spacing={2}
           sx={{
             justifyContent: 'space-between',
+            alignItems: {
+              xs: 'stretch',
+              sm: 'flex-start',
+            },
           }}>
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               variant='h4'
               sx={{
                 fontWeight: 700,
+                fontSize: {
+                  xs: 28,
+                  md: 34,
+                },
               }}>
               Resultatrapport
             </Typography>
@@ -91,6 +129,7 @@ export default function IncomeStatement({ accounts }: Props) {
               color='text.secondary'
               sx={{
                 mt: 0.5,
+                overflowWrap: 'anywhere',
               }}>
               {company?.name ?? 'företaget'}
               {'s'} intäkter och kostnader.
@@ -100,272 +139,329 @@ export default function IncomeStatement({ accounts }: Props) {
           <PrintReportButton />
         </Stack>
 
-        <Card variant='outlined'>
-          <CardContent>
-            <Stack spacing={3}>
-              {/* INTÄKTER */}
-              <Stack spacing={0}>
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: gridColumns,
-                    px: 2,
-                    py: 1.5,
-                    alignItems: 'center',
-                  }}>
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      pl: 2,
-                    }}>
-                    Kontonummer
-                  </Typography>
+        <Card
+          variant='outlined'
+          sx={{
+            minWidth: 0,
+            overflow: 'hidden',
+            borderRadius: 1.5,
+          }}>
+          <CardContent
+            sx={{
+              p: {
+                xs: 1.5,
+                sm: 2,
+                md: 2.5,
+              },
 
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      pl: 16,
-                    }}>
-                    Kontonamn
-                  </Typography>
+              '&:last-child': {
+                pb: {
+                  xs: 1.5,
+                  sm: 2,
+                  md: 2.5,
+                },
+              },
+            }}>
+            <Box
+              className='report-scroll'
+              sx={{
+                width: '100%',
+                minWidth: 0,
+                overflowX: 'auto',
 
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      textAlign: 'right',
-                    }}>
-                    Intäkter
-                  </Typography>
-                </Box>
-
-                <Divider />
-
-                {revenueAccounts.map((account) => {
-                  const amount = account.credit - account.debit;
-
-                  return (
-                    <Box key={account.account_number}>
-                      <Box
-                        sx={{
-                          display: 'grid',
-                          gridTemplateColumns: gridColumns,
-                          px: 2,
-                          py: 1.5,
-                          alignItems: 'center',
-                        }}>
-                        <Typography
-                          sx={{
-                            fontWeight: 600,
-                            textAlign: 'center',
-                          }}>
-                          {account.account_number}
-                        </Typography>
-
-                        <Typography
-                          sx={{
-                            pl: 16,
-                          }}>
-                          {account.name}
-                        </Typography>
-
-                        <Typography
-                          sx={{
-                            textAlign: 'right',
-                          }}>
-                          {formatCurrency(amount)} kr
-                        </Typography>
-                      </Box>
-
-                      <Divider />
-                    </Box>
-                  );
-                })}
-
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: gridColumns,
-                    px: 2,
-                    pt: 3,
-                    pb: 0.5,
-                  }}>
-                  <Box
-                    sx={{
-                      gridColumn: '2 / 4',
-                      display: 'flex',
-                      justifyContent: 'flex-end',
-                      alignItems: 'baseline',
-                      gap: 1.5,
-                      whiteSpace: 'nowrap',
-                    }}>
-                    <Typography
-                      sx={{
-                        fontSize: 22,
-                        fontWeight: 700,
-                      }}>
-                      Summa intäkter :
-                    </Typography>
-
-                    <Typography
-                      sx={{
-                        fontSize: 22,
-                        fontWeight: 700,
-                      }}>
-                      {formatCurrency(totalRevenue)} kr
-                    </Typography>
-                  </Box>
-                </Box>
-              </Stack>
-
-              <Divider sx={{}} />
-
-              {/* KOSTNADER */}
-              <Stack spacing={0}>
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: gridColumns,
-                    px: 2,
-                    py: 1.5,
-                    alignItems: 'center',
-                  }}>
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      textAlign: 'center',
-                    }}>
-                    Kontonummer
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      pl: 16,
-                    }}>
-                    Kontonamn
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      textAlign: 'right',
-                    }}>
-                    Kostnader
-                  </Typography>
-                </Box>
-
-                <Divider />
-
-                {expenseAccounts.map((account) => {
-                  const amount = account.debit - account.credit;
-
-                  return (
-                    <Box key={account.account_number}>
-                      <Box
-                        sx={{
-                          display: 'grid',
-                          gridTemplateColumns: gridColumns,
-                          px: 2,
-                          py: 1.5,
-                          alignItems: 'center',
-                        }}>
-                        <Typography
-                          sx={{
-                            fontWeight: 600,
-                            textAlign: 'center',
-                          }}>
-                          {account.account_number}
-                        </Typography>
-
-                        <Typography
-                          sx={{
-                            pl: 16,
-                          }}>
-                          {account.name}
-                        </Typography>
-
-                        <Typography
-                          sx={{
-                            textAlign: 'right',
-                          }}>
-                          {formatCurrency(amount)} kr
-                        </Typography>
-                      </Box>
-
-                      <Divider />
-                    </Box>
-                  );
-                })}
-
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: gridColumns,
-                    px: 2,
-                    pt: 3,
-                    pb: 0.5,
-                  }}>
-                  <Box
-                    sx={{
-                      gridColumn: '2 / 4',
-                      display: 'flex',
-                      justifyContent: 'flex-end',
-                      alignItems: 'baseline',
-                      gap: 1.5,
-                      whiteSpace: 'nowrap',
-                    }}>
-                    <Typography
-                      sx={{
-                        fontSize: 22,
-                        fontWeight: 700,
-                      }}>
-                      Summa kostnader :
-                    </Typography>
-
-                    <Typography
-                      sx={{
-                        fontSize: 22,
-                        fontWeight: 700,
-                      }}>
-                      {formatCurrency(totalExpenses)} kr
-                    </Typography>
-                  </Box>
-                </Box>
-              </Stack>
-
-              <Divider />
-
-              {/* RESULTAT */}
-              <Box
+                '@media print': {
+                  overflow: 'visible',
+                },
+              }}>
+              <Stack
+                className='report-content'
+                spacing={3}
                 sx={{
-                  display: 'grid',
-                  gridTemplateColumns: gridColumns,
-                  px: 2,
-                  py: 1.5,
-                  alignItems: 'center',
+                  minWidth: {
+                    xs: 560,
+                    sm: 620,
+                    lg: 0,
+                  },
+
+                  '@media print': {
+                    minWidth: 0,
+                    width: '100%',
+                  },
                 }}>
-                <Typography
-                  variant='h6'
+                {/* INTÄKTER */}
+                <Stack spacing={0}>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: gridColumns,
+                      px: 2,
+                      py: 1.5,
+                      alignItems: 'center',
+                    }}>
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        textAlign: 'center',
+                      }}>
+                      Kontonummer
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        pl: namePadding,
+                      }}>
+                      Kontonamn
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        textAlign: 'right',
+                        whiteSpace: 'nowrap',
+                      }}>
+                      Intäkter
+                    </Typography>
+                  </Box>
+
+                  <Divider />
+
+                  {revenueAccounts.map((account) => {
+                    const amount = account.credit - account.debit;
+
+                    return (
+                      <Box key={account.account_number} className='report-row'>
+                        <Box
+                          sx={{
+                            display: 'grid',
+                            gridTemplateColumns: gridColumns,
+                            px: 2,
+                            py: 1.5,
+                            alignItems: 'center',
+                          }}>
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                              textAlign: 'center',
+                            }}>
+                            {account.account_number}
+                          </Typography>
+
+                          <Typography
+                            className='report-account-name'
+                            sx={{
+                              pl: namePadding,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+
+                              '@media print': {
+                                pl: 4,
+                                overflow: 'visible',
+                                textOverflow: 'clip',
+                                whiteSpace: 'normal',
+                              },
+                            }}>
+                            {account.name}
+                          </Typography>
+
+                          <Typography
+                            sx={{
+                              textAlign: 'right',
+                              whiteSpace: 'nowrap',
+                            }}>
+                            {formatCurrency(amount)} kr
+                          </Typography>
+                        </Box>
+
+                        <Divider />
+                      </Box>
+                    );
+                  })}
+
+                  {/* SUMMA INTÄKTER */}
+                  <Box
+                    className='report-total'
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: gridColumns,
+                      px: 2,
+                      pt: 3,
+                      pb: 0.5,
+                    }}>
+                    <Box
+                      sx={{
+                        gridColumn: '2 / 4',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        alignItems: 'baseline',
+                        gap: 1.5,
+                        whiteSpace: 'nowrap',
+                      }}>
+                      <Typography sx={totalTextSx}>Summa intäkter :</Typography>
+
+                      <Typography sx={totalTextSx}>
+                        {formatCurrency(totalRevenue)} kr
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Stack>
+
+                <Divider />
+
+                {/* KOSTNADER */}
+                <Stack spacing={0}>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: gridColumns,
+                      px: 2,
+                      py: 1.5,
+                      alignItems: 'center',
+                    }}>
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        textAlign: 'center',
+                      }}>
+                      Kontonummer
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        pl: namePadding,
+                      }}>
+                      Kontonamn
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        textAlign: 'right',
+                        whiteSpace: 'nowrap',
+                      }}>
+                      Kostnader
+                    </Typography>
+                  </Box>
+
+                  <Divider />
+
+                  {expenseAccounts.map((account) => {
+                    const amount = account.debit - account.credit;
+
+                    return (
+                      <Box key={account.account_number} className='report-row'>
+                        <Box
+                          sx={{
+                            display: 'grid',
+                            gridTemplateColumns: gridColumns,
+                            px: 2,
+                            py: 1.5,
+                            alignItems: 'center',
+                          }}>
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                              textAlign: 'center',
+                            }}>
+                            {account.account_number}
+                          </Typography>
+
+                          <Typography
+                            className='report-account-name'
+                            sx={{
+                              pl: namePadding,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+
+                              '@media print': {
+                                pl: 4,
+                                overflow: 'visible',
+                                textOverflow: 'clip',
+                                whiteSpace: 'normal',
+                              },
+                            }}>
+                            {account.name}
+                          </Typography>
+
+                          <Typography
+                            sx={{
+                              textAlign: 'right',
+                              whiteSpace: 'nowrap',
+                            }}>
+                            {formatCurrency(amount)} kr
+                          </Typography>
+                        </Box>
+
+                        <Divider />
+                      </Box>
+                    );
+                  })}
+
+                  {/* SUMMA KOSTNADER */}
+                  <Box
+                    className='report-total'
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: gridColumns,
+                      px: 2,
+                      pt: 3,
+                      pb: 0.5,
+                    }}>
+                    <Box
+                      sx={{
+                        gridColumn: '2 / 4',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        alignItems: 'baseline',
+                        gap: 1.5,
+                        whiteSpace: 'nowrap',
+                      }}>
+                      <Typography sx={totalTextSx}>
+                        Summa kostnader :
+                      </Typography>
+
+                      <Typography sx={totalTextSx}>
+                        {formatCurrency(totalExpenses)} kr
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Stack>
+
+                <Divider />
+
+                {/* RESULTAT */}
+                <Box
+                  className='report-total'
                   sx={{
-                    fontWeight: 700,
-                    textAlign: 'center',
+                    display: 'grid',
+                    gridTemplateColumns: gridColumns,
+                    px: 2,
+                    pt: 1.5,
+                    pb: 0.5,
                   }}>
-                  Resultat
-                </Typography>
+                  <Box
+                    sx={{
+                      gridColumn: '2 / 4',
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'baseline',
+                      gap: 1.5,
+                      whiteSpace: 'nowrap',
+                    }}>
+                    <Typography sx={totalTextSx}>Resultat :</Typography>
 
-                <Box />
-
-                <Typography
-                  variant='h6'
-                  sx={{
-                    fontWeight: 700,
-                    textAlign: 'right',
-                  }}
-                  color={result >= 0 ? 'success.main' : 'error.main'}>
-                  {formatCurrency(result)} kr
-                </Typography>
-              </Box>
-            </Stack>
+                    <Typography
+                      sx={totalTextSx}
+                      color={result >= 0 ? 'success.main' : 'error.main'}>
+                      {formatCurrency(result)} kr
+                    </Typography>
+                  </Box>
+                </Box>
+              </Stack>
+            </Box>
           </CardContent>
         </Card>
       </Stack>

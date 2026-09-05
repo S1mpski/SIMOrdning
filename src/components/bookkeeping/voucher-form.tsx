@@ -30,7 +30,6 @@ import VoucherRow, {
 import type { Account } from '@/components/bookkeeping/account-select';
 
 import { createClient } from '@/lib/supabase/client';
-import { RightArrow } from 'next/dist/next-devtools/dev-overlay/icons/right-arrow';
 
 function createEmptyRow(): VoucherRowData {
   return {
@@ -252,12 +251,13 @@ export default function VoucherForm() {
       onSubmit={handleSubmit}
       sx={{
         width: '100%',
-        maxWidth: 1100,
+        maxWidth: 1400,
         mx: 'auto',
         px: {
           xs: 2,
           sm: 3,
-          md: 4,
+          md: 3,
+          lg: 4,
         },
       }}>
       <Stack spacing={3}>
@@ -323,7 +323,10 @@ export default function VoucherForm() {
                 xs: 'column',
                 sm: 'row',
               }}
-              spacing={2}>
+              spacing={2}
+              sx={{
+                width: '100%',
+              }}>
               <TextField
                 label='Datum'
                 type='date'
@@ -333,6 +336,13 @@ export default function VoucherForm() {
                   inputLabel: {
                     shrink: true,
                   },
+                }}
+                sx={{
+                  width: {
+                    xs: '100%',
+                    sm: 190,
+                  },
+                  flexShrink: 0,
                 }}
               />
 
@@ -386,9 +396,8 @@ export default function VoucherForm() {
             sx={{
               display: {
                 xs: 'block',
-                sm: 'none',
+                md: 'none',
               },
-
               px: 2,
               pb: 1,
             }}>
@@ -413,14 +422,24 @@ export default function VoucherForm() {
             sx={{
               display: {
                 xs: 'none',
-                sm: 'block',
+                md: 'block',
               },
+              width: '100%',
+              minWidth: 0,
+              overflowX: 'auto',
             }}>
-            <Table size='medium'>
+            <Table
+              size='medium'
+              sx={{
+                width: '100%',
+                tableLayout: 'fixed',
+                minWidth: 650,
+              }}>
               <TableHead>
                 <TableRow>
                   <TableCell
                     sx={{
+                      width: '48%',
                       fontWeight: 600,
                       pl: 2.5,
                     }}>
@@ -428,22 +447,31 @@ export default function VoucherForm() {
                   </TableCell>
 
                   <TableCell
+                    align='center'
                     sx={{
+                      width: 140,
                       fontWeight: 600,
-                      pl: 6,
+                      px: 1,
                     }}>
                     Debet
                   </TableCell>
 
                   <TableCell
+                    align='center'
                     sx={{
+                      width: 140,
                       fontWeight: 600,
-                      pl: 6,
+                      px: 1,
                     }}>
                     Kredit
                   </TableCell>
 
-                  <TableCell />
+                  <TableCell
+                    sx={{
+                      width: 70,
+                      px: 1,
+                    }}
+                  />
                 </TableRow>
               </TableHead>
 
@@ -498,8 +526,10 @@ export default function VoucherForm() {
               sx={{
                 width: {
                   xs: '100%',
-                  sm: 340,
+                  sm: 320,
+                  md: 340,
                 },
+                maxWidth: '100%',
               }}>
               <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
                 <Typography variant='body2' color='text.secondary'>

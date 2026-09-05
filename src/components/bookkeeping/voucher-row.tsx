@@ -39,7 +39,6 @@ export default function VoucherRow({
   onChange,
   onDelete,
   canDelete,
-
   mobile = false,
 }: Props) {
   const debitField = (
@@ -62,18 +61,18 @@ export default function VoucherRow({
         },
       }}
       sx={{
-        width: {
-          xs: 90,
-          sm: 120,
-        },
+        width: mobile ? '100%' : 120,
+        minWidth: 0,
 
         '& input': {
-          textAlign: 'center',
+          textAlign: 'right',
+
           fontSize: {
-            xs: 12,
-            sm: 14,
+            xs: 14,
+            md: 16,
           },
-          px: 0.75,
+
+          px: 1,
         },
       }}
     />
@@ -99,18 +98,18 @@ export default function VoucherRow({
         },
       }}
       sx={{
-        width: {
-          xs: 90,
-          sm: 120,
-        },
+        width: mobile ? '100%' : 120,
+        minWidth: 0,
 
         '& input': {
-          textAlign: 'center',
+          textAlign: 'right',
+
           fontSize: {
             xs: 14,
-            sm: 16,
+            md: 16,
           },
-          px: 0.75,
+
+          px: 1,
         },
       }}
     />
@@ -121,7 +120,7 @@ export default function VoucherRow({
       title={
         canDelete
           ? 'Ta bort rad'
-          : 'Måste innehålla minst 3 verifieringa innan du kan ta bort'
+          : 'Verifikationen måste innehålla minst 2 rader'
       }
       arrow>
       <span>
@@ -132,10 +131,12 @@ export default function VoucherRow({
           size='small'
           sx={{
             color: 'text.secondary',
+
             p: {
               xs: 0.5,
-              sm: 1,
+              md: 1,
             },
+
             '&:hover': {
               color: 'error.main',
               bgcolor: 'rgba(211, 47, 47, 0.06)',
@@ -145,7 +146,7 @@ export default function VoucherRow({
             sx={{
               fontSize: {
                 xs: 20,
-                sm: 24,
+                md: 24,
               },
             }}
           />
@@ -154,19 +155,28 @@ export default function VoucherRow({
     </Tooltip>
   );
 
+  /*
+   * SMAL / TABLET
+   */
   if (mobile) {
     return (
       <Box
         sx={{
           width: '100%',
           minWidth: 0,
-          p: 1.25,
+
+          p: {
+            xs: 1.25,
+            sm: 1.5,
+          },
+
           border: '1px solid',
           borderColor: 'divider',
           borderRadius: 1.5,
           bgcolor: 'background.paper',
         }}>
-        <Stack spacing={1.25}>
+        <Stack spacing={1.5}>
+          {/* KONTO */}
           <Box
             sx={{
               width: '100%',
@@ -184,14 +194,23 @@ export default function VoucherRow({
             />
           </Box>
 
-          <Stack
-            direction='row'
-            spacing={1}
+          {/* DEBET / KREDIT / DELETE */}
+          <Box
             sx={{
+              display: 'grid',
+
+              gridTemplateColumns: {
+                xs: 'minmax(0, 1fr) minmax(0, 1fr) auto',
+              },
+
+              gap: 1,
+
               width: '100%',
-              alignItems: 'flex-end',
+              minWidth: 0,
+
+              alignItems: 'end',
             }}>
-            <Box>
+            <Box sx={{ minWidth: 0 }}>
               <Typography
                 variant='caption'
                 color='text.secondary'
@@ -205,7 +224,7 @@ export default function VoucherRow({
               {debitField}
             </Box>
 
-            <Box>
+            <Box sx={{ minWidth: 0 }}>
               <Typography
                 variant='caption'
                 color='text.secondary'
@@ -222,16 +241,18 @@ export default function VoucherRow({
             <Box
               sx={{
                 pb: 0.25,
-                ml: 'auto',
               }}>
               {deleteButton}
             </Box>
-          </Stack>
+          </Box>
         </Stack>
       </Box>
     );
   }
 
+  /*
+   * DESKTOP
+   */
   return (
     <TableRow
       sx={{
@@ -241,31 +262,38 @@ export default function VoucherRow({
       }}>
       <TableCell
         sx={{
-          width: '48%',
-          minWidth: 240,
+          width: '100%',
+          minWidth: 260,
           pr: 1,
         }}>
-        <AccountSelect
-          accounts={accounts}
-          value={row.account}
-          onChange={(account) =>
-            onChange({
-              ...row,
-              account,
-            })
-          }
-        />
+        <Box
+          sx={{
+            width: '100%',
+            minWidth: 0,
+          }}>
+          <AccountSelect
+            accounts={accounts}
+            value={row.account}
+            onChange={(account) =>
+              onChange({
+                ...row,
+                account,
+              })
+            }
+          />
+        </Box>
       </TableCell>
 
       <TableCell
         sx={{
           width: 140,
+          minWidth: 140,
           px: 1,
         }}>
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             width: '100%',
           }}>
           {debitField}
@@ -275,12 +303,13 @@ export default function VoucherRow({
       <TableCell
         sx={{
           width: 140,
+          minWidth: 140,
           px: 1,
         }}>
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             width: '100%',
           }}>
           {creditField}
@@ -289,8 +318,9 @@ export default function VoucherRow({
 
       <TableCell
         sx={{
-          width: 70,
-          px: 1,
+          width: 60,
+          minWidth: 60,
+          px: 0.5,
           textAlign: 'center',
         }}>
         {deleteButton}

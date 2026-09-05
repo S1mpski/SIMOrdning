@@ -52,6 +52,9 @@ type Props = {
 export default function CompanySettingsForm({ company, canEdit }: Props) {
   const supabase = createClient();
   const router = useRouter();
+
+  const companyContext = useCompany();
+
   const [form, setForm] = useState({
     name: company.name ?? '',
     organization_number: company.organization_number ?? '',
@@ -132,38 +135,90 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
     <Box
       sx={{
         width: '100%',
+        minWidth: 0,
         maxWidth: 2000,
         mx: 'auto',
+
         px: {
           xs: 2,
-          sm: 3,
-          md: 4,
+          sm: 2,
+          md: 3,
+          lg: 4,
         },
       }}>
       <Stack spacing={3}>
+        {/* HEADER */}
         <Stack
-          direction='row'
+          direction={{
+            xs: 'column',
+            sm: 'column',
+            md: 'row',
+          }}
+          spacing={2}
           sx={{
             justifyContent: 'space-between',
-            alignItems: 'center',
+
+            alignItems: {
+              xs: 'stretch',
+              md: 'center',
+            },
           }}>
-          <Box>
-            <Typography variant='h4' sx={{ fontWeight: 700 }}>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              variant='h4'
+              sx={{
+                fontWeight: 700,
+
+                fontSize: {
+                  xs: 28,
+                  md: 34,
+                },
+              }}>
               Företagsuppgifter
             </Typography>
 
-            <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{
+                mt: 0.5,
+                overflowWrap: 'anywhere',
+              }}>
               Hantera uppgifter och bokföringsinställningar för{' '}
-              {company?.name ?? 'företaget'}.
+              {companyContext?.name ?? company.name ?? 'företaget'}.
             </Typography>
           </Box>
 
           {canEdit ? (
-            <Button variant='contained' onClick={handleSave} disabled={saving}>
+            <Button
+              variant='contained'
+              onClick={handleSave}
+              disabled={saving}
+              sx={{
+                width: {
+                  xs: '100%',
+                  md: 'auto',
+                },
+
+                alignSelf: {
+                  xs: 'stretch',
+                  md: 'center',
+                },
+
+                whiteSpace: 'nowrap',
+              }}>
               {saving ? 'Sparar...' : 'Spara ändringar'}
             </Button>
           ) : (
-            <Typography variant='body2' color='text.secondary'>
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{
+                alignSelf: {
+                  xs: 'flex-start',
+                  md: 'center',
+                },
+              }}>
               Endast läsbehörighet
             </Typography>
           )}
@@ -198,8 +253,26 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
             minWidth: 0,
           }}>
           <Stack spacing={3}>
-            <Card variant='outlined'>
-              <CardContent>
+            {/* GRUNDUPPGIFTER */}
+            <Card
+              variant='outlined'
+              sx={{
+                minWidth: 0,
+              }}>
+              <CardContent
+                sx={{
+                  p: {
+                    xs: 2,
+                    md: 2.5,
+                  },
+
+                  '&:last-child': {
+                    pb: {
+                      xs: 2,
+                      md: 2.5,
+                    },
+                  },
+                }}>
                 <Stack spacing={3}>
                   <Typography
                     sx={{
@@ -210,7 +283,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                   </Typography>
 
                   <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 6,
+                      }}>
                       <TextField
                         label='Företagsnamn'
                         value={form.name}
@@ -222,7 +299,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 6,
+                      }}>
                       <TextField
                         label='Organisationsnummer'
                         value={form.organization_number}
@@ -234,7 +315,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 6,
+                      }}>
                       <FormControl fullWidth size='small'>
                         <InputLabel>Företagsform</InputLabel>
 
@@ -247,17 +332,23 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                           <MenuItem value=''>
                             <em>Ej angiven</em>
                           </MenuItem>
+
                           <MenuItem value='enskild_firma'>
                             Enskild firma
                           </MenuItem>
+
                           <MenuItem value='aktiebolag'>Aktiebolag</MenuItem>
+
                           <MenuItem value='handelsbolag'>Handelsbolag</MenuItem>
+
                           <MenuItem value='kommanditbolag'>
                             Kommanditbolag
                           </MenuItem>
+
                           <MenuItem value='ekonomisk_forening'>
                             Ekonomisk förening
                           </MenuItem>
+
                           <MenuItem value='ideell_forening'>
                             Ideell förening
                           </MenuItem>
@@ -265,7 +356,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                       </FormControl>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 6,
+                      }}>
                       <FormControl fullWidth size='small'>
                         <InputLabel>Standardvaluta</InputLabel>
 
@@ -276,9 +371,13 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                             updateField('default_currency', event.target.value)
                           }>
                           <MenuItem value='SEK'>SEK</MenuItem>
+
                           <MenuItem value='EUR'>EUR</MenuItem>
+
                           <MenuItem value='USD'>USD</MenuItem>
+
                           <MenuItem value='NOK'>NOK</MenuItem>
+
                           <MenuItem value='DKK'>DKK</MenuItem>
                         </Select>
                       </FormControl>
@@ -288,8 +387,26 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
               </CardContent>
             </Card>
 
-            <Card variant='outlined'>
-              <CardContent>
+            {/* KONTAKTUPPGIFTER */}
+            <Card
+              variant='outlined'
+              sx={{
+                minWidth: 0,
+              }}>
+              <CardContent
+                sx={{
+                  p: {
+                    xs: 2,
+                    md: 2.5,
+                  },
+
+                  '&:last-child': {
+                    pb: {
+                      xs: 2,
+                      md: 2.5,
+                    },
+                  },
+                }}>
                 <Stack spacing={2}>
                   <Typography
                     sx={{
@@ -312,7 +429,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 4,
+                      }}>
                       <TextField
                         label='Postnummer'
                         value={form.postal_code}
@@ -324,7 +445,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 4,
+                      }}>
                       <TextField
                         label='Ort'
                         value={form.city}
@@ -336,7 +461,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 4,
+                      }}>
                       <TextField
                         label='Land'
                         value={form.country}
@@ -348,7 +477,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 6,
+                      }}>
                       <TextField
                         label='E-post'
                         type='email'
@@ -361,7 +494,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 6,
+                      }}>
                       <TextField
                         label='Telefon'
                         value={form.phone}
@@ -389,9 +526,27 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
               </CardContent>
             </Card>
 
-            <Card variant='outlined'>
-              <CardContent>
-                <Stack spacing={1}>
+            {/* SKATT OCH MOMS */}
+            <Card
+              variant='outlined'
+              sx={{
+                minWidth: 0,
+              }}>
+              <CardContent
+                sx={{
+                  p: {
+                    xs: 2,
+                    md: 2.5,
+                  },
+
+                  '&:last-child': {
+                    pb: {
+                      xs: 2,
+                      md: 2.5,
+                    },
+                  },
+                }}>
+                <Stack spacing={2}>
                   <Typography
                     sx={{
                       fontSize: 16,
@@ -401,8 +556,21 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                   </Typography>
 
                   <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    sx={{ gap: 2 }}>
+                    direction={{
+                      xs: 'column',
+                      sm: 'row',
+                    }}
+                    sx={{
+                      gap: {
+                        xs: 0.5,
+                        sm: 2,
+                      },
+
+                      alignItems: {
+                        xs: 'flex-start',
+                        sm: 'center',
+                      },
+                    }}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -442,8 +610,26 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
               </CardContent>
             </Card>
 
-            <Card variant='outlined'>
-              <CardContent>
+            {/* RÄKENSKAPSÅR */}
+            <Card
+              variant='outlined'
+              sx={{
+                minWidth: 0,
+              }}>
+              <CardContent
+                sx={{
+                  p: {
+                    xs: 2,
+                    md: 2.5,
+                  },
+
+                  '&:last-child': {
+                    pb: {
+                      xs: 2,
+                      md: 2.5,
+                    },
+                  },
+                }}>
                 <Stack spacing={3}>
                   <Typography
                     sx={{
@@ -454,7 +640,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                   </Typography>
 
                   <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 6,
+                      }}>
                       <TextField
                         label='Startdatum'
                         type='date'
@@ -472,7 +662,11 @@ export default function CompanySettingsForm({ company, canEdit }: Props) {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        lg: 6,
+                      }}>
                       <TextField
                         label='Slutdatum'
                         type='date'

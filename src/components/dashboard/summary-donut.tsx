@@ -76,27 +76,44 @@ export default function SummaryDonut({
       sx={{
         height: '100%',
         borderRadius: 1.5,
+        minWidth: 0,
+        overflow: 'hidden',
       }}>
       <CardContent
         sx={{
-          p: 2,
+          p: {
+            xs: 2,
+            md: 2.5,
+          },
+
           '&:last-child': {
-            pb: 2.5,
+            pb: {
+              xs: 2,
+              md: 2.5,
+            },
           },
         }}>
-        <Typography
-          sx={{
-            fontSize: 16,
-            fontWeight: 600,
-          }}>
-          {title}
-        </Typography>
-
-        {subtitle && (
-          <Typography variant='body2' color='text.secondary' sx={{ mt: 0.25 }}>
-            {subtitle}
+        <Box sx={{ minWidth: 0 }}>
+          <Typography
+            sx={{
+              fontSize: 16,
+              fontWeight: 600,
+            }}>
+            {title}
           </Typography>
-        )}
+
+          {subtitle && (
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{
+                mt: 0.25,
+                overflowWrap: 'anywhere',
+              }}>
+              {subtitle}
+            </Typography>
+          )}
+        </Box>
 
         {!hasAccountingData ? (
           <Box
@@ -105,6 +122,7 @@ export default function SummaryDonut({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              textAlign: 'center',
             }}>
             <Typography color='text.secondary'>Ingen data ännu.</Typography>
           </Box>
@@ -137,25 +155,40 @@ export default function SummaryDonut({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              textAlign: 'center',
             }}>
             <Typography color='text.secondary'>Ingen data ännu.</Typography>
           </Box>
         ) : (
           <Stack
-            direction='row'
+            direction={{
+              xs: 'column',
+              md: 'row',
+            }}
             sx={{
               mt: 1.5,
               minHeight: 220,
               gap: 2,
-              alignItems: 'stretch',
+
+              alignItems: {
+                xs: 'stretch',
+                md: 'center',
+              },
+
+              minWidth: 0,
             }}>
+            {/* DATA */}
             <Stack
               spacing={1.5}
               sx={{
                 flex: 1,
+                width: '100%',
                 minWidth: 0,
-                justifyContent: 'flex-end',
-                pb: 1,
+
+                justifyContent: {
+                  xs: 'flex-start',
+                  md: 'center',
+                },
               }}>
               {filteredData.map((item) => {
                 const percentage =
@@ -164,16 +197,28 @@ export default function SummaryDonut({
                     : 0;
 
                 return (
-                  <Box key={item.id}>
+                  <Box
+                    key={item.id}
+                    sx={{
+                      minWidth: 0,
+                    }}>
                     <Typography
                       sx={{
                         fontSize: 13,
                         fontWeight: 600,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
                       }}>
                       {item.label}
                     </Typography>
 
-                    <Typography variant='body2' color='text.secondary'>
+                    <Typography
+                      variant='body2'
+                      color='text.secondary'
+                      sx={{
+                        overflowWrap: 'anywhere',
+                      }}>
                       {formatCurrency(item.value)} kr (
                       {percentage.toLocaleString('sv-SE', {
                         maximumFractionDigits: 1,
@@ -185,14 +230,27 @@ export default function SummaryDonut({
               })}
             </Stack>
 
+            {/* DONUT */}
             <Box
               sx={{
                 position: 'relative',
                 width: 150,
                 height: 150,
                 flexShrink: 0,
-                ml: 'auto',
-                mt: 0.5,
+
+                mx: {
+                  xs: 'auto',
+                  md: 0,
+                },
+
+                ml: {
+                  md: 'auto',
+                },
+
+                mt: {
+                  xs: 1,
+                  md: 0,
+                },
               }}>
               <PieChart
                 width={150}
@@ -204,10 +262,12 @@ export default function SummaryDonut({
                     outerRadius: 70,
                     paddingAngle: 2,
                     cornerRadius: 3,
+
                     highlightScope: {
                       fade: 'global',
                       highlight: 'item',
                     },
+
                     faded: {
                       innerRadius: 40,
                       additionalRadius: -4,
@@ -221,16 +281,23 @@ export default function SummaryDonut({
                 sx={{
                   position: 'absolute',
                   inset: 0,
+
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+
                   pointerEvents: 'none',
                 }}>
-                <Box sx={{ textAlign: 'center' }}>
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    maxWidth: 85,
+                  }}>
                   <Typography
                     sx={{
                       fontSize: 16,
                       fontWeight: 700,
+                      lineHeight: 1.2,
                       color: centerColor ?? 'text.primary',
                     }}>
                     {formatCurrency(centerValue)} kr
@@ -239,6 +306,9 @@ export default function SummaryDonut({
                   <Typography
                     variant='caption'
                     sx={{
+                      display: 'block',
+                      mt: 0.25,
+                      lineHeight: 1.2,
                       color: centerColor ?? 'text.secondary',
                     }}>
                     {centerLabel}

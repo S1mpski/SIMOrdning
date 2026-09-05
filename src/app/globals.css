@@ -12,3 +12,113 @@ body {
 body {
   background: #f5f5f5;
 }
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  body {
+    margin: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  body[data-print-report='income'] * {
+    visibility: hidden;
+  }
+
+  body[data-print-report='income'] #print-income-report,
+  body[data-print-report='income'] #print-income-report * {
+    visibility: visible;
+  }
+
+  body[data-print-report='balance'] * {
+    visibility: hidden;
+  }
+
+  body[data-print-report='balance'] #print-balance-report,
+  body[data-print-report='balance'] #print-balance-report * {
+    visibility: visible;
+  }
+
+  #print-income-report,
+  #print-balance-report {
+    position: absolute !important;
+    inset: 0 auto auto 0 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    overflow: visible !important;
+
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  #print-income-report .MuiCard-root,
+  #print-balance-report .MuiCard-root {
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
+  #print-income-report .MuiCardContent-root,
+  #print-balance-report .MuiCardContent-root {
+    padding: 0 !important;
+  }
+
+  #print-income-report .MuiDivider-root,
+  #print-balance-report .MuiDivider-root {
+    border-color: #bbb !important;
+  }
+
+  #print-income-report p,
+  #print-income-report span,
+  #print-balance-report p,
+  #print-balance-report span {
+    color: #000 !important;
+  }
+
+  #print-income-report .report-scroll,
+  #print-balance-report .report-scroll {
+    overflow: visible !important;
+  }
+
+  #print-income-report .report-content,
+  #print-balance-report .report-content {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  #print-income-report .report-row,
+  #print-balance-report .report-row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #print-income-report .report-total,
+  #print-balance-report .report-total {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #print-income-report .report-account-name,
+  #print-balance-report .report-account-name {
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+}
