@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
 
 import { basAccounts } from '@/data/bas-accounts';
@@ -16,18 +17,19 @@ import {
   Alert,
   Box,
   Button,
-  Card,
-  CardContent,
   Checkbox,
   Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
   IconButton,
+  InputLabel,
   Menu,
   MenuItem,
   Paper,
+  Select,
   Stack,
   Table,
   TableBody,
@@ -37,14 +39,9 @@ import {
   TableRow,
   TextField,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  Divider,
 } from '@mui/material';
 
 import { useCompany } from '@/components/providers/company-provider';
-
 import { createClient } from '@/lib/supabase/client';
 
 export type AccountListItem = {
@@ -74,11 +71,77 @@ const emptyForm: AccountForm = {
   accountType: '',
 };
 
+function getAccountTypeLabel(accountType: AccountType | null) {
+  switch (accountType) {
+    case 'asset':
+      return 'Tillgång';
+
+    case 'equity':
+      return 'Eget kapital';
+
+    case 'liability':
+      return 'Skuld';
+
+    case 'revenue':
+      return 'Intäkt';
+
+    case 'expense':
+      return 'Kostnad';
+
+    default:
+      return '–';
+  }
+}
+
+function getAccountTypeChip(accountType: string) {
+  switch (accountType) {
+    case 'asset':
+      return {
+        label: 'Tillgång',
+        color: 'info' as const,
+      };
+
+    case 'equity':
+      return {
+        label: 'Eget kapital',
+        color: 'secondary' as const,
+      };
+
+    case 'liability':
+      return {
+        label: 'Skuld',
+        color: 'warning' as const,
+      };
+
+    case 'revenue':
+      return {
+        label: 'Intäkt',
+        color: 'success' as const,
+      };
+
+    case 'expense':
+      return {
+        label: 'Kostnad',
+        color: 'error' as const,
+      };
+
+    default:
+      return {
+        label: 'Okänd',
+        color: 'default' as const,
+      };
+  }
+}
+
 export default function AccountList({ accounts, companyId }: Props) {
   const router = useRouter();
+
   const supabase = createClient();
 
+  const company = useCompany();
+
   const [dialogOpen, setDialogOpen] = useState(false);
+
   const [editingAccount, setEditingAccount] = useState<AccountListItem | null>(
     null,
   );
@@ -86,6 +149,7 @@ export default function AccountList({ accounts, companyId }: Props) {
   const [form, setForm] = useState<AccountForm>(emptyForm);
 
   const [saving, setSaving] = useState(false);
+
   const [error, setError] = useState('');
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
@@ -94,12 +158,16 @@ export default function AccountList({ accounts, companyId }: Props) {
     useState<AccountListItem | null>(null);
 
   const [basDialogOpen, setBasDialogOpen] = useState(false);
+
   const [basSearch, setBasSearch] = useState('');
+
   const [selectedBasAccounts, setSelectedBasAccounts] = useState<number[]>([]);
+
   const [basSaving, setBasSaving] = useState(false);
+
   const [basError, setBasError] = useState('');
+
   const [accountSearch, setAccountSearch] = useState('');
-  const company = useCompany();
 
   const existingAccountNumbers = new Set(
     accounts.map((account) => account.account_number),
@@ -364,19 +432,46 @@ export default function AccountList({ accounts, companyId }: Props) {
 
   return (
     <>
-      <Stack spacing={2}>
-        {/* Knappar */}
+      <Stack
+        spacing={2}
+        sx={{
+          width: '100%',
+          minWidth: 0,
+        }}>
+        {/* KNAPPAR */}
         <Box
           sx={{
             display: 'flex',
             justifyContent: 'flex-end',
+            width: '100%',
+            minWidth: 0,
           }}>
-          <Stack direction='row' spacing={1.5}>
+          <Stack
+            direction={{
+              xs: 'column',
+              sm: 'row',
+            }}
+            spacing={1.5}
+            sx={{
+              width: {
+                xs: '100%',
+                sm: 'auto',
+              },
+
+              '& .MuiButton-root': {
+                whiteSpace: 'nowrap',
+              },
+            }}>
             <Button
               variant='outlined'
               startIcon={<LibraryAddOutlinedIcon />}
               onClick={handleOpenBasDialog}
-              sx={{ flexShrink: 0 }}>
+              sx={{
+                width: {
+                  xs: '100%',
+                  sm: 'auto',
+                },
+              }}>
               Lägg till från BAS
             </Button>
 
@@ -384,27 +479,64 @@ export default function AccountList({ accounts, companyId }: Props) {
               variant='contained'
               startIcon={<AddIcon />}
               onClick={handleOpenCreate}
-              sx={{ flexShrink: 0 }}>
+              sx={{
+                width: {
+                  xs: '100%',
+                  sm: 'auto',
+                },
+              }}>
               Skapa eget konto
             </Button>
           </Stack>
         </Box>
 
-        {/* Kontoplan vänster + sökfält höger */}
+        {/* RUBRIK + SÖK */}
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'flex-end',
+
+            flexDirection: {
+              xs: 'column',
+              md: 'row',
+            },
+
+            alignItems: {
+              xs: 'stretch',
+              md: 'flex-end',
+            },
+
             justifyContent: 'space-between',
-            gap: 20,
+
+            gap: {
+              xs: 2,
+              md: 4,
+            },
+
+            width: '100%',
+            minWidth: 0,
           }}>
-          <Box>
-            <Typography variant='h4' sx={{ fontWeight: 700 }}>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              variant='h4'
+              sx={{
+                fontWeight: 700,
+
+                fontSize: {
+                  xs: 28,
+                  md: 34,
+                },
+              }}>
               Kontoplan
             </Typography>
 
-            <Typography variant='body2' color='text.secondary' sx={{ mt: 0.5 }}>
-              Bokföringskonton som finns tillängliga i{' '}
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{
+                mt: 0.5,
+                overflowWrap: 'anywhere',
+              }}>
+              Bokföringskonton som finns tillgängliga i{' '}
               {company?.name ?? 'företaget'}.
             </Typography>
           </Box>
@@ -417,36 +549,92 @@ export default function AccountList({ accounts, companyId }: Props) {
             sx={{
               width: {
                 xs: '100%',
-                sm: 360,
+                md: 300,
+                lg: 360,
               },
+              flexShrink: 0,
             }}
           />
         </Box>
 
         {accounts.length === 0 ? (
-          <Paper variant='outlined' sx={{ p: 4 }}>
+          <Paper
+            variant='outlined'
+            sx={{
+              p: {
+                xs: 3,
+                md: 4,
+              },
+            }}>
             <Typography color='text.secondary'>
               Det finns inga konton i kontoplanen.
             </Typography>
           </Paper>
         ) : (
-          <TableContainer component={Paper} variant='outlined'>
+          <TableContainer
+            component={Paper}
+            variant='outlined'
+            sx={{
+              width: '100%',
+              maxWidth: '100%',
+              minWidth: 0,
+              overflowX: 'auto',
+            }}>
             <Table
               sx={{
+                width: '100%',
+                minWidth: 640,
+                tableLayout: 'fixed',
+
                 '& .MuiTableCell-root': {
                   borderBottom: '1px solid',
                   borderColor: 'divider',
+
+                  px: {
+                    xs: 1.25,
+                    md: 2,
+                  },
+
+                  py: {
+                    xs: 1.25,
+                    md: 1.5,
+                  },
                 },
               }}>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ width: 160 }}>Kontonummer</TableCell>
+                  <TableCell
+                    sx={{
+                      width: 120,
+                      whiteSpace: 'nowrap',
+                    }}>
+                    Kontonummer
+                  </TableCell>
+
                   <TableCell>Kontonamn</TableCell>
-                  <TableCell sx={{ width: 160 }}>Kontotyp</TableCell>
-                  <TableCell align='right' sx={{ width: 140 }}>
+
+                  <TableCell
+                    sx={{
+                      width: 130,
+                      whiteSpace: 'nowrap',
+                    }}>
+                    Kontotyp
+                  </TableCell>
+
+                  <TableCell
+                    align='right'
+                    sx={{
+                      width: 105,
+                    }}>
                     Status
                   </TableCell>
-                  <TableCell align='right' sx={{ width: 70 }} />
+
+                  <TableCell
+                    align='right'
+                    sx={{
+                      width: 52,
+                    }}
+                  />
                 </TableRow>
               </TableHead>
 
@@ -458,36 +646,42 @@ export default function AccountList({ accounts, companyId }: Props) {
                     sx={{
                       opacity: account.active ? 1 : 0.6,
 
-                      '& td': {
-                        borderBottom: '1px solid',
-                        borderColor: 'divider',
+                      '&:last-child td': {
+                        borderBottom: 0,
                       },
                     }}>
                     <TableCell>
                       <Typography
                         sx={{
                           fontWeight: 600,
+                          whiteSpace: 'nowrap',
                         }}>
                         {account.account_number}
                       </Typography>
                     </TableCell>
 
-                    <TableCell sx={{ fontWeight: 600 }}>
-                      {account.name}{' '}
+                    <TableCell
+                      sx={{
+                        minWidth: 0,
+                      }}>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          minWidth: 0,
+
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}>
+                        {account.name}
+                      </Typography>
                     </TableCell>
 
-                    <TableCell>
-                      {account.account_type === 'asset'
-                        ? 'Tillgång'
-                        : account.account_type === 'equity'
-                          ? 'Eget kapital'
-                          : account.account_type === 'liability'
-                            ? 'Skuld'
-                            : account.account_type === 'revenue'
-                              ? 'Intäkt'
-                              : account.account_type === 'expense'
-                                ? 'Kostnad'
-                                : '–'}
+                    <TableCell
+                      sx={{
+                        whiteSpace: 'nowrap',
+                      }}>
+                      {getAccountTypeLabel(account.account_type)}
                     </TableCell>
 
                     <TableCell align='right'>
@@ -499,9 +693,17 @@ export default function AccountList({ accounts, companyId }: Props) {
                       />
                     </TableCell>
 
-                    <TableCell align='right'>
+                    <TableCell
+                      align='right'
+                      sx={{
+                        px: {
+                          xs: 0.5,
+                          md: 1,
+                        },
+                      }}>
                       <IconButton
                         size='small'
+                        aria-label='Kontoalternativ'
                         onClick={(event) => handleOpenMenu(event, account)}>
                         <MoreVertIcon fontSize='small' />
                       </IconButton>
@@ -514,6 +716,7 @@ export default function AccountList({ accounts, companyId }: Props) {
         )}
       </Stack>
 
+      {/* KONTO-MENY */}
       <Menu
         anchorEl={menuAnchor}
         open={Boolean(menuAnchor)}
@@ -524,26 +727,56 @@ export default function AccountList({ accounts, companyId }: Props) {
               handleOpenEdit(selectedAccount);
             }
           }}>
-          <EditOutlinedIcon fontSize='small' sx={{ mr: 1.5 }} />
+          <EditOutlinedIcon
+            fontSize='small'
+            sx={{
+              mr: 1.5,
+            }}
+          />
           Redigera
         </MenuItem>
 
         <MenuItem onClick={handleToggleActive}>
           {selectedAccount?.active ? (
-            <ToggleOffOutlinedIcon fontSize='small' sx={{ mr: 1.5 }} />
+            <ToggleOffOutlinedIcon
+              fontSize='small'
+              sx={{
+                mr: 1.5,
+              }}
+            />
           ) : (
-            <ToggleOnOutlinedIcon fontSize='small' sx={{ mr: 1.5 }} />
+            <ToggleOnOutlinedIcon
+              fontSize='small'
+              sx={{
+                mr: 1.5,
+              }}
+            />
           )}
 
           {selectedAccount?.active ? 'Inaktivera' : 'Aktivera'}
         </MenuItem>
       </Menu>
 
+      {/* BAS-DIALOG */}
       <Dialog
         open={basDialogOpen}
         onClose={handleCloseBasDialog}
         fullWidth
-        maxWidth='md'>
+        maxWidth='md'
+        slotProps={{
+          paper: {
+            sx: {
+              width: {
+                xs: 'calc(100% - 24px)',
+                sm: 'calc(100% - 64px)',
+              },
+              m: {
+                xs: 1.5,
+                sm: 4,
+              },
+            },
+          },
+        }}>
         <DialogTitle>Lägg till från BAS</DialogTitle>
 
         <DialogContent dividers>
@@ -558,37 +791,46 @@ export default function AccountList({ accounts, companyId }: Props) {
               size='small'
               autoFocus
             />
-            <Stack direction='row' sx={{ alignItems: 'center', gap: 1 }}>
-              {
-                <Typography
-                  variant='h6'
-                  color='text.secondary'
-                  sx={{ fontWeight: 500 }}>
-                  {availableBasAccounts.length}
-                </Typography>
-              }
 
-              <sup>
-                <Box sx={{ mr: 0.25, ml: -0.8, mb: -0.5 }}>st</Box>
-              </sup>
-
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'baseline',
+                gap: 0.75,
+              }}>
               <Typography
                 variant='h6'
                 color='text.secondary'
-                sx={{ fontWeight: 500 }}>
-                konton finns tillgängliga att lägga till.
+                sx={{
+                  fontWeight: 500,
+                }}>
+                {availableBasAccounts.length}
               </Typography>
-            </Stack>
+
+              <Typography variant='body2' color='text.secondary'>
+                Konton finns tillgängliga att lägga till.
+              </Typography>
+            </Box>
+
             <Box
               sx={{
-                maxHeight: 480,
+                maxHeight: {
+                  xs: 420,
+                  sm: 480,
+                },
+
                 overflowY: 'auto',
+
                 border: '1px solid',
                 borderColor: 'divider',
                 borderRadius: 1,
               }}>
               {filteredBasAccounts.length === 0 ? (
-                <Box sx={{ p: 3 }}>
+                <Box
+                  sx={{
+                    p: 3,
+                  }}>
                   <Typography color='text.secondary'>
                     Inga konton hittades.
                   </Typography>
@@ -598,46 +840,8 @@ export default function AccountList({ accounts, companyId }: Props) {
                   const checked = selectedBasAccounts.includes(
                     account.accountNumber,
                   );
+
                   const typeChip = getAccountTypeChip(account.accountType);
-                  function getAccountTypeChip(accountType: string) {
-                    switch (accountType) {
-                      case 'asset':
-                        return {
-                          label: 'Tillgång',
-                          color: 'info' as const,
-                        };
-
-                      case 'equity':
-                        return {
-                          label: 'Eget kapital',
-                          color: 'secondary' as const,
-                        };
-
-                      case 'liability':
-                        return {
-                          label: 'Skuld',
-                          color: 'warning' as const,
-                        };
-
-                      case 'revenue':
-                        return {
-                          label: 'Intäkt',
-                          color: 'success' as const,
-                        };
-
-                      case 'expense':
-                        return {
-                          label: 'Kostnad',
-                          color: 'error' as const,
-                        };
-
-                      default:
-                        return {
-                          label: 'Okänd',
-                          color: 'default' as const,
-                        };
-                    }
-                  }
 
                   return (
                     <Box
@@ -646,16 +850,41 @@ export default function AccountList({ accounts, companyId }: Props) {
                         handleToggleBasAccount(account.accountNumber)
                       }
                       sx={{
-                        display: 'flex',
+                        display: 'grid',
+
+                        gridTemplateColumns: {
+                          xs: '36px 60px minmax(0, 1fr)',
+                          sm: '40px 76px minmax(0, 1fr) auto',
+                        },
+
                         alignItems: 'center',
-                        px: 1.5,
-                        py: 0.75,
+
+                        columnGap: {
+                          xs: 0.5,
+                          sm: 1,
+                        },
+
+                        rowGap: 0.5,
+
+                        px: {
+                          xs: 1,
+                          sm: 1.5,
+                        },
+
+                        py: {
+                          xs: 1,
+                          sm: 0.75,
+                        },
+
                         cursor: 'pointer',
+
                         borderBottom: '1px solid',
                         borderColor: 'divider',
+
                         '&:last-child': {
                           borderBottom: 0,
                         },
+
                         '&:hover': {
                           bgcolor: 'action.hover',
                         },
@@ -667,19 +896,41 @@ export default function AccountList({ accounts, companyId }: Props) {
                         }
                         onClick={(event) => event.stopPropagation()}
                         size='small'
+                        sx={{
+                          p: 0.5,
+                        }}
                       />
 
                       <Typography
                         sx={{
-                          width: 80,
-                          flexShrink: 0,
                           fontWeight: 600,
                           fontSize: 14,
+                          whiteSpace: 'nowrap',
                         }}>
                         {account.accountNumber}
                       </Typography>
 
-                      <Typography sx={{ fontSize: 14 }}>
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          minWidth: 0,
+
+                          overflow: {
+                            xs: 'visible',
+                            sm: 'hidden',
+                          },
+
+                          textOverflow: {
+                            sm: 'ellipsis',
+                          },
+
+                          whiteSpace: {
+                            xs: 'normal',
+                            sm: 'nowrap',
+                          },
+
+                          overflowWrap: 'anywhere',
+                        }}>
                         {account.name}
                       </Typography>
 
@@ -688,7 +939,24 @@ export default function AccountList({ accounts, companyId }: Props) {
                         color={typeChip.color}
                         size='small'
                         variant='outlined'
-                        sx={{ ml: 'auto', py: 2 }}
+                        sx={{
+                          gridColumn: {
+                            xs: '3',
+                            sm: 'auto',
+                          },
+
+                          justifySelf: {
+                            xs: 'start',
+                            sm: 'end',
+                          },
+
+                          mt: {
+                            xs: 0.25,
+                            sm: 0,
+                          },
+
+                          flexShrink: 0,
+                        }}
                       />
                     </Box>
                   );
@@ -698,11 +966,24 @@ export default function AccountList({ accounts, companyId }: Props) {
           </Stack>
         </DialogContent>
 
-        <DialogActions>
+        <DialogActions
+          sx={{
+            flexWrap: 'wrap',
+            gap: 1,
+
+            px: {
+              xs: 2,
+              sm: 3,
+            },
+
+            py: 1.5,
+          }}>
           <Typography
             variant='body2'
             color='text.secondary'
-            sx={{ mr: 'auto', ml: 1 }}>
+            sx={{
+              mr: 'auto',
+            }}>
             {selectedBasAccounts.length === 0
               ? 'Inga konton valda'
               : `${selectedBasAccounts.length} valda`}
@@ -727,17 +1008,37 @@ export default function AccountList({ accounts, companyId }: Props) {
         </DialogActions>
       </Dialog>
 
+      {/* SKAPA / REDIGERA KONTO */}
       <Dialog
         open={dialogOpen}
         onClose={handleCloseDialog}
         fullWidth
-        maxWidth='sm'>
+        maxWidth='sm'
+        slotProps={{
+          paper: {
+            sx: {
+              width: {
+                xs: 'calc(100% - 24px)',
+                sm: 'calc(100% - 64px)',
+              },
+
+              m: {
+                xs: 1.5,
+                sm: 4,
+              },
+            },
+          },
+        }}>
         <DialogTitle>
           {editingAccount ? 'Redigera konto' : 'Lägg till konto'}
         </DialogTitle>
 
         <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
+          <Stack
+            spacing={2}
+            sx={{
+              mt: 1,
+            }}>
             {error && <Alert severity='error'>{error}</Alert>}
 
             <TextField
@@ -789,9 +1090,13 @@ export default function AccountList({ accounts, companyId }: Props) {
                   }))
                 }>
                 <MenuItem value='asset'>Tillgång</MenuItem>
+
                 <MenuItem value='equity'>Eget kapital</MenuItem>
+
                 <MenuItem value='liability'>Skuld</MenuItem>
+
                 <MenuItem value='revenue'>Intäkt</MenuItem>
+
                 <MenuItem value='expense'>Kostnad</MenuItem>
               </Select>
             </FormControl>
@@ -804,7 +1109,15 @@ export default function AccountList({ accounts, companyId }: Props) {
           </Stack>
         </DialogContent>
 
-        <DialogActions>
+        <DialogActions
+          sx={{
+            px: {
+              xs: 2,
+              sm: 3,
+            },
+
+            py: 1.5,
+          }}>
           <Button onClick={handleCloseDialog} disabled={saving}>
             Avbryt
           </Button>

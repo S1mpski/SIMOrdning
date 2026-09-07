@@ -72,6 +72,7 @@ export default async function ReportsPage() {
         display: 'flex',
         flexDirection: 'column',
         gap: 3,
+        px: 20,
       }}>
       <IncomeStatement accounts={reportAccounts} />
 

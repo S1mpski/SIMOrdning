@@ -1,8 +1,9 @@
 'use client';
 
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
-import { PieChart } from '@mui/x-charts/PieChart';
 import { useTheme } from '@mui/material/styles';
+import { PieChart } from '@mui/x-charts/PieChart';
+
 import { useCompany } from '@/components/providers/company-provider';
 
 export type ExpenseChartItem = {
@@ -24,9 +25,11 @@ function formatCurrency(value: number) {
 
 export default function ExpenseChart({ data }: Props) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
+
   const theme = useTheme();
 
   const chartColors = [theme.palette.simBlue.dark, theme.palette.simBlue.light];
+
   const company = useCompany();
 
   return (
@@ -35,16 +38,25 @@ export default function ExpenseChart({ data }: Props) {
       sx={{
         borderRadius: 1.5,
         height: '100%',
+        minWidth: 0,
+        overflow: 'hidden',
       }}>
       <CardContent
         sx={{
-          p: 2.5,
+          p: {
+            xs: 2,
+            md: 2.5,
+          },
+
           '&:last-child': {
-            pb: 2.5,
+            pb: {
+              xs: 2,
+              md: 2.5,
+            },
           },
         }}>
         <Stack spacing={2}>
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
                 fontSize: 16,
@@ -56,7 +68,10 @@ export default function ExpenseChart({ data }: Props) {
             <Typography
               variant='body2'
               color='text.secondary'
-              sx={{ mt: 0.25 }}>
+              sx={{
+                mt: 0.25,
+                overflowWrap: 'anywhere',
+              }}>
               Fördelning av {company?.name ?? 'företaget'}
               {'s'} bokförda kostnader.
             </Typography>
@@ -65,8 +80,12 @@ export default function ExpenseChart({ data }: Props) {
           {data.length === 0 || total === 0 ? (
             <Box
               sx={{
-                py: 5,
+                minHeight: 180,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 textAlign: 'center',
+                px: 1,
               }}>
               <Typography color='text.secondary'>
                 Inga kostnader bokförda ännu.
@@ -74,19 +93,21 @@ export default function ExpenseChart({ data }: Props) {
             </Box>
           ) : (
             <Stack
-              direction='column'
-              spacing={1.5}
+              spacing={2}
               sx={{
                 alignItems: 'center',
+                minWidth: 0,
               }}>
               <Box
                 sx={{
                   width: '100%',
-
+                  minWidth: 0,
                   display: 'flex',
                   justifyContent: 'center',
+                  overflow: 'hidden',
                 }}>
                 <PieChart
+                  width={180}
                   height={180}
                   colors={chartColors}
                   series={[
@@ -96,10 +117,12 @@ export default function ExpenseChart({ data }: Props) {
                       outerRadius: 72,
                       paddingAngle: 2,
                       cornerRadius: 3,
+
                       highlightScope: {
                         fade: 'global',
                         highlight: 'item',
                       },
+
                       faded: {
                         innerRadius: 45,
                         additionalRadius: -5,
@@ -127,17 +150,21 @@ export default function ExpenseChart({ data }: Props) {
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         gap: 2,
+                        minWidth: 0,
                       }}>
                       <Box
                         sx={{
                           minWidth: 0,
+                          flex: 1,
                         }}>
                         <Typography
                           sx={{
                             fontSize: 13,
                             fontWeight: 500,
-                          }}
-                          noWrap>
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}>
                           {item.label}
                         </Typography>
 
@@ -154,6 +181,7 @@ export default function ExpenseChart({ data }: Props) {
                           fontSize: 13,
                           fontWeight: 600,
                           whiteSpace: 'nowrap',
+                          flexShrink: 0,
                         }}>
                         {formatCurrency(item.value)} kr
                       </Typography>
@@ -167,8 +195,11 @@ export default function ExpenseChart({ data }: Props) {
                     mt: 0.5,
                     borderTop: '1px solid',
                     borderColor: 'divider',
+
                     display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'space-between',
+                    gap: 2,
                   }}>
                   <Typography
                     sx={{
@@ -182,6 +213,7 @@ export default function ExpenseChart({ data }: Props) {
                     sx={{
                       fontSize: 13,
                       fontWeight: 700,
+                      whiteSpace: 'nowrap',
                     }}>
                     {formatCurrency(total)} kr
                   </Typography>

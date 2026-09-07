@@ -11,6 +11,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+
 import DeleteVoucherButton from '@/components/bookkeeping/delete-voucher-button';
 
 type VoucherRowDetails = {
@@ -31,6 +32,13 @@ type Props = {
   rows: VoucherRowDetails[];
 };
 
+function formatCurrency(value: number) {
+  return value.toLocaleString('sv-SE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 export default function VoucherDetails({
   voucherId,
   voucherNumber,
@@ -48,110 +56,255 @@ export default function VoucherDetails({
   return (
     <Box
       sx={{
+        width: '100%',
+        minWidth: 0,
         maxWidth: 1000,
         mx: 'auto',
+
+        px: {
+          xs: 2,
+          sm: 2,
+          md: 3,
+        },
       }}>
-      <Stack spacing={3}>
-        <Box>
-          <Typography variant='h4' sx={{ fontWeight: 700 }}>
+      <Stack
+        spacing={{
+          xs: 2,
+          md: 3,
+        }}>
+        {/* HEADER */}
+        <Box sx={{ minWidth: 0 }}>
+          <Typography
+            variant='h4'
+            sx={{
+              fontWeight: 700,
+
+              fontSize: {
+                xs: 28,
+                sm: 30,
+                md: 34,
+              },
+
+              overflowWrap: 'anywhere',
+            }}>
             Verifikation {voucherNumber}
           </Typography>
 
-          <Typography color='text.secondary' sx={{ mt: 0.5 }}>
+          <Typography
+            color='text.secondary'
+            sx={{
+              mt: 0.5,
+            }}>
             {new Date(`${voucherDate}T00:00:00`).toLocaleDateString('sv-SE')}
           </Typography>
         </Box>
 
-        <Card variant='outlined'>
-          <CardContent>
-            <Stack spacing={3}>
-              <Box>
+        <Card
+          variant='outlined'
+          sx={{
+            minWidth: 0,
+            overflow: 'hidden',
+            borderRadius: 1.5,
+          }}>
+          <CardContent
+            sx={{
+              p: {
+                xs: 2,
+                md: 3,
+              },
+
+              '&:last-child': {
+                pb: {
+                  xs: 2,
+                  md: 3,
+                },
+              },
+            }}>
+            <Stack
+              spacing={{
+                xs: 2,
+                md: 3,
+              }}>
+              {/* BESKRIVNING */}
+              <Box sx={{ minWidth: 0 }}>
                 <Typography variant='caption' color='text.secondary'>
                   Beskrivning
                 </Typography>
 
-                <Typography variant='h6'>{description}</Typography>
+                <Typography
+                  variant='h6'
+                  sx={{
+                    overflowWrap: 'anywhere',
+
+                    fontSize: {
+                      xs: 18,
+                      md: 20,
+                    },
+                  }}>
+                  {description}
+                </Typography>
               </Box>
 
               <Divider />
 
-              <Table
+              {/* TABELL */}
+              <Box
                 sx={{
-                  '& .MuiTableCell-root': {
-                    borderColor: 'text.disabled',
-                  },
+                  width: '100%',
+                  minWidth: 0,
+                  overflowX: 'auto',
                 }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Konto</TableCell>
+                <Table
+                  size='small'
+                  sx={{
+                    minWidth: 520,
 
-                    <TableCell align='right'>Debet</TableCell>
+                    '& .MuiTableCell-root': {
+                      borderColor: 'text.disabled',
 
-                    <TableCell align='right'>Kredit</TableCell>
-                  </TableRow>
-                </TableHead>
+                      px: {
+                        xs: 1.5,
+                        md: 2,
+                      },
 
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id}>
+                      py: {
+                        xs: 1.25,
+                        md: 1.5,
+                      },
+                    },
+                  }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        sx={{
+                          minWidth: 220,
+                        }}>
+                        Konto
+                      </TableCell>
+
+                      <TableCell
+                        align='right'
+                        sx={{
+                          width: 130,
+                          whiteSpace: 'nowrap',
+                        }}>
+                        Debet
+                      </TableCell>
+
+                      <TableCell
+                        align='right'
+                        sx={{
+                          width: 130,
+                          whiteSpace: 'nowrap',
+                        }}>
+                        Kredit
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+
+                  <TableBody>
+                    {rows.map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell>
+                          <Typography
+                            sx={{
+                              fontWeight: 500,
+
+                              maxWidth: {
+                                xs: 240,
+                                sm: 360,
+                                md: 'none',
+                              },
+
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}>
+                            {row.accounts.account_number} – {row.accounts.name}
+                          </Typography>
+                        </TableCell>
+
+                        <TableCell
+                          align='right'
+                          sx={{
+                            whiteSpace: 'nowrap',
+                          }}>
+                          {Number(row.debit) > 0
+                            ? `${formatCurrency(Number(row.debit))} kr`
+                            : '–'}
+                        </TableCell>
+
+                        <TableCell
+                          align='right'
+                          sx={{
+                            whiteSpace: 'nowrap',
+                          }}>
+                          {Number(row.credit) > 0
+                            ? `${formatCurrency(Number(row.credit))} kr`
+                            : '–'}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+
+                    {/* SUMMA */}
+                    <TableRow>
                       <TableCell>
-                        <Typography sx={{ fontWeight: 500 }}>
-                          {row.accounts.account_number} – {row.accounts.name}
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                          }}>
+                          Summa
                         </Typography>
                       </TableCell>
 
-                      <TableCell align='right'>
-                        {Number(row.debit) > 0
-                          ? `${Number(row.debit).toLocaleString('sv-SE', {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })} kr`
-                          : '–'}
+                      <TableCell
+                        align='right'
+                        sx={{
+                          whiteSpace: 'nowrap',
+                        }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                          }}>
+                          {formatCurrency(debitTotal)} kr
+                        </Typography>
                       </TableCell>
 
-                      <TableCell align='right'>
-                        {Number(row.credit) > 0
-                          ? `${Number(row.credit).toLocaleString('sv-SE', {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })} kr`
-                          : '–'}
+                      <TableCell
+                        align='right'
+                        sx={{
+                          whiteSpace: 'nowrap',
+                        }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                          }}>
+                          {formatCurrency(creditTotal)} kr
+                        </Typography>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  </TableBody>
+                </Table>
+              </Box>
 
-                  <TableRow>
-                    <TableCell>
-                      <Typography sx={{ fontWeight: 700 }}>Summa</Typography>
-                    </TableCell>
-
-                    <TableCell align='right'>
-                      <Typography sx={{ fontWeight: 700 }}>
-                        {debitTotal.toLocaleString('sv-SE', {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}{' '}
-                        kr
-                      </Typography>
-                    </TableCell>
-
-                    <TableCell align='right'>
-                      <Typography sx={{ fontWeight: 700 }}>
-                        {creditTotal.toLocaleString('sv-SE', {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}{' '}
-                        kr
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              {/* DELETE */}
               <Box
                 sx={{
                   display: 'flex',
-                  justifyContent: 'flex-end',
+
+                  justifyContent: {
+                    xs: 'stretch',
+                    sm: 'flex-end',
+                  },
+
                   mt: 2,
+
+                  '& > *': {
+                    width: {
+                      xs: '100%',
+                      sm: 'auto',
+                    },
+                  },
                 }}>
                 <DeleteVoucherButton voucherId={voucherId} />
               </Box>

@@ -79,7 +79,8 @@ export default async function VouchersPage() {
         mx: 'auto',
         px: {
           sm: 1,
-          md: 1,
+          md: 8,
+          xl: 12,
         },
       }}>
       <Box sx={{ mb: 3 }}>

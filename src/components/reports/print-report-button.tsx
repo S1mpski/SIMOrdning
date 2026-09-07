@@ -37,7 +37,20 @@ export default function PrintReportButton() {
         variant='outlined'
         startIcon={<PrintOutlinedIcon />}
         onClick={handleOpen}
-        className='no-print'>
+        className='no-print'
+        sx={{
+          whiteSpace: 'nowrap',
+
+          width: {
+            xs: '100%',
+            md: 'auto',
+          },
+
+          alignSelf: {
+            xs: 'stretch',
+            md: 'flex-start',
+          },
+        }}>
         Skriv ut
       </Button>
 
